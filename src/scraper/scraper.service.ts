@@ -39,6 +39,21 @@ export class ScraperService {
 
   //endregion
 
+  getImageSrc(imageElement: HTMLImageElement): string {
+    if (imageElement.srcset) {
+      const srcsetArray = imageElement.srcset.split(',').map(src => src.trim().split(' '));
+      const src2x = srcsetArray.find(src => src[1] === '2x');
+      if (src2x) {
+        return src2x[0];
+      }
+      const src1x = srcsetArray.find(src => src[1] === '1x');
+      if (src1x) {
+        return src1x[0];
+      }
+    }
+    return imageElement.src;
+  }
+
 
   async scrapeItems() {
     const crawler = new PlaywrightCrawler({
@@ -58,7 +73,7 @@ export class ScraperService {
           try {
             await page.waitForSelector('table.items-table tr', { timeout: 5000 });
 
-            const rowCount = await page.$$eval('table.items-table tr', rows => {
+            const items = await page.$$eval('table.items-table tr', rows => {
               return rows.slice(1).map(row => {
                 const cells = row.querySelectorAll('td');
                 const imageElement = cells[0]?.querySelector('img');
@@ -88,7 +103,8 @@ export class ScraperService {
                 };
               }).filter(item => item !== null); // Filter out null items
             });
-            console.log(`Data extracted from ${request.loadedUrl}:`, rowCount);
+            //: todo: save it to the database
+            console.log(`Data extracted from ${request.loadedUrl}:`, items);
           } catch (error) {
             log.error(`Error processing ${request.loadedUrl}: ${error.message}`);
           }
@@ -97,5 +113,100 @@ export class ScraperService {
       headless: false,
     });
     await crawler.run(['https://wuthering.gg/items/']);
+  }
+
+
+  async scrapeWeapons() {
+    const crawler = new PlaywrightCrawler({
+      requestHandler: async ({ page, request }) => {
+        console.log(`Processing: ${request.url}`);
+
+        const urlObj = new URL(request.url);
+        const domain = urlObj.origin;
+        console.log(`Domain: ${domain}`);
+
+        await page.waitForSelector('select#weapon-type', { timeout: 10000 });
+        const options = await page.$$eval('select#weapon-type option', options => {
+          return options.map(option => {
+            if (option instanceof HTMLOptionElement) {
+              return option.value;
+            }
+            return null;
+          }).filter(value => value !== null);
+        });
+
+        console.log('Options:', options);
+
+        for (const option of options.slice(1)) {
+          await page.selectOption('select#weapon-type', option);
+          console.log('Found weapons');
+          await page.waitForSelector('ul.weapons > li a.weapon', { timeout: 10000 });
+
+          const weaponData = await page.$$eval('ul.weapons > li a.weapon', items => {
+            return items.map(item => {
+              const anchor = item as HTMLAnchorElement;
+              const img = anchor.querySelector('div.image img') as HTMLImageElement;
+              const nameElement = anchor.querySelector('div.name');
+
+              if (!anchor || !img || !nameElement) {
+                console.error('Missing element:', { anchor, img, nameElement });
+                return null;
+              }
+
+
+              const rankMatch = anchor.className.match(/quality(\d)/);
+              const rank = rankMatch ? parseInt(rankMatch[1], 10) : null;
+
+              const href = anchor.href;
+              const imgSrc = img.src;
+              const name = nameElement.textContent.trim();
+
+              return {
+                rank,
+                href,
+                imgSrc,
+                name,
+              };
+            }).filter(item => item !== null); // Filter out null items
+          });
+//: todo: save it to the database
+          console.log(`Data extracted for option ${option}:`, weaponData);
+        }
+      },
+      headless: false,
+    });
+    await crawler.run(['https://wuthering.gg/weapons/']);
+  }
+
+  async scrapeElements() {
+    const crawler = new PlaywrightCrawler({
+      requestHandler: async ({ page, request }) => {
+        console.log(`Processing: ${request.url}`);
+        await page.waitForSelector('div.elements', { timeout: 10000 });
+
+        const buttons = await page.$$eval('div.elements button', buttons => {
+          return buttons.map(button => {
+            const buttonElement = button as HTMLButtonElement;
+
+            const imgElement = buttonElement.querySelector('img') as HTMLImageElement;
+            if (!imgElement) {
+              console.error('Missing img element:', { buttonElement });
+              return null;
+            }
+            const name = imgElement.alt;
+            const imgSrc = this.getImageSrc(imgElement);
+            return {
+              name,
+              imgSrc,
+            };
+          });
+        });
+        //: todo: save it to the database
+        console.log('List of buttons:', buttons);
+      },
+
+    });
+    await crawler.run(['https://wuthering.gg/echos/']);
+
   }
 }
