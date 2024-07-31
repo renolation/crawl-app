@@ -8,8 +8,8 @@ export class ScraperController {
   constructor(private readonly scraperService: ScraperService) {
   }
 
-  @Get('scrape')
-  async scrape() {
+  @Get('items')
+  async items() {
     await this.scraperService.scrapeItems();
   }
 

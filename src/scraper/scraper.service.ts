@@ -6,7 +6,7 @@ import { PlaywrightCrawler, Dataset, log } from '@crawlee/playwright';
 import { Scraper } from './entities/scraper.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
+import { ItemEntity } from './entities/item.entity';
 
 // Define the getImageSrc method inside the class
 function getImageSrc(imageElement: HTMLImageElement): string {
@@ -30,6 +30,8 @@ export class ScraperService {
   constructor(
     @InjectRepository(Scraper)
     private scraperRepository: Repository<Scraper>,
+    @InjectRepository(ItemEntity)
+    private itemRepository: Repository<ItemEntity>,
   ) {
   }
 
@@ -72,14 +74,20 @@ export class ScraperService {
         });
 
         if (!request.loadedUrl.endsWith('/items')) {
+          await new Promise(resolve => setTimeout(resolve, 5000));
           try {
-            await page.waitForSelector('table.items-table tr', { timeout: 5000 });
-
+            await page.waitForSelector('table.items-table tr', { timeout: 10000 });
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            const rows = await page.$$eval('table.items-table tr', rows => {
+              console.log('Rows:', rows);
+              return rows;
+            });
+            //region crawlItems
             const items = await page.$$eval('table.items-table tr', rows => {
-              return rows.slice(1).map(row => {
+              return rows.slice(1).map(row => { // Skip the first row (header)
                 const cells = row.querySelectorAll('td');
                 const imageElement = cells[0]?.querySelector('img');
-                const nameElement = cells[1]?.querySelector('div.name.quality3');
+                const nameElement = cells[1]?.querySelector('div.name');
                 const subtypesElement = cells[1]?.querySelector('div.subtypes');
                 const descriptionElement = cells[2];
 
@@ -92,8 +100,8 @@ export class ScraperService {
                 const name = nameElement.textContent.trim();
                 const subtypes = subtypesElement.textContent.trim();
                 const description = descriptionElement.textContent.trim();
-                const rankMatch = nameElement.className.match(/quality(\d)/);
-                const rank = rankMatch ? parseInt(rankMatch[1], 10) : null;
+                const qualityClass = Array.from(nameElement.classList).find(cls => cls.startsWith('quality'));
+                const rank = qualityClass ? parseInt(qualityClass.replace('quality', ''), 10) : null;
                 console.log(name + ' ' + subtypes + ' ' + description + ' ' + rank);
 
                 return {
@@ -103,18 +111,47 @@ export class ScraperService {
                   description,
                   rank,
                 };
-              }).filter(item => item !== null); // Filter out null items
+              }); // Filter out null items
             });
-            //: todo: save it to the database
-            console.log(`Data extracted from ${request.loadedUrl}:`, items);
+            const type = await page.$eval('a.router-link-active div.name', element => element.textContent.trim());
+
+            console.log(`Items: ${request.loadedUrl}`, items.length);
+            await this.saveItemsToDatabase(items, type);
+            //endregion
+            console.log(`Data: ${request.loadedUrl}:`, rows.length - 1);
           } catch (error) {
             log.error(`Error processing ${request.loadedUrl}: ${error.message}`);
           }
         }
       },
-      headless: false,
+      // headless: false,
     });
     await crawler.run(['https://wuthering.gg/items/']);
+  }
+
+  async saveItemsToDatabase(items: any[], type: string) {
+
+    let count = 0;
+    for (const item of items) {
+      count++;
+      const existingItem = await this.itemRepository.findOne({
+        where: { name: item.name },
+      });
+
+      if (!existingItem) {
+        const newItem = this.itemRepository.create({
+          name: item.name,
+          subTypes: item.subtypes,
+          description: item.description,
+          rank: item.rank,
+          type: type,
+          imageUrl: item.imageSrc,
+        });
+        console.log(newItem);
+        await this.itemRepository.save(newItem);
+      }
+    }
+    console.log('Items saved to database:', count);
   }
 
   async scrapeWeapons() {

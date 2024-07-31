@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ScraperModule } from './scraper/scraper.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Scraper } from './scraper/entities/scraper.entity';
+import { ItemEntity } from './scraper/entities/item.entity';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { Scraper } from './scraper/entities/scraper.entity';
       username: 'root',
       password: 'password',
       database: 'postgres',
-      entities: [Scraper],
+      entities: [Scraper, ItemEntity],
       synchronize: true,
     }),
      ScraperModule],

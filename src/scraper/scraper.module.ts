@@ -3,9 +3,10 @@ import { ScraperService } from './scraper.service';
 import { ScraperController } from './scraper.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Scraper } from './entities/scraper.entity';
+import { ItemEntity } from './entities/item.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Scraper])],
+  imports: [TypeOrmModule.forFeature([Scraper, ItemEntity])],
   controllers: [ScraperController],
   providers: [ScraperService],
   exports: [ScraperService],
