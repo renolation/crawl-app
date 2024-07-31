@@ -7,6 +7,23 @@ import { Scraper } from './entities/scraper.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+
+// Define the getImageSrc method inside the class
+function getImageSrc(imageElement: HTMLImageElement): string {
+  if (imageElement.srcset) {
+    const srcsetArray = imageElement.srcset.split(',').map(src => src.trim().split(' '));
+    const src2x = srcsetArray.find(src => src[1] === '2x');
+    if (src2x) {
+      return src2x[0];
+    }
+    const src1x = srcsetArray.find(src => src[1] === '1x');
+    if (src1x) {
+      return src1x[0];
+    }
+  }
+  return imageElement.src;
+}
+
 @Injectable()
 export class ScraperService {
 
@@ -38,21 +55,6 @@ export class ScraperService {
   }
 
   //endregion
-
-  getImageSrc(imageElement: HTMLImageElement): string {
-    if (imageElement.srcset) {
-      const srcsetArray = imageElement.srcset.split(',').map(src => src.trim().split(' '));
-      const src2x = srcsetArray.find(src => src[1] === '2x');
-      if (src2x) {
-        return src2x[0];
-      }
-      const src1x = srcsetArray.find(src => src[1] === '1x');
-      if (src1x) {
-        return src1x[0];
-      }
-    }
-    return imageElement.src;
-  }
 
 
   async scrapeItems() {
@@ -114,8 +116,7 @@ export class ScraperService {
     });
     await crawler.run(['https://wuthering.gg/items/']);
   }
-
-
+  
   async scrapeWeapons() {
     const crawler = new PlaywrightCrawler({
       requestHandler: async ({ page, request }) => {
@@ -194,10 +195,28 @@ export class ScraperService {
               return null;
             }
             const name = imgElement.alt;
-            const imgSrc = this.getImageSrc(imgElement);
+            // region Inline getImageSrc logic
+            let imgSrc = imgElement.src;
+            if (imgElement.srcset) {
+              const srcsetArray = imgElement.srcset.split(',').map(src => src.trim().split(' '));
+              const src2x = srcsetArray.find(src => src[1] === '2x');
+              if (src2x) {
+                imgSrc = src2x[0];
+              } else {
+                const src1x = srcsetArray.find(src => src[1] === '1x');
+                if (src1x) {
+                  imgSrc = src1x[0];
+                }
+              }
+            }
+            //endregion
+            const className = buttonElement.className;
+            const orderMatch = className.match(/f(\d+)/);
+            const order = orderMatch ? parseInt(orderMatch[1], 10) : null;
             return {
               name,
               imgSrc,
+              order,
             };
           });
         });

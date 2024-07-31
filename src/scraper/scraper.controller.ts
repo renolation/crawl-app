@@ -16,6 +16,10 @@ export class ScraperController {
   async weapons() {
     await this.scraperService.scrapeWeapons();
   }
+  @Get('elements')
+  async elements() {
+    await this.scraperService.scrapeElements();
+  }
 
   @Post()
   create(@Body() createScraperDto: CreateScraperDto) {
