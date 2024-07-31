@@ -12,13 +12,20 @@ export class ScraperController {
   async scrape() {
     await this.scraperService.scrapeItems();
   }
+
   @Get('weapons')
   async weapons() {
     await this.scraperService.scrapeWeapons();
   }
+
   @Get('elements')
   async elements() {
     await this.scraperService.scrapeElements();
+  }
+
+  @Get('echos')
+  async echos() {
+    await this.scraperService.scrapeEchos();
   }
 
   @Post()

@@ -116,7 +116,7 @@ export class ScraperService {
     });
     await crawler.run(['https://wuthering.gg/items/']);
   }
-  
+
   async scrapeWeapons() {
     const crawler = new PlaywrightCrawler({
       requestHandler: async ({ page, request }) => {
@@ -211,12 +211,12 @@ export class ScraperService {
             }
             //endregion
             const className = buttonElement.className;
-            const orderMatch = className.match(/f(\d+)/);
-            const order = orderMatch ? parseInt(orderMatch[1], 10) : null;
+            const fetterMatch = className.match(/f(\d+)/);
+            const fetter = fetterMatch ? parseInt(fetterMatch[1], 10) : null;
             return {
               name,
               imgSrc,
-              order,
+              fetter: fetter,
             };
           });
         });
@@ -228,4 +228,68 @@ export class ScraperService {
     await crawler.run(['https://wuthering.gg/echos/']);
 
   }
+
+  async scrapeEchos() {
+    const crawler = new PlaywrightCrawler({
+      requestHandler: async ({ page, request }) => {
+        console.log(`Processing: ${request.url}`);
+        await page.waitForSelector('div.elements', { timeout: 20000 });
+        const items = await page.$$eval('div.list div.item', items => {
+          return items.map(item => {
+            const itemElement = item as HTMLElement;
+
+            const anchorElement = itemElement.querySelector('a') as HTMLAnchorElement;
+            const href = anchorElement ? new URL(anchorElement.href).pathname : null;
+
+            const imgElement = itemElement.querySelector('div.image img') as HTMLImageElement;
+
+
+            // region Inline getImageSrc logic
+            let imgSrc = imgElement.src;
+            if (imgElement.srcset) {
+              const srcsetArray = imgElement.srcset.split(',').map(src => src.trim().split(' '));
+              const src2x = srcsetArray.find(src => src[1] === '2x');
+              if (src2x) {
+                imgSrc = src2x[0];
+              } else {
+                const src1x = srcsetArray.find(src => src[1] === '1x');
+                if (src1x) {
+                  imgSrc = src1x[0];
+                }
+              }
+            }
+            //endregion
+
+
+            const nameElement = itemElement.querySelector('div.name') as HTMLElement;
+            const name = nameElement ? nameElement.textContent.trim() : null;
+
+            const costElement = itemElement.querySelector('div.cost') as HTMLElement;
+            const cost = costElement ? costElement.textContent.trim() : null;
+
+            const fetterElements = itemElement.querySelectorAll('div.fet');
+            const fetters = Array.from(fetterElements).map(fetterElement => {
+              const fetterMatch = fetterElement.className.match(/f(\d+)/);
+              return fetterMatch ? parseInt(fetterMatch[1], 10) : null;
+            }).filter(fetter => fetter !== null);
+
+
+            return {
+              href,
+              imgSrc,
+              name,
+              cost: parseInt(cost, 10),
+              fetters,
+            };
+          }).filter(item => item !== null); // Filter out null items
+        });
+        //: todo: save it to the database
+        console.log('List of buttons:', items);
+      },
+
+    });
+    await crawler.run(['https://wuthering.gg/echos/']);
+
+  }
+
 }
