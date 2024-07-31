@@ -7,6 +7,7 @@ import { Scraper } from './entities/scraper.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ItemEntity } from './entities/item.entity';
+import { WeaponEntity } from './entities/weapon.entity';
 
 // Define the getImageSrc method inside the class
 function getImageSrc(imageElement: HTMLImageElement): string {
@@ -32,6 +33,8 @@ export class ScraperService {
     private scraperRepository: Repository<Scraper>,
     @InjectRepository(ItemEntity)
     private itemRepository: Repository<ItemEntity>,
+    @InjectRepository(WeaponEntity)
+    private weaponRepository: Repository<WeaponEntity>,
   ) {
   }
 
@@ -58,7 +61,7 @@ export class ScraperService {
 
   //endregion
 
-
+//region crawl items
   async scrapeItems() {
     const crawler = new PlaywrightCrawler({
       requestHandler: async ({ page, request, enqueueLinks }) => {
@@ -154,6 +157,8 @@ export class ScraperService {
     console.log('Items saved to database:', count);
   }
 
+  //endregion
+
   async scrapeWeapons() {
     const crawler = new PlaywrightCrawler({
       requestHandler: async ({ page, request }) => {
@@ -207,14 +212,61 @@ export class ScraperService {
               };
             }).filter(item => item !== null); // Filter out null items
           });
-//: todo: save it to the database
+          //: todo: save it to the database
+          console.log('Type:', this.convertWeaponType(option));
+          console.log('item:', weaponData[0]);
+          await this.saveWeaponsToDatabase(weaponData, this.convertWeaponType(option));
           console.log(`Data extracted for option ${option}:`, weaponData);
         }
       },
-      headless: false,
+      // headless: false,
     });
     await crawler.run(['https://wuthering.gg/weapons/']);
   }
+
+   convertWeaponType(value: string): string {
+  switch (parseInt(value, 10)) {
+    case 0:
+      return 'All';
+    case 1:
+      return 'Broadblade';
+    case 2:
+      return 'Sword';
+    case 3:
+      return 'Pistols';
+    case 4:
+      return 'Gauntlets';
+    case 5:
+      return 'Rectifier';
+    default:
+      throw new Error('Invalid weapon type value');
+  }
+}
+
+  async saveWeaponsToDatabase(weapons: any[], type: string) {
+
+    let count = 0;
+    for (const weapon of weapons) {
+      count++;
+      const existingWeapon = await this.weaponRepository.findOne({
+        where: { name: weapon.name, href: weapon.href },
+      });
+
+      if (!existingWeapon) {
+        const newWeapon = this.weaponRepository.create({
+          name: weapon.name,
+          href: weapon.href,
+          rank: weapon.rank,
+          type: type,
+          imageUrl: weapon.imgSrc,
+        });
+        console.log(newWeapon);
+        await this.weaponRepository.save(newWeapon);
+      }
+    }
+    console.log('Weapons saved to database:', count);
+  }
+
 
   async scrapeElements() {
     const crawler = new PlaywrightCrawler({
