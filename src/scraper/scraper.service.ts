@@ -67,6 +67,38 @@ export class ScraperService {
 
     //endregion
 
+
+    async test() {
+        const crawler = new PlaywrightCrawler({
+            headless: false,
+            requestHandler: async ({page}) => {
+
+                await page.waitForSelector('.slider-handle-lower', {timeout: 10000});
+
+                await page.waitForTimeout(3000);
+
+                const sliderTrack = await page.locator('.slider-base').first();
+                const sliderOffsetWidth = await sliderTrack.evaluate(el => el.getBoundingClientRect().width);
+
+                await sliderTrack.hover({force: true, position: {x: 0, y: 0}});
+                await page.mouse.down();
+                await sliderTrack.hover({force: true, position: {x: sliderOffsetWidth, y: 0}});
+                await page.mouse.up();
+                await page.waitForTimeout(3000);
+
+                // Print the new value to verify the change
+                const newValue = await page.evaluate(() => {
+                    const sliderHandle = document.querySelector('.slider-handle-lower');
+                    return sliderHandle ? sliderHandle.getAttribute('aria-valuenow') : null;
+                });
+                console.log('New slider value:', newValue);
+            },
+        });
+
+        await crawler.run(['https://wuthering.gg/weapons/broadblade-41']);
+        console.log('Scraper has shut down.');
+    }
+
 //region crawl items
     async scrapeItems() {
         const crawler = new PlaywrightCrawler({
