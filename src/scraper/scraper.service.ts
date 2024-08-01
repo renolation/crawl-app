@@ -158,9 +158,12 @@ export class ScraperService {
         });
         console.log(newItem);
         await this.itemRepository.save(newItem);
+        console.log('Items saved to database:', count);
+      } else {
+        console.log('Item already exists:', existingItem);
       }
     }
-    console.log('Items saved to database:', count);
+
   }
 
   async getItemByName(name: string) {
@@ -343,8 +346,9 @@ export class ScraperService {
           stat1_value: stats[0].value,
           stat2_name: stats[1].text,
           stat2_value: stats[1].value,
-
+          ascension_max_level: parseInt(maxLevel, 10),
           items: itemIds,
+          about: skillAbout,
         });
         const savedRank = await this.weaponLevelRankRepository.save(newRank);
         console.log(savedRank);
