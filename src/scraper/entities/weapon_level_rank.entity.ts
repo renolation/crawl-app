@@ -4,7 +4,7 @@ import { ItemEntity } from './item.entity';
 import { SkillEntity } from './skill.entity';
 
 @Entity()
-@Unique(['level', 'rank'])
+@Unique(['level', 'rank', 'weapon'])
 export class WeaponLevelRank {
   @PrimaryGeneratedColumn()
   id: number;

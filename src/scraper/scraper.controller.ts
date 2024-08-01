@@ -20,7 +20,12 @@ export class ScraperController {
 
     @Get('weapon')
   async weapon() {
-    await this.scraperService.scrapeWeapon('https://wuthering.gg/weapons/emerald-of-genesis');
+    await this.scraperService.scrapeWeapon(['https://wuthering.gg/weapons/emerald-of-genesis']);
+  }
+
+      @Get('all-weapon')
+  async allWeapon() {
+    await this.scraperService.scrapeAllWeapons();
   }
 
   @Get('elements')
