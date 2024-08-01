@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { CreateScraperDto } from './dto/create-scraper.dto';
 import { UpdateScraperDto } from './dto/update-scraper.dto';
 
-import { PlaywrightCrawler, Dataset, log } from '@crawlee/playwright';
+import { log, PlaywrightCrawler } from '@crawlee/playwright';
 import { Scraper } from './entities/scraper.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ItemEntity } from './entities/item.entity';
 import { WeaponEntity } from './entities/weapon.entity';
+import { WeaponLevelRank } from './entities/weapon_level_rank.entity';
+import { SkillEntity } from './entities/skill.entity';
 
 // Define the getImageSrc method inside the class
 function getImageSrc(imageElement: HTMLImageElement): string {
@@ -35,6 +37,10 @@ export class ScraperService {
     private itemRepository: Repository<ItemEntity>,
     @InjectRepository(WeaponEntity)
     private weaponRepository: Repository<WeaponEntity>,
+    @InjectRepository(WeaponLevelRank)
+    private weaponLevelRankRepository: Repository<WeaponLevelRank>,
+    @InjectRepository(SkillEntity)
+    private skillRepository: Repository<SkillEntity>,
   ) {
   }
 
@@ -286,6 +292,17 @@ export class ScraperService {
           })),
         );
         console.log('data: ', stats);
+        const consume = await page.$$eval('div.ascension ul.list li.consume', items =>
+          items.map(item => ({
+            name: item.querySelector('div.name')?.textContent.trim() || null,
+            cost: item.querySelector('div.cost')?.textContent.trim() || null,
+          })),
+        );
+        console.log('consume: ', consume);
+
+        const consumeValue = await this.getItemsFromConsume(consume);
+        const itemIds = consumeValue.items;
+        const costs = consumeValue.costs;
 
         //: ascension
         const maxLevel = (await page.$eval('div.ascension div.top-h2 span', span => span.textContent.match(/Max Level: (\d+)/)[1])).trim();
@@ -294,18 +311,79 @@ export class ScraperService {
         //: skill name
         const skillName = (await page.$eval('div.about.ability h3', name => name.textContent.trim())).trim();
         console.log('Skill Name:', skillName);
-      const skillDetail = (await page.$eval('div.about.ability div.container p', p => p.innerHTML.trim())).trim();
+        const skillDetail = (await page.$eval('div.about.ability div.container p', p => p.innerHTML.trim())).trim();
         console.log('Skill Detail:', skillDetail);
+
+        const skillEntity = {
+          name: skillName,
+          value: skillDetail,
+        };
+
 
         const skillAbout = (await page.$eval('div.about.info div.container p', p => p.innerHTML.trim())).trim();
         console.log('Skill About:', skillAbout);
 
+        const weapon = await this.weaponRepository.findOne({ where: { href: href } });
 
+
+        // const items = await this.itemRepository.find(
+        //   {
+        //     where: { id: In(itemIds) },
+        //   },
+        // );
+        const skill = await this.saveSkillToDatabase(skillEntity);
+
+        const newRank = this.weaponLevelRankRepository.create({
+          rank: 1,
+          level: 1,
+          weapon: weapon,
+          skills: [skill],
+          itemCounts: costs,
+          stat1_name: stats[0].text,
+          stat1_value: stats[0].value,
+          stat2_name: stats[1].text,
+          stat2_value: stats[1].value,
+
+          items: itemIds,
+        });
+        const savedRank = await this.weaponLevelRankRepository.save(newRank);
+        console.log(savedRank);
       },
     });
 
     await crawler.run([href]);
     console.log('Scraper has shut down.');
+  }
+
+  async saveSkillToDatabase(skill: { name: string, value: string }): Promise<SkillEntity> {
+    const existingSkill = await this.skillRepository.findOne({
+      where: { name: skill.name },
+    });
+
+    if (!existingSkill) {
+      const newSkill = this.skillRepository.create({
+        name: skill.name,
+        value: skill.value,
+      });
+      console.log(newSkill);
+      return await this.skillRepository.save(newSkill);
+    }
+
+    return existingSkill;
+  }
+
+
+  async getItemsFromConsume(consume: any[]): Promise<{ items: ItemEntity[], costs: number[] }> {
+    const names: string[] = [];
+    const costs: number[] = [];
+    for (const item of consume) {
+      names.push(item.name);
+      costs.push(parseInt(item.cost, 10));
+    }
+    const items = await this.itemRepository.find({
+      where: { name: In(names) },
+    });
+    return { items, costs };
   }
 
   //endregion

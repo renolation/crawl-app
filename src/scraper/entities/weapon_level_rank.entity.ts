@@ -19,13 +19,13 @@ export class WeaponLevelRank {
   stat1_name: string;
 
   @Column()
-  stat1_value: number;
+  stat1_value: string;
 
   @Column()
   stat2_name: string;
 
   @Column()
-  stat2_value: number;
+  stat2_value: string;
 
   @Column()
   ascension_max_level: number
