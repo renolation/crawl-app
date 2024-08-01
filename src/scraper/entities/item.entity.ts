@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { WeaponLevelRank } from './weapon_level_rank.entity';
 
 @Entity()
 export class ItemEntity {
@@ -24,6 +25,7 @@ export class ItemEntity {
   @Column()
   imageUrl: string;
 
-
+  @ManyToMany(() => WeaponLevelRank, levelRank => levelRank.items)
+  levelRanks: WeaponLevelRank[];
 
 }

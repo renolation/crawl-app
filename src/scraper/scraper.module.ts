@@ -5,9 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Scraper } from './entities/scraper.entity';
 import { ItemEntity } from './entities/item.entity';
 import { WeaponEntity } from './entities/weapon.entity';
+import { SkillEntity } from './entities/skill.entity';
+import { WeaponLevelRank } from './entities/weapon_level_rank.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Scraper, ItemEntity, WeaponEntity])],
+  imports: [TypeOrmModule.forFeature([Scraper, ItemEntity, WeaponEntity, SkillEntity, WeaponLevelRank])],
   controllers: [ScraperController],
   providers: [ScraperService],
   exports: [ScraperService],

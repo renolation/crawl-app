@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Scraper } from './scraper/entities/scraper.entity';
 import { ItemEntity } from './scraper/entities/item.entity';
 import { WeaponEntity } from './scraper/entities/weapon.entity';
+import { SkillEntity } from './scraper/entities/skill.entity';
+import { WeaponLevelRank } from './scraper/entities/weapon_level_rank.entity';
 
 @Module({
   imports: [
@@ -16,7 +18,7 @@ import { WeaponEntity } from './scraper/entities/weapon.entity';
       username: 'root',
       password: 'password',
       database: 'postgres',
-      entities: [Scraper, ItemEntity, WeaponEntity],
+      entities: [Scraper, ItemEntity, WeaponEntity, SkillEntity, WeaponLevelRank],
       synchronize: true,
     }),
      ScraperModule],

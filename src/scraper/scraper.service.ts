@@ -157,8 +157,12 @@ export class ScraperService {
     console.log('Items saved to database:', count);
   }
 
-  //endregion
+  async getItemByName(name: string) {
+    return await this.itemRepository.findOne({ where: { name } });
+  }
 
+  //endregion
+  //region weapon
   async scrapeWeapons() {
     const crawler = new PlaywrightCrawler({
       requestHandler: async ({ page, request }) => {
@@ -224,24 +228,24 @@ export class ScraperService {
     await crawler.run(['https://wuthering.gg/weapons/']);
   }
 
-   convertWeaponType(value: string): string {
-  switch (parseInt(value, 10)) {
-    case 0:
-      return 'All';
-    case 1:
-      return 'Broadblade';
-    case 2:
-      return 'Sword';
-    case 3:
-      return 'Pistols';
-    case 4:
-      return 'Gauntlets';
-    case 5:
-      return 'Rectifier';
-    default:
-      throw new Error('Invalid weapon type value');
+  convertWeaponType(value: string): string {
+    switch (parseInt(value, 10)) {
+      case 0:
+        return 'All';
+      case 1:
+        return 'Broadblade';
+      case 2:
+        return 'Sword';
+      case 3:
+        return 'Pistols';
+      case 4:
+        return 'Gauntlets';
+      case 5:
+        return 'Rectifier';
+      default:
+        throw new Error('Invalid weapon type value');
+    }
   }
-}
 
   async saveWeaponsToDatabase(weapons: any[], type: string) {
 
@@ -267,6 +271,44 @@ export class ScraperService {
     console.log('Weapons saved to database:', count);
   }
 
+  async scrapeWeapon(href: string) {
+    const crawler = new PlaywrightCrawler({
+      requestHandler: async ({ page, request }) => {
+        console.log(`Processing: ${request.url}`);
+
+        await page.waitForSelector('div.stats.head div.item', { timeout: 10000 });
+
+        //: stats
+        const stats = await page.$$eval('div.stats.head div.item', items =>
+          items.map(item => ({
+            text: item.querySelector('div.text')?.textContent.trim() || null,
+            value: item.querySelector('div.value')?.textContent.trim() || null,
+          })),
+        );
+        console.log('data: ', stats);
+
+        //: ascension
+        const maxLevel = (await page.$eval('div.ascension div.top-h2 span', span => span.textContent.match(/Max Level: (\d+)/)[1])).trim();
+        console.log('Max Level:', maxLevel);
+
+        //: skill name
+        const skillName = (await page.$eval('div.about.ability h3', name => name.textContent.trim())).trim();
+        console.log('Skill Name:', skillName);
+      const skillDetail = (await page.$eval('div.about.ability div.container p', p => p.innerHTML.trim())).trim();
+        console.log('Skill Detail:', skillDetail);
+
+        const skillAbout = (await page.$eval('div.about.info div.container p', p => p.innerHTML.trim())).trim();
+        console.log('Skill About:', skillAbout);
+
+
+      },
+    });
+
+    await crawler.run([href]);
+    console.log('Scraper has shut down.');
+  }
+
+  //endregion
 
   async scrapeElements() {
     const crawler = new PlaywrightCrawler({

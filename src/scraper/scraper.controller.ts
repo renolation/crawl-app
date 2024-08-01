@@ -18,6 +18,11 @@ export class ScraperController {
     await this.scraperService.scrapeWeapons();
   }
 
+    @Get('weapon')
+  async weapon() {
+    await this.scraperService.scrapeWeapon('https://wuthering.gg/weapons/emerald-of-genesis');
+  }
+
   @Get('elements')
   async elements() {
     await this.scraperService.scrapeElements();
