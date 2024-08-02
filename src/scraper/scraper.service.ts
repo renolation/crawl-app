@@ -71,33 +71,49 @@ export class ScraperService {
     async test() {
         const crawler = new PlaywrightCrawler({
             headless: false,
+            requestHandlerTimeoutSecs: 1800,
+            maxConcurrency:1,
+
             requestHandler: async ({page}) => {
+                const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+                await page.waitForSelector('.slider-handle-lower', {timeout: 1000});
+                await page.waitForTimeout(1000);
 
-                await page.waitForSelector('.slider-handle-lower', {timeout: 10000});
+                const minValue = await page.evaluate(() => {
+                    const sliderHandle = document.querySelector('.slider-handle-lower');
+                    return sliderHandle ? parseFloat(sliderHandle.getAttribute('aria-valuemin')) : 0;
+                });
 
-                await page.waitForTimeout(3000);
-
-                const sliderTrack = await page.locator('.slider-base').first();
+                const maxValue = await page.evaluate(() => {
+                    const sliderHandle = document.querySelector('.slider-handle-lower');
+                    return sliderHandle ? parseFloat(sliderHandle.getAttribute('aria-valuemax')) : 100;
+                });
+                const sliderTrack = page.locator('.slider-base').first();
                 const sliderOffsetWidth = await sliderTrack.evaluate(el => el.getBoundingClientRect().width);
 
-                await sliderTrack.hover({force: true, position: {x: 0, y: 0}});
-                await page.mouse.down();
-                await sliderTrack.hover({force: true, position: {x: sliderOffsetWidth, y: 0}});
-                await page.mouse.up();
-                await page.waitForTimeout(3000);
+                for (let value = minValue; value <= maxValue; value++) {
+                    const positionX = (sliderOffsetWidth / (maxValue - minValue)) * (value - minValue);
 
-                // Print the new value to verify the change
-                const newValue = await page.evaluate(() => {
-                    const sliderHandle = document.querySelector('.slider-handle-lower');
-                    return sliderHandle ? sliderHandle.getAttribute('aria-valuenow') : null;
-                });
-                console.log('New slider value:', newValue);
+                    // await sliderTrack.click({force: true, position: {x: positionX, y: 0}});
+                    await page.mouse.down();
+                    await sliderTrack.click({force: true, position: {x: positionX, y: 0}});
+                    await page.mouse.up();
+
+                    // Print the new value to verify the change
+                    const newValue = await page.evaluate(() => {
+                        const sliderHandle = document.querySelector('.slider-handle-lower');
+                        return sliderHandle ? sliderHandle.getAttribute('aria-valuenow') : null;
+                    });
+                    console.log(`New slider value: ${value}`, newValue);
+                    await sleep(1000);
+                }
             },
         });
 
         await crawler.run(['https://wuthering.gg/weapons/broadblade-41']);
         console.log('Scraper has shut down.');
     }
+
 
 //region crawl items
     async scrapeItems() {
