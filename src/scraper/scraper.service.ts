@@ -72,41 +72,71 @@ export class ScraperService {
         const crawler = new PlaywrightCrawler({
             headless: false,
             requestHandlerTimeoutSecs: 1800,
-            maxConcurrency:1,
+            maxConcurrency: 1,
 
             requestHandler: async ({page}) => {
+
+                await page.route('**/*', (route) => {
+                    const request = route.request();
+                    if (request.resourceType() === 'image') {
+                        route.abort();
+                    } else {
+                        route.continue();
+                    }
+                });
+
                 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
                 await page.waitForSelector('.slider-handle-lower', {timeout: 1000});
                 await page.waitForTimeout(1000);
 
-                const minValue = await page.evaluate(() => {
-                    const sliderHandle = document.querySelector('.slider-handle-lower');
-                    return sliderHandle ? parseFloat(sliderHandle.getAttribute('aria-valuemin')) : 0;
-                });
+                // await page.evaluate(() => {
+                //     const sliderHandle = document.querySelector('.slider-handle-lower');
+                //     return sliderHandle ? parseFloat(sliderHandle.getAttribute('aria-valuemin')) : 0;
+                // });
 
-                const maxValue = await page.evaluate(() => {
-                    const sliderHandle = document.querySelector('.slider-handle-lower');
-                    return sliderHandle ? parseFloat(sliderHandle.getAttribute('aria-valuemax')) : 100;
-                });
-                const sliderTrack = page.locator('.slider-base').first();
-                const sliderOffsetWidth = await sliderTrack.evaluate(el => el.getBoundingClientRect().width);
+                const levelMinValue = 1
+                const levelMaxValue = 90
+                const rankMinValue = 1
+                const rankMaxValue = 5
 
-                for (let value = minValue; value <= maxValue; value++) {
-                    const positionX = (sliderOffsetWidth / (maxValue - minValue)) * (value - minValue);
 
-                    // await sliderTrack.click({force: true, position: {x: positionX, y: 0}});
-                    await page.mouse.down();
-                    await sliderTrack.click({force: true, position: {x: positionX, y: 0}});
-                    await page.mouse.up();
+                await sleep(1000);
 
-                    // Print the new value to verify the change
-                    const newValue = await page.evaluate(() => {
-                        const sliderHandle = document.querySelector('.slider-handle-lower');
-                        return sliderHandle ? sliderHandle.getAttribute('aria-valuenow') : null;
-                    });
-                    console.log(`New slider value: ${value}`, newValue);
+                const sliderLevelTrack = page.locator('.slider-base').nth(0);
+                const sliderRankTrack = page.locator('.slider-base').nth(1)
+
+                const sliderLevelOffsetWidth = await sliderLevelTrack.evaluate(el => el.getBoundingClientRect().width);
+                const sliderRankOffsetWidth = await sliderRankTrack.evaluate(el => el.getBoundingClientRect().width);
+
+                for (let valueRank = rankMinValue; valueRank <= rankMaxValue; valueRank++) {
+
+                    for (let valueLevel = levelMinValue; valueLevel <= 5; valueLevel++) {
+
+                        const positionX = (sliderLevelOffsetWidth / (levelMaxValue - levelMinValue)) * (valueLevel - levelMinValue);
+                        // await sliderTrack.click({force: true, position: {x: positionX, y: 0}});
+                        await sliderLevelTrack.click({force: true, position: {x: positionX, y: 0}});
+
+                        // Print the new value to verify the change
+                        const newValue = await page.evaluate(() => {
+                            const sliderHandle = document.querySelectorAll('.slider-handle-lower');
+                            return sliderHandle[0].getAttribute('aria-valuenow') ?? null;
+                        });
+                        const newValueRank = await page.evaluate(() => {
+                            const sliderHandle = document.querySelectorAll('.slider-handle-lower');
+                            return sliderHandle[1].getAttribute('aria-valuenow') ?? null;
+                        });
+                        console.log(`New level value: ${valueLevel} : ${newValue} - New rank value: ${valueRank} : ${newValueRank}`);
+                        await sleep(1000);
+                    }
+
+
+                    const positionRank = (sliderRankOffsetWidth / (rankMaxValue - rankMinValue)) * (valueRank - rankMinValue);
+                    await sliderRankTrack.click({force: true, position: {x: positionRank, y: 0}});
                     await sleep(1000);
+
                 }
+
+
             },
         });
 
