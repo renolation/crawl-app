@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateScraperDto } from './dto/create-scraper.dto';
 import { UpdateScraperDto } from './dto/update-scraper.dto';
+import { shuffle } from 'lodash';
 
 import { log, PlaywrightCrawler } from '@crawlee/playwright';
 import { Scraper } from './entities/scraper.entity';
@@ -71,7 +72,7 @@ export class ScraperService {
     return 'a';
   }
 
-  async test(hrefs: string[]) {
+  async crawlDetail(hrefs: string[]) {
     const crawler = new PlaywrightCrawler({
       headless: false,
       requestHandlerTimeoutSecs: 1800,
@@ -142,14 +143,14 @@ export class ScraperService {
           positionsRank.push(positionXRank);
         }
 
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 5; i++) {
           await sliderLevelTrack.click({ force: true, position: { x: positionsLevel[i], y: 0 } });
           await sleep(1000);
           const currentLevelValue = await sliderLevelTrack.evaluate(el => {
             const handle = el.querySelector('.slider-handle-lower');
             return handle ? parseInt(handle.getAttribute('aria-valuenow'), 10) : null;
           });
-          for (let j = 0; j < 5; j++) {
+          for (let j = 0; j < positionsRank.length; j++) {
             await sliderRankTrack.click({ force: true, position: { x: positionsRank[j], y: 0 } });
             await sleep(100);
             const currentRankValue = await sliderRankTrack.evaluate(el => {
@@ -231,7 +232,7 @@ export class ScraperService {
       },
     });
 
-    await crawler.run(['https://wuthering.gg/weapons/broadblade-41']);
+    await crawler.run(hrefs);
     console.log('Scraper has shut down.');
   }
 
@@ -548,8 +549,9 @@ export class ScraperService {
 
   async scrapeAllWeaponsDetail() {
     const weapons = await this.weaponRepository.find();
-    const weaponHrefs = weapons.map(weapon => weapon.href);
-    await this.test(weaponHrefs);
+    let weaponHrefs = weapons.map(weapon => weapon.href);
+    weaponHrefs = shuffle(weaponHrefs);
+    await this.crawlDetail(weaponHrefs);
     console.log(weaponHrefs);
     console.log('Total weapons:', weapons.length);
   }
