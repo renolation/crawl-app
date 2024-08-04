@@ -74,7 +74,7 @@ export class ScraperService {
       requestHandlerTimeoutSecs: 1800,
       maxConcurrency: 1,
 
-      requestHandler: async ({ page }) => {
+      requestHandler: async ({ page, request }) => {
 
         await page.route('**/*', (route) => {
           const request = route.request();
@@ -90,13 +90,13 @@ export class ScraperService {
         await page.waitForTimeout(1000);
 
         // Get the current width of the slider element and multiply it by 3
-await page.evaluate(() => {
-  const slider = document.querySelector('.slider-base') as HTMLElement;
-  if (slider) {
-    const currentWidth = slider.getBoundingClientRect().width;
-    slider.style.width = `${currentWidth * 3}px`;
-  }
-});
+        await page.evaluate(() => {
+          const slider = document.querySelector('.slider-base') as HTMLElement;
+          if (slider) {
+            const currentWidth = slider.getBoundingClientRect().width;
+            slider.style.width = `${currentWidth * 3}px`;
+          }
+        });
 
         const levelMinValue = 1;
         const levelMaxValue = 90;
@@ -112,6 +112,11 @@ await page.evaluate(() => {
         const sliderLevelOffsetWidth = await sliderLevelTrack.evaluate(el => el.getBoundingClientRect().width);
         const sliderRankOffsetWidth = await sliderRankTrack.evaluate(el => el.getBoundingClientRect().width);
 
+        const sliderHandleWidth = await page.$eval('.slider-handle-lower', el => el.getBoundingClientRect().width);
+        const correctedSliderRankOffsetWidth = sliderRankOffsetWidth - sliderHandleWidth;
+        const correctedSliderLevelOffsetWidth = sliderLevelOffsetWidth - sliderHandleWidth;
+
+
         const sliderRankBox = await sliderRankTrack.boundingBox();
         if (!sliderRankBox) {
           throw new Error('Unable to find bounding box on sliderRankTrack');
@@ -122,28 +127,102 @@ await page.evaluate(() => {
 
         for (let valueLevel = levelMinValue; valueLevel <= levelMaxValue; valueLevel++) {
           const positionXLevel = valueLevel === levelMaxValue
-            ? sliderLevelOffsetWidth
-            : (sliderLevelOffsetWidth / (levelMaxValue - levelMinValue)) * (valueLevel - levelMinValue);
+            ? correctedSliderLevelOffsetWidth
+            : (correctedSliderLevelOffsetWidth / (levelMaxValue - levelMinValue)) * (valueLevel - levelMinValue);
           positionsLevel.push(positionXLevel);
         }
 
         for (let valueRank = rankMinValue; valueRank <= rankMaxValue; valueRank++) {
           const positionXRank = valueRank === rankMaxValue
-            ? sliderRankOffsetWidth
-            : (sliderRankOffsetWidth / (rankMaxValue - rankMinValue)) * (valueRank - rankMinValue);
+            ? correctedSliderRankOffsetWidth
+            : (correctedSliderRankOffsetWidth / (rankMaxValue - rankMinValue)) * (valueRank - rankMinValue);
           positionsRank.push(positionXRank);
         }
+
         for (let i = 0; i < 5; i++) {
           await sliderLevelTrack.click({ force: true, position: { x: positionsLevel[i], y: 0 } });
           await sleep(1000);
-
+          const currentLevelValue = await sliderLevelTrack.evaluate(el => {
+            const handle = el.querySelector('.slider-handle-lower');
+            return handle ? parseInt(handle.getAttribute('aria-valuenow'), 10) : null;
+          });
           for (let j = 0; j < 5; j++) {
             await sliderRankTrack.click({ force: true, position: { x: positionsRank[j], y: 0 } });
+            await sleep(100);
+            const currentRankValue = await sliderRankTrack.evaluate(el => {
+              const handle = el.querySelector('.slider-handle-lower');
+              return handle ? parseInt(handle.getAttribute('aria-valuenow'), 10) : null;
+            });
+            //: stats
+            const stats = await page.$$eval('div.stats.head div.item', items =>
+              items.map(item => ({
+                text: item.querySelector('div.text')?.textContent.trim() || null,
+                value: item.querySelector('div.value')?.textContent.trim() || null,
+              })),
+            );
+            console.log('data: ', stats);
+            const consume = await page.$$eval('div.ascension ul.list li.consume', items =>
+              items.map(item => ({
+                name: item.querySelector('div.name')?.textContent.trim() || null,
+                cost: item.querySelector('div.cost')?.textContent.trim() || null,
+              })),
+            );
+            console.log('consume: ', consume);
+
+            const consumeValue = await this.getItemsFromConsume(consume);
+            const itemIds = consumeValue.items;
+            const costs = consumeValue.costs;
+
+            //: ascension
+            const maxLevel = (await page.$eval('div.ascension div.top-h2 span', span => span.textContent.match(/Max Level: (\d+)/)[1])).trim();
+            console.log('Max Level:', maxLevel);
+
+            //: skill name
+            const skillName = (await page.$eval('div.about.ability h3', name => name.textContent.trim())).trim();
+            console.log('Skill Name:', skillName);
+            const skillDetail = (await page.$eval('div.about.ability div.container p', p => p.innerHTML.trim())).trim();
+            console.log('Skill Detail:', skillDetail);
+
+            const skillEntity = {
+              name: skillName,
+              value: skillDetail,
+            };
+
+            const skillAbout = (await page.$eval('div.about.info div.container p', p => p.innerHTML.trim())).trim();
+            console.log('Skill About:', skillAbout);
+
+            const weapon = await this.weaponRepository.findOne({ where: { href: request.url } });
+            console.log('Weapon:', weapon);
+            const skill = await this.saveSkillToDatabase(skillEntity);
+
+            try {
+              const newRank = this.weaponLevelRankRepository.create({
+                rank: currentRankValue,
+                level: currentLevelValue,
+                weapon: weapon,
+                skills: [skill],
+                itemCounts: costs,
+                stat1_name: stats[0].text,
+                stat1_value: stats[0].value,
+                stat2_name: stats[1].text,
+                stat2_value: stats[1].value,
+                ascension_max_level: parseInt(maxLevel, 10),
+                items: itemIds,
+                about: skillAbout,
+              });
+              const savedRank = await this.weaponLevelRankRepository.save(newRank);
+              console.log(savedRank);
+              await sleep(100);
+            } catch (error) {
+              if (error.code === '23505') { // Unique constraint violation
+                console.log('Rank already exists, skipping save.');
+              } else {
+                throw error;
+              }
+            }
             await sleep(1000);
           }
-
         }
-
 
 
       },
