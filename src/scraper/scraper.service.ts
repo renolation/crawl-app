@@ -74,9 +74,9 @@ export class ScraperService {
 
   async crawlDetail(hrefs: string[]) {
     const crawler = new PlaywrightCrawler({
-      headless: false,
-      requestHandlerTimeoutSecs: 1800,
-      maxConcurrency: 1,
+      // headless: false,
+      requestHandlerTimeoutSecs: 36000,
+      maxConcurrency: 2,
 
       requestHandler: async ({ page, request }) => {
 
@@ -143,7 +143,7 @@ export class ScraperService {
           positionsRank.push(positionXRank);
         }
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < positionsLevel.length; i++) {
           await sliderLevelTrack.click({ force: true, position: { x: positionsLevel[i], y: 0 } });
           await sleep(1000);
           const currentLevelValue = await sliderLevelTrack.evaluate(el => {
@@ -548,12 +548,21 @@ export class ScraperService {
   }
 
   async scrapeAllWeaponsDetail() {
-    const weapons = await this.weaponRepository.find();
-    let weaponHrefs = weapons.map(weapon => weapon.href);
-    weaponHrefs = shuffle(weaponHrefs);
+    // const weapons = await this.weaponRepository.find();
+    const weapons = await this.weaponRepository.createQueryBuilder('weapon')
+      .leftJoinAndSelect('weapon.levelRanks', 'levelRank')
+      .select(['weapon.id', 'weapon.name', 'weapon.href'])
+      .addSelect('COUNT(levelRank.id)', 'rank_count')
+      .groupBy('weapon.id')
+      .addGroupBy('weapon.name')
+      .addGroupBy('weapon.href')
+      .orderBy('rank_count', 'ASC')
+      .getMany();
+    const weaponHrefs = weapons.map(weapon => weapon.href);
+    // weaponHrefs = shuffle(weaponHrefs);
     await this.crawlDetail(weaponHrefs);
     console.log(weaponHrefs);
-    console.log('Total weapons:', weapons.length);
+    console.log('Total weapons:', weapons);
   }
 
   async saveSkillToDatabase(skill: { name: string, value: string }): Promise<SkillEntity> {
