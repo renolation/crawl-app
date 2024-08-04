@@ -12,6 +12,7 @@ import {WeaponEntity} from './entities/weapon.entity';
 import {WeaponLevelRank} from './entities/weapon_level_rank.entity';
 import {SkillEntity} from './entities/skill.entity';
 import {SonataEffectEntity} from "./entities/sonata_effect.entity";
+import {EchoEntity} from "./entities/echo.entity";
 
 
 @Injectable()
@@ -30,6 +31,8 @@ export class ScraperService {
         private skillRepository: Repository<SkillEntity>,
         @InjectRepository(SonataEffectEntity)
         private sonataEffectRepository: Repository<SonataEffectEntity>,
+        @InjectRepository(EchoEntity)
+        private echoRepository: Repository<EchoEntity>,
     ) {
     }
 
@@ -702,11 +705,41 @@ export class ScraperService {
                 });
                 //: todo: save it to the database
                 console.log('List of buttons:', items);
+                await this.saveEchosToDatabase(items);
             },
 
         });
         await crawler.run(['https://wuthering.gg/echos/']);
 
+    }
+
+    async saveEchosToDatabase(itemsData: { href: string, name: string, imgSrc: string, cost: number, fetters: number[] }[]) {
+        for (const itemData of itemsData) {
+            const existingEcho = await this.echoRepository.findOne({
+                where: { name: itemData.name, href: itemData.href },
+                relations: ['sonataEffects'],
+            });
+
+            const sonataEffects = await this.sonataEffectRepository.find({
+                where: {index: In(itemData.fetters)},
+            })
+
+            if (!existingEcho) {
+                const newEcho = this.echoRepository.create({
+                    name: itemData.name,
+                    imageUrl: itemData.imgSrc,
+                    href: itemData.href,
+                    cost: itemData.cost,
+                    sonataEffects: sonataEffects,
+                });
+                await this.echoRepository.save(newEcho);
+                console.log('Echo saved to database:', newEcho);
+            } else {
+                existingEcho.sonataEffects = sonataEffects;
+                await this.echoRepository.save(existingEcho);
+                console.log('Echo updated in database:', existingEcho);
+            }
+        }
     }
 
     async scrapeSonataEffect() {
@@ -752,10 +785,11 @@ export class ScraperService {
         });
         await crawler.run(['https://wuthering.gg/echos/']);
     }
-  async saveSonataEffectsToDatabase(buttonsData: { index: number, name: string, srcset: string }[]) {
+
+    async saveSonataEffectsToDatabase(buttonsData: { index: number, name: string, srcset: string }[]) {
         for (const buttonData of buttonsData) {
             const existingSonataEffect = await this.sonataEffectRepository.findOne({
-                where: { name: buttonData.name, index: buttonData.index },
+                where: {name: buttonData.name, index: buttonData.index},
             });
 
             if (!existingSonataEffect) {
@@ -771,6 +805,8 @@ export class ScraperService {
             }
         }
     }
+
+
 
     getImageSrc(imageElement: HTMLImageElement): string {
         if (imageElement.srcset) {

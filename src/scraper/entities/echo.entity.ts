@@ -11,6 +11,9 @@ export class EchoEntity {
     name: string
 
     @Column()
+    href: string
+
+    @Column()
     imageUrl: string
 
     @Column()
