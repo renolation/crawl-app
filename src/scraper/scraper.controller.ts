@@ -1,78 +1,83 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ScraperService } from './scraper.service';
-import { CreateScraperDto } from './dto/create-scraper.dto';
-import { UpdateScraperDto } from './dto/update-scraper.dto';
+import {Controller, Get, Post, Body, Patch, Param, Delete} from '@nestjs/common';
+import {ScraperService} from './scraper.service';
+import {CreateScraperDto} from './dto/create-scraper.dto';
+import {UpdateScraperDto} from './dto/update-scraper.dto';
 
 @Controller('scraper')
 export class ScraperController {
-  constructor(private readonly scraperService: ScraperService) {
-  }
+    constructor(private readonly scraperService: ScraperService) {
+    }
 
 
-  @Get('test')
-  async test() {
-    await this.scraperService.test2();
-  }
+    @Get('test')
+    async test() {
+        await this.scraperService.test2();
+    }
 
 
-  @Get('items')
-  async items() {
-    await this.scraperService.scrapeItems();
-  }
+    @Get('items')
+    async items() {
+        await this.scraperService.scrapeItems();
+    }
 
 
-  @Get('weapons')
-  async weapons() {
-    await this.scraperService.scrapeWeapons();
-  }
+    @Get('weapons')
+    async weapons() {
+        await this.scraperService.scrapeWeapons();
+    }
 
-  @Get('weapon')
-  async weapon() {
-    await this.scraperService.scrapeWeapon(['https://wuthering.gg/weapons/emerald-of-genesis']);
-  }
+    @Get('weapon')
+    async weapon() {
+        await this.scraperService.scrapeWeapon(['https://wuthering.gg/weapons/emerald-of-genesis']);
+    }
 
-  @Get('all-weapon')
-  async allWeapon() {
-    await this.scraperService.scrapeAllWeapons();
-  }
+    @Get('all-weapon')
+    async allWeapon() {
+        await this.scraperService.scrapeAllWeapons();
+    }
 
-  @Get('all-weapons-detail')
-  async allWeaponsDetail() {
-    await this.scraperService.scrapeAllWeaponsDetail();
-  }
+    @Get('all-weapons-detail')
+    async allWeaponsDetail() {
+        await this.scraperService.scrapeAllWeaponsDetail();
+    }
 
-  @Get('elements')
-  async elements() {
-    await this.scraperService.scrapeElements();
-  }
+    @Get('elements')
+    async elements() {
+        await this.scraperService.scrapeElements();
+    }
 
-  @Get('echos')
-  async echos() {
-    await this.scraperService.scrapeEchos();
-  }
+    @Get('echos')
+    async echos() {
+        await this.scraperService.scrapeEchos();
+    }
 
-  @Post()
-  create(@Body() createScraperDto: CreateScraperDto) {
-    return this.scraperService.create(createScraperDto);
-  }
+    @Get('echo/sonata')
+    async scrapeSonataEffect() {
+        await this.scraperService.scrapeSonataEffect();
+    }
 
-  @Get()
-  findAll() {
-    return this.scraperService.findAll();
-  }
+    @Post()
+    create(@Body() createScraperDto: CreateScraperDto) {
+        return this.scraperService.create(createScraperDto);
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.scraperService.findOne(+id);
-  }
+    @Get()
+    findAll() {
+        return this.scraperService.findAll();
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateScraperDto: UpdateScraperDto) {
-    return this.scraperService.update(+id, updateScraperDto);
-  }
+    @Get(':id')
+    findOne(@Param('id') id: string) {
+        return this.scraperService.findOne(+id);
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.scraperService.remove(+id);
-  }
+    @Patch(':id')
+    update(@Param('id') id: string, @Body() updateScraperDto: UpdateScraperDto) {
+        return this.scraperService.update(+id, updateScraperDto);
+    }
+
+    @Delete(':id')
+    remove(@Param('id') id: string) {
+        return this.scraperService.remove(+id);
+    }
 }
