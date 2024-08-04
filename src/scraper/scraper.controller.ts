@@ -11,7 +11,7 @@ export class ScraperController {
 
   @Get('test')
   async test() {
-    await this.scraperService.test();
+    await this.scraperService.test2();
   }
 
 
@@ -26,14 +26,19 @@ export class ScraperController {
     await this.scraperService.scrapeWeapons();
   }
 
-    @Get('weapon')
+  @Get('weapon')
   async weapon() {
     await this.scraperService.scrapeWeapon(['https://wuthering.gg/weapons/emerald-of-genesis']);
   }
 
-      @Get('all-weapon')
+  @Get('all-weapon')
   async allWeapon() {
     await this.scraperService.scrapeAllWeapons();
+  }
+
+  @Get('all-weapons-detail')
+  async allWeaponsDetail() {
+    await this.scraperService.scrapeAllWeaponsDetail();
   }
 
   @Get('elements')

@@ -67,8 +67,11 @@ export class ScraperService {
 
   //endregion
 
+  async test2() {
+    return 'a';
+  }
 
-  async test() {
+  async test(hrefs: string[]) {
     const crawler = new PlaywrightCrawler({
       headless: false,
       requestHandlerTimeoutSecs: 1800,
@@ -139,7 +142,7 @@ export class ScraperService {
           positionsRank.push(positionXRank);
         }
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 3; i++) {
           await sliderLevelTrack.click({ force: true, position: { x: positionsLevel[i], y: 0 } });
           await sleep(1000);
           const currentLevelValue = await sliderLevelTrack.evaluate(el => {
@@ -160,14 +163,14 @@ export class ScraperService {
                 value: item.querySelector('div.value')?.textContent.trim() || null,
               })),
             );
-            console.log('data: ', stats);
+            // console.log('data: ', stats);
             const consume = await page.$$eval('div.ascension ul.list li.consume', items =>
               items.map(item => ({
                 name: item.querySelector('div.name')?.textContent.trim() || null,
                 cost: item.querySelector('div.cost')?.textContent.trim() || null,
               })),
             );
-            console.log('consume: ', consume);
+            // console.log('consume: ', consume);
 
             const consumeValue = await this.getItemsFromConsume(consume);
             const itemIds = consumeValue.items;
@@ -175,11 +178,11 @@ export class ScraperService {
 
             //: ascension
             const maxLevel = (await page.$eval('div.ascension div.top-h2 span', span => span.textContent.match(/Max Level: (\d+)/)[1])).trim();
-            console.log('Max Level:', maxLevel);
+            // console.log('Max Level:', maxLevel);
 
             //: skill name
             const skillName = (await page.$eval('div.about.ability h3', name => name.textContent.trim())).trim();
-            console.log('Skill Name:', skillName);
+            // console.log('Skill Name:', skillName);
             const skillDetail = (await page.$eval('div.about.ability div.container p', p => p.innerHTML.trim())).trim();
             console.log('Skill Detail:', skillDetail);
 
@@ -189,10 +192,10 @@ export class ScraperService {
             };
 
             const skillAbout = (await page.$eval('div.about.info div.container p', p => p.innerHTML.trim())).trim();
-            console.log('Skill About:', skillAbout);
+            // console.log('Skill About:', skillAbout);
 
             const weapon = await this.weaponRepository.findOne({ where: { href: request.url } });
-            console.log('Weapon:', weapon);
+            // console.log('Weapon:', weapon);
             const skill = await this.saveSkillToDatabase(skillEntity);
 
             try {
@@ -543,21 +546,40 @@ export class ScraperService {
     console.log('Total weapons:', weapons.length);
   }
 
+  async scrapeAllWeaponsDetail() {
+    const weapons = await this.weaponRepository.find();
+    const weaponHrefs = weapons.map(weapon => weapon.href);
+    await this.test(weaponHrefs);
+    console.log(weaponHrefs);
+    console.log('Total weapons:', weapons.length);
+  }
+
   async saveSkillToDatabase(skill: { name: string, value: string }): Promise<SkillEntity> {
-    const existingSkill = await this.skillRepository.findOne({
-      where: { name: skill.name },
-    });
-
-    if (!existingSkill) {
-      const newSkill = this.skillRepository.create({
-        name: skill.name,
-        value: skill.value,
+    try {
+      const existingSkill = await this.skillRepository.findOne({
+        where: { name: skill.name, value: skill.value },
       });
-      console.log(newSkill);
-      return await this.skillRepository.save(newSkill);
-    }
 
-    return existingSkill;
+      if (!existingSkill) {
+        const newSkill = this.skillRepository.create({
+          name: skill.name,
+          value: skill.value,
+        });
+        console.log(newSkill);
+        return await this.skillRepository.save(newSkill);
+      }
+
+      return existingSkill;
+    } catch (error) {
+      if (error.code === '23505') { // Unique constraint violation
+        console.log('Skill already exists, skipping save.');
+        return await this.skillRepository.findOne({
+          where: { name: skill.name, value: skill.value },
+        });
+      } else {
+        throw error;
+      }
+    }
   }
 
 

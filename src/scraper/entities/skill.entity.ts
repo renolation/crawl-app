@@ -1,7 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, Unique } from 'typeorm';
 import { WeaponLevelRank } from './weapon_level_rank.entity';
 
 @Entity()
+@Unique(['name', 'value'])
+
 export class SkillEntity {
   @PrimaryGeneratedColumn()
   id: number;
