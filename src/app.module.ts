@@ -11,6 +11,7 @@ import { WeaponLevelRank } from './scraper/entities/weapon_level_rank.entity';
 import {SonataEffectEntity} from "./scraper/entities/sonata_effect.entity";
 import {EchoEntity} from "./scraper/entities/echo.entity";
 import {EchoSubStatEntity} from "./scraper/entities/echo_sub_stat.entity";
+import {CharElementEntity} from "./scraper/entities/char_element.entity";
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import {EchoSubStatEntity} from "./scraper/entities/echo_sub_stat.entity";
       password: 'password',
       database: 'postgres',
       entities: [Scraper, ItemEntity, WeaponEntity, SkillEntity, WeaponLevelRank,
-      SonataEffectEntity, EchoEntity, EchoSubStatEntity],
+      SonataEffectEntity, EchoEntity, EchoSubStatEntity,
+      CharElementEntity],
       synchronize: true,
     }),
      ScraperModule],

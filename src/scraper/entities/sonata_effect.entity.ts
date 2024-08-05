@@ -19,5 +19,4 @@ export class SonataEffectEntity {
     @ManyToMany(() => EchoEntity, echo => echo.sonataEffects)
     @JoinTable()
     echoes: EchoEntity[];
-
 }

@@ -14,6 +14,7 @@ import {SkillEntity} from './entities/skill.entity';
 import {SonataEffectEntity} from "./entities/sonata_effect.entity";
 import {EchoEntity} from "./entities/echo.entity";
 import {EchoSubStatEntity} from "./entities/echo_sub_stat.entity";
+import {CharElementEntity} from "./entities/char_element.entity";
 
 
 @Injectable()
@@ -36,6 +37,8 @@ export class ScraperService {
         private echoRepository: Repository<EchoEntity>,
         @InjectRepository(EchoSubStatEntity)
         private echoSubStatRepository: Repository<EchoSubStatEntity>,
+        @InjectRepository(CharElementEntity)
+        private charElementRepository: Repository<CharElementEntity>,
     ) {
     }
 
@@ -924,6 +927,68 @@ export class ScraperService {
             await this.echoRepository.save(echo);
             await this.echoSubStatRepository.save(existSubStat);
             return existSubStat;
+        }
+    }
+
+    async scrapeCharElements(){
+         const crawler = new PlaywrightCrawler({
+            requestHandler: async ({page, request}) => {
+                console.log(`Processing: ${request.url}`);
+                const buttonsData = await page.$$eval('div.elements button', buttons => {
+
+                    function getImageSrc(imageElement: HTMLImageElement): string {
+                        if (imageElement.srcset) {
+                            const srcsetArray = imageElement.srcset.split(',').map(src => src.trim().split(' '));
+                            const src2x = srcsetArray.find(src => src[1] === '2x');
+                            if (src2x) {
+                                return src2x[0];
+                            }
+                            const src1x = srcsetArray.find(src => src[1] === '1x');
+                            if (src1x) {
+                                return src1x[0];
+                            }
+                        }
+                        return imageElement.src;
+                    }
+
+                    return buttons.map(button => {
+                        const buttonElement = button as HTMLButtonElement;
+
+                        const imgElement = buttonElement.querySelector('img') as HTMLImageElement;
+                        const name = imgElement.alt;
+                        const srcset = getImageSrc(imgElement);
+                        return {
+                            name,
+                            srcset
+                        };
+                    });
+                });
+
+                console.log('Buttons data:', buttonsData);
+                await this.saveCharElementToDatabase(buttonsData);
+            },
+            // headless: false
+        });
+        await crawler.run(['https://wuthering.gg/characters/']);
+    }
+
+        async saveCharElementToDatabase(elementsData: {name: string, srcset: string }[]) {
+        for (const element of elementsData) {
+            const existingElement = await this.charElementRepository.findOne({
+                where: {name: element.name, imageUrl: element.srcset},
+            });
+
+            if (!existingElement) {
+                const charElementEntity = this.charElementRepository.create({
+                    name: element.name,
+                    imageUrl: element.srcset,
+
+                });
+                await this.charElementRepository.save(charElementEntity);
+                console.log('Sonata Effect saved to database:', charElementEntity);
+            } else {
+                console.log('Sonata Effect already exists:', existingElement);
+            }
         }
     }
 

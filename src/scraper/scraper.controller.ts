@@ -66,6 +66,11 @@ export class ScraperController {
         return await this.scraperService.scrapeEchosHref();
     }
 
+            @Get('char/get_elements')
+    async getElements() {
+        return await this.scraperService.scrapeCharElements();
+    }
+
     @Post()
     create(@Body() createScraperDto: CreateScraperDto) {
         return this.scraperService.create(createScraperDto);
