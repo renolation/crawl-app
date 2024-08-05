@@ -41,6 +41,18 @@ export class ScraperService {
         return 'This action adds a new scraper';
     }
 
+    async findAllEchos() {
+        return await this.echoRepository.find({
+            relations: ['sonataEffects'],
+            select: {
+                sonataEffects: {
+                    name: true, imageUrl: true, index: true
+                }
+            }
+        });
+
+    }
+
     findAll() {
         return `This action returns all scraper`;
     }
@@ -713,10 +725,16 @@ export class ScraperService {
 
     }
 
-    async saveEchosToDatabase(itemsData: { href: string, name: string, imgSrc: string, cost: number, fetters: number[] }[]) {
+    async saveEchosToDatabase(itemsData: {
+        href: string,
+        name: string,
+        imgSrc: string,
+        cost: number,
+        fetters: number[]
+    }[]) {
         for (const itemData of itemsData) {
             const existingEcho = await this.echoRepository.findOne({
-                where: { name: itemData.name, href: itemData.href },
+                where: {name: itemData.name, href: itemData.href},
                 relations: ['sonataEffects'],
             });
 
@@ -805,7 +823,6 @@ export class ScraperService {
             }
         }
     }
-
 
 
     getImageSrc(imageElement: HTMLImageElement): string {

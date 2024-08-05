@@ -53,7 +53,12 @@ export class ScraperController {
 
     @Get('echo/sonata')
     async scrapeSonataEffect() {
-        await this.scraperService.scrapeSonataEffect();
+        return await this.scraperService.scrapeSonataEffect();
+    }
+
+        @Get('echo/get')
+    async getAllEchos() {
+        return await this.scraperService.findAllEchos();
     }
 
     @Post()
