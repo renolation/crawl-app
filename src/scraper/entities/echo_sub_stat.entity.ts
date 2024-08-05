@@ -7,40 +7,43 @@ export class EchoSubStatEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ unique: true })
     hp: string;
 
-    @Column()
+    @Column({ unique: true })
     atk: string;
 
-    @Column()
+    @Column({ unique: true })
     def: string;
 
-    @Column()
+    @Column({ unique: true })
+    hp_percent: string;
+
+    @Column({ unique: true })
     atk_percent: string;
 
-    @Column()
+    @Column({ unique: true })
     def_percent: string;
 
-    @Column()
+    @Column({ unique: true })
     crit_rate: string;
 
-    @Column()
+    @Column({ unique: true })
     crit_dmg: string;
 
-    @Column()
+    @Column({ unique: true })
     energy_regen: string;
 
-    @Column()
+    @Column({ unique: true })
     resonance_skill_dmg_bonus: string;
 
-    @Column()
+    @Column({ unique: true })
     basic_atk_dmg_bonus: string;
 
-    @Column()
+    @Column({ unique: true })
     heavy_atk_dmg_bonus: string;
 
-    @Column()
+    @Column({ unique: true })
     resonance_liberation_dmg_bonus: string;
 
     @OneToMany(() => EchoEntity, echo => echo.echoSubStat)

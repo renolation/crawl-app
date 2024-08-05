@@ -829,35 +829,100 @@ export class ScraperService {
 
     async scrapeEchosHref() {
         const echos = await this.echoRepository.find();
-        const echosHrefs = echos.map(echo => 'https://wuthering.gg' +echo.href);
+        const echosHrefs = echos.map(echo => 'https://wuthering.gg' + echo.href);
         console.log(echosHrefs);
         console.log('Total weapons:', echos.length);
+        await this.scrapeEchoSubStat(echosHrefs);
         return echosHrefs;
     }
 
-    async scrapeEchoSubStat() {
+    async scrapeEchoSubStat(hrefs: string[]) {
         const crawler = new PlaywrightCrawler({
-            
-        });
-    }
+            requestHandlerTimeoutSecs: 1800,
+            requestHandler: async ({page, request}) => {
+                const subStat = await page.$$eval('div.props.sub div.list div.prop', items => {
+                    return items.map(item => {
+                        const propElement = item as HTMLElement;
+                        const valElement = propElement.querySelector('div.val') as HTMLElement;
+                        const value = valElement ? valElement.textContent.trim() : null;
+                        return {value};
+                    });
+                });
+                console.log('Props data: \n', subStat);
+                const subStatObject = {
+                    hp: subStat[0]?.value || '',
+                    atk: subStat[1]?.value || '',
+                    def: subStat[2]?.value || '',
+                    hp_percent: subStat[3]?.value || '',
+                    atk_percent: subStat[4]?.value || '',
+                    def_percent: subStat[5]?.value || '',
+                    crit_rate: subStat[6]?.value || '',
+                    crit_dmg: subStat[7]?.value || '',
+                    energy_regen: subStat[8]?.value || '',
+                    resonance_skill_dmg_bonus: subStat[9]?.value || '',
+                    basic_atk_dmg_bonus: subStat[10]?.value || '',
+                    heavy_atk_dmg_bonus: subStat[11]?.value || '',
+                    resonance_liberation_dmg_bonus: subStat[12]?.value || ''
+                };
+                await this.saveEchoSubStatToDatabase(request.url.replace('https://wuthering.gg', ''), subStatObject);
 
-    async saveEchoSubStatToDatabase(hp: string, atk: string, def: string) {
-        const existSubStat = await this.echoSubStatRepository.find({
-            where: {
-                hp: hp, atk: atk, def: def
+
             }
         });
-        if(!existSubStat){
+        await crawler.run(hrefs);
+    }
+
+
+    async saveEchoSubStatToDatabase(echoUrl: string, subStat: {
+        hp: string,
+        atk: string,
+        def: string,
+        hp_percent: string,
+        atk_percent: string,
+        def_percent: string,
+        crit_rate: string,
+        crit_dmg: string,
+        energy_regen: string,
+        resonance_skill_dmg_bonus: string,
+        basic_atk_dmg_bonus: string,
+        heavy_atk_dmg_bonus: string,
+        resonance_liberation_dmg_bonus: string
+    }): Promise<EchoSubStatEntity> {
+
+        const echo = await this.echoRepository.findOne({where: {href: echoUrl}});
+
+        const existSubStat = await this.echoSubStatRepository.findOne({
+            where: {
+                hp: subStat.hp,
+                atk: subStat.atk,
+                def: subStat.def,
+            },
+
+        });
+        if (!existSubStat) {
             const newSubStat = this.echoSubStatRepository.create({
-                hp: hp,
-                atk: atk,
-                def: def,
+                hp: subStat.hp,
+                atk: subStat.atk,
+                def: subStat.def,
+                hp_percent: subStat.hp_percent,
+                atk_percent: subStat.atk_percent,
+                def_percent: subStat.def_percent,
+                crit_rate: subStat.crit_rate,
+                crit_dmg: subStat.crit_dmg,
+                energy_regen: subStat.energy_regen,
+                resonance_skill_dmg_bonus: subStat.resonance_skill_dmg_bonus,
+                basic_atk_dmg_bonus: subStat.basic_atk_dmg_bonus,
+                heavy_atk_dmg_bonus: subStat.heavy_atk_dmg_bonus,
+                resonance_liberation_dmg_bonus: subStat.resonance_liberation_dmg_bonus,
+                echoes: [echo]
             });
             await this.echoSubStatRepository.save(newSubStat);
             console.log('SubStat saved to database:', newSubStat);
             return newSubStat;
         } else {
-            console.log('SubStat already exists:', existSubStat);
+            echo.echoSubStat = existSubStat;
+            await this.echoRepository.save(echo);
+            await this.echoSubStatRepository.save(existSubStat);
             return existSubStat;
         }
     }
