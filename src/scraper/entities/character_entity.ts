@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {CharElementEntity} from "./char_element.entity";
 
 @Entity()
@@ -15,6 +15,6 @@ export class CharacterEntity {
     @Column()
     imageUrl: string
 
-    @ManyToMany( () => CharElementEntity, charElement => charElement.characters)
-    characterElement: CharElementEntity[];
+    @ManyToOne(() => CharacterEntity, character => character.characterElement)
+    characterElement: CharElementEntity;
 }

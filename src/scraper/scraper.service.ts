@@ -1044,7 +1044,7 @@ export class ScraperService {
                 });
                 //: todo: save it to the database
                 console.log('List of buttons:', items);
-                // await this.saveEchosToDatabase(items);
+                await this.saveCharToDatabase(items);
             },
 
         });
@@ -1052,6 +1052,34 @@ export class ScraperService {
 
     }
 
+    async saveCharToDatabase(itemsData: {
+        href: string,
+        name: string,
+        imgSrc: string,
+        elementAlt: string,
+    }[]) {
+        for (const itemData of itemsData) {
+            const existingChar = await this.characterRepository.findOne({
+                where: {name: itemData.name, href: itemData.href},
+                relations: ['characterElement'],
+            });
+
+            const charElement = await this.charElementRepository.findOne({where: {name: itemData.elementAlt}});
+
+            if (!existingChar) {
+              const newChar = this.characterRepository.create({
+                name: itemData.name,
+                imageUrl: itemData.imgSrc,
+                href: itemData.href,
+                characterElement: charElement,
+            });
+                await this.characterRepository.save(newChar);
+                console.log('Echo saved to database:', newChar);
+            } else {
+                console.log('Echo already exists:', existingChar);
+            }
+        }
+    }
 
 
     getImageSrc(imageElement: HTMLImageElement): string {
