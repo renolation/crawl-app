@@ -15,6 +15,7 @@ import {SonataEffectEntity} from "./entities/sonata_effect.entity";
 import {EchoEntity} from "./entities/echo.entity";
 import {EchoSubStatEntity} from "./entities/echo_sub_stat.entity";
 import {CharElementEntity} from "./entities/char_element.entity";
+import {CharacterEntity} from "./entities/character_entity";
 
 
 @Injectable()
@@ -39,6 +40,8 @@ export class ScraperService {
         private echoSubStatRepository: Repository<EchoSubStatEntity>,
         @InjectRepository(CharElementEntity)
         private charElementRepository: Repository<CharElementEntity>,
+        @InjectRepository(CharacterEntity)
+        private characterRepository: Repository<CharacterEntity>,
     ) {
     }
 
@@ -930,8 +933,8 @@ export class ScraperService {
         }
     }
 
-    async scrapeCharElements(){
-         const crawler = new PlaywrightCrawler({
+    async scrapeCharElements() {
+        const crawler = new PlaywrightCrawler({
             requestHandler: async ({page, request}) => {
                 console.log(`Processing: ${request.url}`);
                 const buttonsData = await page.$$eval('div.elements button', buttons => {
@@ -972,7 +975,7 @@ export class ScraperService {
         await crawler.run(['https://wuthering.gg/characters/']);
     }
 
-        async saveCharElementToDatabase(elementsData: {name: string, srcset: string }[]) {
+    async saveCharElementToDatabase(elementsData: { name: string, srcset: string }[]) {
         for (const element of elementsData) {
             const existingElement = await this.charElementRepository.findOne({
                 where: {name: element.name, imageUrl: element.srcset},
@@ -991,6 +994,65 @@ export class ScraperService {
             }
         }
     }
+
+    async scrapeCharacter() {
+        const crawler = new PlaywrightCrawler({
+            requestHandler: async ({page, request}) => {
+                console.log(`Processing: ${request.url}`);
+                await page.waitForSelector('div.elements', {timeout: 20000});
+                const items = await page.$$eval('ul.list li.item', items => {
+                    return items.map(item => {
+                        const itemElement = item as HTMLElement;
+
+                        const anchorElement = itemElement.querySelector('a') as HTMLAnchorElement;
+                        const href = anchorElement ? new URL(anchorElement.href).pathname : null;
+
+                        const imgElement = itemElement.querySelector('div.image img') as HTMLImageElement;
+
+                        // region Inline getImageSrc logic
+                        let imgSrc = imgElement.src;
+                        if (imgElement.srcset) {
+                            const srcsetArray = imgElement.srcset.split(',').map(src => src.trim().split(' '));
+                            const src2x = srcsetArray.find(src => src[1] === '2x');
+                            if (src2x) {
+                                imgSrc = src2x[0];
+                            } else {
+                                const src1x = srcsetArray.find(src => src[1] === '1x');
+                                if (src1x) {
+                                    imgSrc = src1x[0];
+                                }
+                            }
+                        }
+                        //endregion
+
+
+                        const nameElement = itemElement.querySelector('div.name') as HTMLElement;
+                        const name = nameElement ? nameElement.textContent.trim() : null;
+
+
+                        const element = itemElement.querySelector('div.elm');
+                        const elementAlt = element.querySelector('img').alt;
+
+
+                        return {
+                            href,
+                            imgSrc,
+                            name,
+                            elementAlt,
+                        };
+                    }); // Filter out null items
+                });
+                //: todo: save it to the database
+                console.log('List of buttons:', items);
+                // await this.saveEchosToDatabase(items);
+            },
+
+        });
+        await crawler.run(['https://wuthering.gg/characters']);
+
+    }
+
+
 
     getImageSrc(imageElement: HTMLImageElement): string {
         if (imageElement.srcset) {

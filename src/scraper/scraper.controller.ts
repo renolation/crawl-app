@@ -61,14 +61,19 @@ export class ScraperController {
         return await this.scraperService.findAllEchos();
     }
 
-        @Get('echo/get_sub_stat')
+    @Get('echo/get_sub_stat')
     async getSubStat() {
         return await this.scraperService.scrapeEchosHref();
     }
 
-            @Get('char/get_elements')
+    @Get('char/get_elements')
     async getElements() {
         return await this.scraperService.scrapeCharElements();
+    }
+
+    @Get('char/get_all')
+    async getAll() {
+        return await this.scraperService.scrapeCharacter();
     }
 
     @Post()

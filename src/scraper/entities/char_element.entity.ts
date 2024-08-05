@@ -1,4 +1,5 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {CharacterEntity} from "./character_entity";
 
 @Entity()
 export class CharElementEntity {
@@ -10,5 +11,9 @@ export class CharElementEntity {
 
     @Column()
     imageUrl: string
+
+    @ManyToMany( () => CharacterEntity, character => character.characterElement)
+    @JoinTable()
+    characters: CharacterEntity[];
 
 }
