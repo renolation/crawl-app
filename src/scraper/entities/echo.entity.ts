@@ -1,5 +1,6 @@
 import {Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {SonataEffectEntity} from "./sonata_effect.entity";
+import {EchoSubStatEntity} from "./echo_sub_stat.entity";
 
 
 @Entity()
@@ -18,6 +19,9 @@ export class EchoEntity {
 
     @Column()
     cost: number
+
+    @ManyToOne(() => EchoSubStatEntity, echoSubStat => echoSubStat.id)
+    echoSubStat: EchoSubStatEntity;
 
     @ManyToMany(() => SonataEffectEntity, sonataEffect => sonataEffect.echoes)
     sonataEffects: SonataEffectEntity[];

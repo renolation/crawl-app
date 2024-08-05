@@ -13,6 +13,7 @@ import {WeaponLevelRank} from './entities/weapon_level_rank.entity';
 import {SkillEntity} from './entities/skill.entity';
 import {SonataEffectEntity} from "./entities/sonata_effect.entity";
 import {EchoEntity} from "./entities/echo.entity";
+import {EchoSubStatEntity} from "./entities/echo_sub_stat.entity";
 
 
 @Injectable()
@@ -33,12 +34,25 @@ export class ScraperService {
         private sonataEffectRepository: Repository<SonataEffectEntity>,
         @InjectRepository(EchoEntity)
         private echoRepository: Repository<EchoEntity>,
+        @InjectRepository(EchoSubStatEntity)
+        private echoSubStatRepository: Repository<EchoSubStatEntity>,
     ) {
     }
 
     //region default
     create(createScraperDto: CreateScraperDto) {
         return 'This action adds a new scraper';
+    }
+
+    async findAllEchos() {
+        return await this.echoRepository.find({
+            relations: ['sonataEffects'],
+            select: {
+                sonataEffects: {
+                    name: true, imageUrl: true, index: true
+                }
+            }
+        });
     }
 
     findAll() {
@@ -713,10 +727,16 @@ export class ScraperService {
 
     }
 
-    async saveEchosToDatabase(itemsData: { href: string, name: string, imgSrc: string, cost: number, fetters: number[] }[]) {
+    async saveEchosToDatabase(itemsData: {
+        href: string,
+        name: string,
+        imgSrc: string,
+        cost: number,
+        fetters: number[]
+    }[]) {
         for (const itemData of itemsData) {
             const existingEcho = await this.echoRepository.findOne({
-                where: { name: itemData.name, href: itemData.href },
+                where: {name: itemData.name, href: itemData.href},
                 relations: ['sonataEffects'],
             });
 
@@ -807,6 +827,40 @@ export class ScraperService {
     }
 
 
+    async scrapeEchosHref() {
+        const echos = await this.echoRepository.find();
+        const echosHrefs = echos.map(echo => 'https://wuthering.gg' +echo.href);
+        console.log(echosHrefs);
+        console.log('Total weapons:', echos.length);
+        return echosHrefs;
+    }
+
+    async scrapeEchoSubStat() {
+        const crawler = new PlaywrightCrawler({
+            
+        });
+    }
+
+    async saveEchoSubStatToDatabase(hp: string, atk: string, def: string) {
+        const existSubStat = await this.echoSubStatRepository.find({
+            where: {
+                hp: hp, atk: atk, def: def
+            }
+        });
+        if(!existSubStat){
+            const newSubStat = this.echoSubStatRepository.create({
+                hp: hp,
+                atk: atk,
+                def: def,
+            });
+            await this.echoSubStatRepository.save(newSubStat);
+            console.log('SubStat saved to database:', newSubStat);
+            return newSubStat;
+        } else {
+            console.log('SubStat already exists:', existSubStat);
+            return existSubStat;
+        }
+    }
 
     getImageSrc(imageElement: HTMLImageElement): string {
         if (imageElement.srcset) {
