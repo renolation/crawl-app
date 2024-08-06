@@ -8,9 +8,11 @@ import {CharElementEntity} from "../scraper/entities/char_element.entity";
 import {EchoEntity} from "../scraper/entities/echo.entity";
 import {EchoSubStatEntity} from "../scraper/entities/echo_sub_stat.entity";
 import {SonataEffectEntity} from "../scraper/entities/sonata_effect.entity";
+import {WeaponEntity} from "../scraper/entities/weapon.entity";
+import {ItemEntity} from "../scraper/entities/item.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CharacterEntity, CharElementEntity, EchoEntity, EchoSubStatEntity, SonataEffectEntity])],
+  imports: [TypeOrmModule.forFeature([CharacterEntity, CharElementEntity, EchoEntity, EchoSubStatEntity, SonataEffectEntity, WeaponEntity, ItemEntity])],
   controllers: [GetterController],
   providers: [GetterService],
   exports: [GetterService]

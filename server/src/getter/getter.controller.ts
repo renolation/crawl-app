@@ -23,9 +23,19 @@ export class GetterController {
         return this.getterService.findAllCharacters();
     }
 
-        @Get('list-echos')
+    @Get('list-echos')
     listEchos() {
         return this.getterService.findAllEchos();
+    }
+
+    @Get('list-weapons')
+    listWeapons() {
+        return this.getterService.findAllWeapons();
+    }
+
+    @Get('list-items')
+    listItems() {
+        return this.getterService.findAllItems();
     }
 
     @Get(':id')

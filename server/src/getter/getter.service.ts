@@ -5,6 +5,8 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {CharacterEntity} from "../scraper/entities/character_entity";
 import {Repository} from "typeorm";
 import {EchoEntity} from "../scraper/entities/echo.entity";
+import {WeaponEntity} from "../scraper/entities/weapon.entity";
+import {ItemEntity} from "../scraper/entities/item.entity";
 
 @Injectable()
 export class GetterService {
@@ -13,7 +15,11 @@ export class GetterService {
         @InjectRepository(CharacterEntity)
         private characterRepository: Repository<CharacterEntity>,
         @InjectRepository(EchoEntity)
-        private echoRepository: Repository<EchoEntity>
+        private echoRepository: Repository<EchoEntity>,
+        @InjectRepository(WeaponEntity)
+        private weaponRepository: Repository<WeaponEntity>,
+        @InjectRepository(ItemEntity)
+        private itemRepository: Repository<ItemEntity>,
     ) {
     }
 
@@ -36,6 +42,14 @@ export class GetterService {
                 relations: ['sonataEffects']
             }
         );
+    }
+
+    async findAllWeapons() {
+        return await this.weaponRepository.find();
+    }
+
+    async findAllItems() {
+        return await this.itemRepository.find();
     }
 
     findAll() {
