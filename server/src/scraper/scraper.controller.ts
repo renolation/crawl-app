@@ -66,6 +66,12 @@ export class ScraperController {
         return await this.scraperService.scrapeEchosHref();
     }
 
+
+    @Get('echo/get_main_stat')
+    async getMainStat() {
+        return await this.scraperService.scrapeEchoMainStat();
+    }
+
     @Get('char/get_elements')
     async getElements() {
         return await this.scraperService.scrapeCharElements();

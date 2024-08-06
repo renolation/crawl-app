@@ -16,6 +16,7 @@ import {EchoEntity} from "./entities/echo.entity";
 import {EchoSubStatEntity} from "./entities/echo_sub_stat.entity";
 import {CharElementEntity} from "./entities/char_element.entity";
 import {CharacterEntity} from "./entities/character_entity";
+import {EchoMainStatEntity} from "./entities/echo_main_stat.entity";
 
 
 @Injectable()
@@ -42,6 +43,8 @@ export class ScraperService {
         private charElementRepository: Repository<CharElementEntity>,
         @InjectRepository(CharacterEntity)
         private characterRepository: Repository<CharacterEntity>,
+        @InjectRepository(EchoMainStatEntity)
+        private echoMainStatRepository: Repository<EchoMainStatEntity>,
     ) {
     }
 
@@ -1067,12 +1070,12 @@ export class ScraperService {
             const charElement = await this.charElementRepository.findOne({where: {name: itemData.elementAlt}});
 
             if (!existingChar) {
-              const newChar = this.characterRepository.create({
-                name: itemData.name,
-                imageUrl: itemData.imgSrc,
-                href: itemData.href,
-                characterElement: charElement,
-            });
+                const newChar = this.characterRepository.create({
+                    name: itemData.name,
+                    imageUrl: itemData.imgSrc,
+                    href: itemData.href,
+                    characterElement: charElement,
+                });
                 await this.characterRepository.save(newChar);
                 console.log('Echo saved to database:', newChar);
             } else {
@@ -1081,19 +1084,53 @@ export class ScraperService {
         }
     }
 
+    async scrapeEchoMainStat() {
 
-    getImageSrc(imageElement: HTMLImageElement): string {
-        if (imageElement.srcset) {
-            const srcsetArray = imageElement.srcset.split(',').map(src => src.trim().split(' '));
-            const src2x = srcsetArray.find(src => src[1] === '2x');
-            if (src2x) {
-                return src2x[0];
+
+        const crawler = new PlaywrightCrawler({
+            requestHandlerTimeoutSecs: 1800,
+            requestHandler: async ({page, request}) => {
+
+                //region mainStat
+
+                const mainStat = await page.$$eval('div.props.main div.list div.prop', items => {
+                    return items.map(item => {
+                        const propElement = item as HTMLElement;
+                        const nameElement = propElement.querySelector('div.name') as HTMLElement;
+                        const name = nameElement ? nameElement.innerText.trim() : null;
+                        const valElement = propElement.querySelector('div.val') as HTMLElement;
+                        const value = valElement ? valElement.textContent.trim() : null;
+                        return {name, value};
+                    });
+                });
+                console.log('Props data: \n', mainStat);
+                const entity = this.mapToEntity(mainStat);
+                console.log('Entity:', entity);
+                //endregion
+
             }
-            const src1x = srcsetArray.find(src => src[1] === '1x');
-            if (src1x) {
-                return src1x[0];
+        });
+        await crawler.run(['https://wuthering.gg/echos/flautist']);
+    }
+
+ toSnakeCase(str: string): string {
+    return str
+        .replace(/([a-z])([A-Z])/g, '$1_$2') // Add underscore between lowercase and uppercase letters
+        .replace(/\s+/g, '_') // Replace spaces with underscores
+        .replace(/%/g, 'percent') // Replace '%' with 'percent'
+        .replace(/\./g, '') // Remove '.'
+        .toLowerCase();
+}
+
+    mapToEntity(data: { name: string, value: string }[]): EchoMainStatEntity {
+        const entity = new EchoMainStatEntity();
+        data.forEach(item => {
+            const propertyName = this.toSnakeCase(item.name);
+            console.log('Property:', propertyName);
+            if (propertyName in entity) {
+                entity[propertyName] = item.value;
             }
-        }
-        return imageElement.src;
+        });
+        return entity;
     }
 }

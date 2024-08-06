@@ -14,6 +14,7 @@ import {EchoSubStatEntity} from "./scraper/entities/echo_sub_stat.entity";
 import {CharElementEntity} from "./scraper/entities/char_element.entity";
 import {CharacterEntity} from "./scraper/entities/character_entity";
 import { GetterModule } from './getter/getter.module';
+import {EchoMainStatEntity} from "./scraper/entities/echo_main_stat.entity";
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { GetterModule } from './getter/getter.module';
       password: 'password',
       database: 'postgres',
       entities: [Scraper, ItemEntity, WeaponEntity, SkillEntity, WeaponLevelRank,
-      SonataEffectEntity, EchoEntity, EchoSubStatEntity,
+      SonataEffectEntity, EchoEntity, EchoSubStatEntity,EchoMainStatEntity,
       CharElementEntity, CharacterEntity],
       synchronize: true,
     }),
