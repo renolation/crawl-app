@@ -13,10 +13,12 @@ import {EchoSubStatEntity} from "./entities/echo_sub_stat.entity";
 import {CharElementEntity} from "./entities/char_element.entity";
 import {CharacterEntity} from "./entities/character_entity";
 import {EchoMainStatEntity} from "./entities/echo_main_stat.entity";
+import {EchoAbilityEntity} from "./entities/echo_ability.entity";
+import {EchoLevelRank} from "./entities/echo_level_rank.entity";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Scraper, ItemEntity, WeaponEntity, SkillEntity, WeaponLevelRank,
-   SonataEffectEntity, EchoEntity, EchoSubStatEntity, EchoMainStatEntity,
+   SonataEffectEntity, EchoEntity, EchoSubStatEntity, EchoMainStatEntity, EchoAbilityEntity, EchoLevelRank,
   CharElementEntity, CharacterEntity])],
   controllers: [ScraperController],
   providers: [ScraperService],

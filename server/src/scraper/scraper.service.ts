@@ -1091,36 +1091,59 @@ export class ScraperService {
             requestHandlerTimeoutSecs: 1800,
             requestHandler: async ({page, request}) => {
 
-                //region mainStat
+                function getImageSrc(imageElement: HTMLImageElement): string {
+                    if (imageElement.srcset) {
+                        const srcsetArray = imageElement.srcset.split(',').map(src => src.trim().split(' '));
+                        const src2x = srcsetArray.find(src => src[1] === '2x');
+                        if (src2x) {
+                            return src2x[0];
+                        }
+                        const src1x = srcsetArray.find(src => src[1] === '1x');
+                        if (src1x) {
+                            return src1x[0];
+                        }
+                    }
+                    return imageElement.src;
+                }
 
-                const mainStat = await page.$$eval('div.props.main div.list div.prop', items => {
-                    return items.map(item => {
-                        const propElement = item as HTMLElement;
-                        const nameElement = propElement.querySelector('div.name') as HTMLElement;
-                        const name = nameElement ? nameElement.innerText.trim() : null;
-                        const valElement = propElement.querySelector('div.val') as HTMLElement;
-                        const value = valElement ? valElement.textContent.trim() : null;
-                        return {name, value};
-                    });
-                });
-                console.log('Props data: \n', mainStat);
-                const entity = this.mapToEntity(mainStat);
-                console.log('Entity:', entity);
+                //region mainStat
+                //
+                // const mainStat = await page.$$eval('div.props.main div.list div.prop', items => {
+                //     return items.map(item => {
+                //         const propElement = item as HTMLElement;
+                //         const nameElement = propElement.querySelector('div.name') as HTMLElement;
+                //         const name = nameElement ? nameElement.innerText.trim() : null;
+                //         const valElement = propElement.querySelector('div.val') as HTMLElement;
+                //         const value = valElement ? valElement.textContent.trim() : null;
+                //         return {name, value};
+                //     });
+                // });
+                // console.log('Props data: \n', mainStat);
+                // const entity = this.mapToEntity(mainStat);
+                // console.log('Entity:', entity);
                 //endregion
 
+                //region get ability
+                // const imageSrc = (await page.$eval('div.ability div.name img', (img: HTMLImageElement) => img.src)).trim();
+                // console.log('Image:', imageSrc);
+                // const rank = (await page.$eval('div.ability div.rank', (element: HTMLElement) => element.textContent.trim())).replace('Rank ', '');
+                // console.log('rank:', rank);
+                // const abilityDetail = (await page.$eval('div.ability div.container p', p => p.innerHTML.trim())).trim();
+                // console.log('Skill Detail:', abilityDetail);
+                //endregion
             }
         });
         await crawler.run(['https://wuthering.gg/echos/flautist']);
     }
 
- toSnakeCase(str: string): string {
-    return str
-        .replace(/([a-z])([A-Z])/g, '$1_$2') // Add underscore between lowercase and uppercase letters
-        .replace(/\s+/g, '_') // Replace spaces with underscores
-        .replace(/%/g, 'percent') // Replace '%' with 'percent'
-        .replace(/\./g, '') // Remove '.'
-        .toLowerCase();
-}
+    toSnakeCase(str: string): string {
+        return str
+            .replace(/([a-z])([A-Z])/g, '$1_$2') // Add underscore between lowercase and uppercase letters
+            .replace(/\s+/g, '_') // Replace spaces with underscores
+            .replace(/%/g, 'percent') // Replace '%' with 'percent'
+            .replace(/\./g, '') // Remove '.'
+            .toLowerCase();
+    }
 
     mapToEntity(data: { name: string, value: string }[]): EchoMainStatEntity {
         const entity = new EchoMainStatEntity();
