@@ -13,6 +13,7 @@ import {EchoEntity} from "./scraper/entities/echo.entity";
 import {EchoSubStatEntity} from "./scraper/entities/echo_sub_stat.entity";
 import {CharElementEntity} from "./scraper/entities/char_element.entity";
 import {CharacterEntity} from "./scraper/entities/character_entity";
+import { GetterModule } from './getter/getter.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import {CharacterEntity} from "./scraper/entities/character_entity";
       CharElementEntity, CharacterEntity],
       synchronize: true,
     }),
-     ScraperModule],
+     ScraperModule,
+     GetterModule],
   controllers: [AppController],
   providers: [AppService],
 })
