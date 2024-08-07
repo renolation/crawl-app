@@ -52,6 +52,20 @@ export class GetterService {
         return await this.itemRepository.find();
     }
 
+    async getEchoById(id: number) {
+    const echo = await this.echoRepository.findOne({
+      where: { id },
+      relations: ['levelRanks', 'levelRanks.echoMainStatEntities', 'levelRanks.echo_ability', 'echoSubStat'],
+    });
+
+    if (!echo) {
+      throw new Error(`Echo with id ${id} not found`);
+    }
+
+    return echo;
+  }
+
+
     findAll() {
         return `This action returns all getter`;
     }

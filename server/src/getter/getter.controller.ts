@@ -38,6 +38,11 @@ export class GetterController {
         return this.getterService.findAllItems();
     }
 
+  @Get('echo/:id')
+  async getEchoById(@Param('id') id: number) {
+    return this.getterService.getEchoById(id);
+  }
+
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.getterService.findOne(+id);

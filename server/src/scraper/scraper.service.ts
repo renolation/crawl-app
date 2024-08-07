@@ -1123,7 +1123,7 @@ export class ScraperService {
                     const slider = document.querySelector('.slider-base') as HTMLElement;
                     if (slider) {
                         const currentWidth = slider.getBoundingClientRect().width;
-                        slider.style.width = `${currentWidth * 3}px`;
+                        slider.style.width = `${currentWidth * 15}px`;
                     }
                 });
 
