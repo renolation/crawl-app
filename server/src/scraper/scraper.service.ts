@@ -17,6 +17,10 @@ import {EchoSubStatEntity} from "./entities/echo_sub_stat.entity";
 import {CharElementEntity} from "./entities/char_element.entity";
 import {CharacterEntity} from "./entities/character_entity";
 import {EchoMainStatEntity} from "./entities/echo_main_stat.entity";
+import {EchoAbilityEntity} from "./entities/echo_ability.entity";
+import {EchoLevelRank} from "./entities/echo_level_rank.entity";
+import {CreateEchoMainStatDto} from "./dto/create-echo-main-stat.dto";
+import {plainToClass, plainToInstance} from "class-transformer";
 
 
 @Injectable()
@@ -45,6 +49,10 @@ export class ScraperService {
         private characterRepository: Repository<CharacterEntity>,
         @InjectRepository(EchoMainStatEntity)
         private echoMainStatRepository: Repository<EchoMainStatEntity>,
+        @InjectRepository(EchoAbilityEntity)
+        private echoAbilityRepository: Repository<EchoAbilityEntity>,
+        @InjectRepository(EchoLevelRank)
+        private echoLevelRankRepository: Repository<EchoLevelRank>,
     ) {
     }
 
@@ -83,7 +91,21 @@ export class ScraperService {
     //endregion
 
     async test2() {
-        return 'a';
+        const map = [
+            {name: 'ATK\nDefault', value: '12'},
+            {name: 'ATK\n%', value: '3.8%'},
+            {name: 'HP\n%', value: '3.8%'},
+            {name: 'DEF\n%', value: '4.8%'},
+            {name: 'Glacio DMG Bonus', value: '3.8%'},
+            {name: 'Fusion DMG Bonus', value: '3.8%'},
+            {name: 'Electro DMG Bonus', value: '3.8%'},
+            {name: 'Aero DMG Bonus', value: '3.8%'},
+            {name: 'Spectro DMG Bonus', value: '3.8%'},
+            {name: 'Havoc DMG Bonus', value: '3.8%'},
+            {name: 'Energy Regen', value: '4.0%'}
+        ];
+        const entity = this.mapToEntity(map);
+        console.log('Entity:', entity);
     }
 
     async crawlDetail(hrefs: string[]) {
@@ -1089,54 +1111,138 @@ export class ScraperService {
 
         const crawler = new PlaywrightCrawler({
             requestHandlerTimeoutSecs: 1800,
+            // headless: false,
             requestHandler: async ({page, request}) => {
 
-                function getImageSrc(imageElement: HTMLImageElement): string {
-                    if (imageElement.srcset) {
-                        const srcsetArray = imageElement.srcset.split(',').map(src => src.trim().split(' '));
-                        const src2x = srcsetArray.find(src => src[1] === '2x');
-                        if (src2x) {
-                            return src2x[0];
-                        }
-                        const src1x = srcsetArray.find(src => src[1] === '1x');
-                        if (src1x) {
-                            return src1x[0];
-                        }
-                    }
-                    return imageElement.src;
-                }
+                await page.waitForSelector('.slider-handle-lower', {timeout: 1000});
+                await page.waitForTimeout(1000);
+                const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-                //region mainStat
-                //
-                // const mainStat = await page.$$eval('div.props.main div.list div.prop', items => {
-                //     return items.map(item => {
-                //         const propElement = item as HTMLElement;
-                //         const nameElement = propElement.querySelector('div.name') as HTMLElement;
-                //         const name = nameElement ? nameElement.innerText.trim() : null;
-                //         const valElement = propElement.querySelector('div.val') as HTMLElement;
-                //         const value = valElement ? valElement.textContent.trim() : null;
-                //         return {name, value};
-                //     });
-                // });
+                // Get the current width of the slider element and multiply it by 3
+                await page.evaluate(() => {
+                    const slider = document.querySelector('.slider-base') as HTMLElement;
+                    if (slider) {
+                        const currentWidth = slider.getBoundingClientRect().width;
+                        slider.style.width = `${currentWidth * 2}px`;
+                    }
+                });
+
+                // //region slider
+                  const rankMinValue = 2;
+                 const rankMaxValue = 5;
+
+                 const levelMinValue = 0;
+                 const levelMaxValue = 25;
+
+                 const sliderRankTrack = page.locator('.slider-base').nth(0);
+                 const sliderLevelTrack = page.locator('.slider-base').nth(1);
+
+                 const sliderRankOffsetWidth = await sliderRankTrack.evaluate(el => el.getBoundingClientRect().width);
+                 const sliderLevelOffsetWidth = await sliderLevelTrack.evaluate(el => el.getBoundingClientRect().width);
+                 const sliderHandleWidth = await page.$eval('.slider-handle-lower', el => el.getBoundingClientRect().width);
+                 const correctedSliderRankOffsetWidth = sliderRankOffsetWidth - sliderHandleWidth;
+                 const correctedSliderLevelOffsetWidth = sliderLevelOffsetWidth - sliderHandleWidth;
+                 const positionsRank = [];
+                 const positionsLevel = [];
+
+                 for (let valueLevel = levelMinValue; valueLevel <= levelMaxValue; valueLevel++) {
+                     const positionXLevel = valueLevel === levelMaxValue
+                         ? correctedSliderLevelOffsetWidth
+                         : (correctedSliderLevelOffsetWidth / (levelMaxValue - levelMinValue)) * (valueLevel - levelMinValue);
+                     positionsLevel.push(positionXLevel);
+                 }
+
+                 for (let valueRank = rankMinValue; valueRank <= rankMaxValue; valueRank++) {
+                     const positionXRank = valueRank === rankMaxValue
+                         ? correctedSliderRankOffsetWidth
+                         : (correctedSliderRankOffsetWidth / (rankMaxValue - rankMinValue)) * (valueRank - rankMinValue);
+                     positionsRank.push(positionXRank);
+                 }
+
+                 for (let i = 0; i < positionsLevel.length; i++) {
+                     await sliderLevelTrack.click({force: true, position: {x: positionsLevel[i], y: 0}});
+                     await sleep(1000);
+                     const currentLevelValue = await sliderLevelTrack.evaluate(el => {
+                         const handle = el.querySelector('.slider-handle-lower');
+                         return handle ? parseInt(handle.getAttribute('aria-valuenow'), 10) : null;
+                     });
+                     for (let j = 0; j < positionsRank.length; j++) {
+                         await sliderRankTrack.click({force: true, position: {x: positionsRank[j], y: 0}});
+                         await sleep(1000);
+                         const currentRankValue = await sliderRankTrack.evaluate(el => {
+                             const handle = el.querySelector('.slider-handle-lower');
+                             return handle ? parseInt(handle.getAttribute('aria-valuenow'), 10) : null;
+                         });
+                         console.log('Level:', currentLevelValue);
+                         console.log('Rank:', currentRankValue);
+                          //region mainStat
+
+                const mainStat = await page.$$eval('div.props.main div.list div.prop', items => {
+                    return items.map(item => {
+                        const propElement = item as HTMLElement;
+                        const nameElement = propElement.querySelector('div.name') as HTMLElement;
+                        const name = nameElement ? nameElement.innerText.trim() : null;
+                        const valElement = propElement.querySelector('div.val') as HTMLElement;
+                        const value = valElement ? valElement.textContent.trim() : null;
+                        return {name, value};
+                    });
+                });
                 // console.log('Props data: \n', mainStat);
-                // const entity = this.mapToEntity(mainStat);
+                const entity = this.mapToEntity(mainStat);
                 // console.log('Entity:', entity);
+                const mainStatEntity = await this.saveMainStatToDatabase(entity);
                 //endregion
 
                 //region get ability
-                // const imageSrc = (await page.$eval('div.ability div.name img', (img: HTMLImageElement) => img.src)).trim();
+                const imageSrc = (await page.$eval('div.ability div.name img', (img: HTMLImageElement) => img.src)).trim();
                 // console.log('Image:', imageSrc);
-                // const rank = (await page.$eval('div.ability div.rank', (element: HTMLElement) => element.textContent.trim())).replace('Rank ', '');
+                const rank = (await page.$eval('div.ability div.rank', (element: HTMLElement) => element.textContent.trim())).replace('Rank ', '');
                 // console.log('rank:', rank);
-                // const abilityDetail = (await page.$eval('div.ability div.container p', p => p.innerHTML.trim())).trim();
+                const abilityDetail = (await page.$eval('div.ability div.container p', p => p.innerHTML.trim())).trim();
                 // console.log('Skill Detail:', abilityDetail);
+                const echoAbility = await this.saveAbilityToDatabase(imageSrc, parseInt(rank, 10), abilityDetail);
                 //endregion
+
+                //region save to db
+                const echo = await this.echoRepository.findOne({where: {href: request.url.replace('https://wuthering.gg', '')}});
+
+                try {
+                    const newRank = this.echoLevelRankRepository.create({
+                        rank: currentRankValue,
+                        level: currentLevelValue,
+                        echo: echo,
+                        echoMainStatEntity: mainStatEntity,
+                        echo_ability: [echoAbility]
+                    });
+                    const savedRank = await this.echoLevelRankRepository.save(newRank);
+                    console.log(`Saved Rank: ${savedRank.rank} : ${savedRank.level}`);
+                    await sleep(100);
+                } catch (error) {
+                    if (error.code === '23505') { // Unique constraint violation
+                        console.log('Rank already exists, skipping save.');
+                    } else {
+                        throw error;
+                    }
+                }
+                await sleep(1000);
+
+                //endregion
+                     }
+                 }
+                //  //endregion
+
+
+
+
             }
         });
         await crawler.run(['https://wuthering.gg/echos/flautist']);
     }
 
     toSnakeCase(str: string): string {
+        if (str === 'ATK\nDefault') {
+            return 'atk';
+        }
         return str
             .replace(/([a-z])([A-Z])/g, '$1_$2') // Add underscore between lowercase and uppercase letters
             .replace(/\s+/g, '_') // Replace spaces with underscores
@@ -1145,15 +1251,87 @@ export class ScraperService {
             .toLowerCase();
     }
 
-    mapToEntity(data: { name: string, value: string }[]): EchoMainStatEntity {
-        const entity = new EchoMainStatEntity();
-        data.forEach(item => {
-            const propertyName = this.toSnakeCase(item.name);
-            console.log('Property:', propertyName);
-            if (propertyName in entity) {
-                entity[propertyName] = item.value;
-            }
+
+    mapToEntity(data: { name: string, value: string }[]): CreateEchoMainStatDto {
+        const dtoObject = {};
+
+        for (const item of data) {
+            const key = this.toSnakeCase(item.name);
+            dtoObject[key] = item.value;
+        }
+        return plainToInstance(CreateEchoMainStatDto, dtoObject);
+    }
+
+    async saveAbilityToDatabase(imageSrc: string, rank: number, abilityDetail: string) {
+        const existingAbility = await this.echoAbilityRepository.findOne({
+            where: {imageUrl: imageSrc},
         });
-        return entity;
+
+        if (!existingAbility) {
+            const newAbility = this.echoAbilityRepository.create({
+                imageUrl: imageSrc,
+                rank: rank,
+                value: abilityDetail,
+            });
+            await this.echoAbilityRepository.save(newAbility);
+            console.log('Ability saved to database:', newAbility);
+            return newAbility;
+        } else {
+            console.log('Ability already exists:', existingAbility);
+            return existingAbility;
+        }
+    }
+
+    async saveMainStatToDatabase(mainStat: CreateEchoMainStatDto) {
+        const existMainStat = await this.echoMainStatRepository.findOne({
+            where: {
+                atk: mainStat.atk,
+                atk_percent: mainStat.atk_percent,
+
+                hp: mainStat.hp,
+                hp_percent: mainStat.hp_percent,
+
+                def_percent: mainStat.def_percent,
+                crit_rate: mainStat.crit_rate,
+                crit_dmg: mainStat.crit_dmg,
+
+                healing_bonus: mainStat.healing_bonus,
+                glacio_dmg_bonus: mainStat.glacio_dmg_bonus,
+                fusion_dmg_bonus: mainStat.fusion_dmg_bonus,
+                electro_dmg_bonus: mainStat.electro_dmg_bonus,
+                aero_dmg_bonus: mainStat.aero_dmg_bonus,
+                spectro_dmg_bonus: mainStat.spectro_dmg_bonus,
+                havoc_dmg_bonus: mainStat.havoc_dmg_bonus,
+                energy_regen: mainStat.energy_regen,
+            },
+        });
+        if (!existMainStat) {
+            const newMainStat = this.echoMainStatRepository.create({
+                atk: mainStat.atk,
+                atk_percent: mainStat.atk_percent,
+
+                hp: mainStat.hp,
+                hp_percent: mainStat.hp_percent,
+
+                def_percent: mainStat.def_percent,
+                crit_rate: mainStat.crit_rate,
+                crit_dmg: mainStat.crit_dmg,
+
+                healing_bonus: mainStat.healing_bonus,
+                glacio_dmg_bonus: mainStat.glacio_dmg_bonus,
+                fusion_dmg_bonus: mainStat.fusion_dmg_bonus,
+                electro_dmg_bonus: mainStat.electro_dmg_bonus,
+                aero_dmg_bonus: mainStat.aero_dmg_bonus,
+                spectro_dmg_bonus: mainStat.spectro_dmg_bonus,
+                havoc_dmg_bonus: mainStat.havoc_dmg_bonus,
+                energy_regen: mainStat.energy_regen,
+
+            });
+            await this.echoMainStatRepository.save(newMainStat);
+            console.log('MainStat saved to database:', newMainStat);
+            return newMainStat;
+        } else {
+            return existMainStat;
+        }
     }
 }
