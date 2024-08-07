@@ -1123,115 +1123,110 @@ export class ScraperService {
                     const slider = document.querySelector('.slider-base') as HTMLElement;
                     if (slider) {
                         const currentWidth = slider.getBoundingClientRect().width;
-                        slider.style.width = `${currentWidth * 2}px`;
+                        slider.style.width = `${currentWidth * 3}px`;
                     }
                 });
 
                 // //region slider
-                  const rankMinValue = 2;
-                 const rankMaxValue = 5;
+                const rankMinValue = 2;
+                const rankMaxValue = 5;
 
-                 const levelMinValue = 0;
-                 const levelMaxValue = 25;
+                const levelMinValue = 0;
+                const levelMaxValue = 25;
 
-                 const sliderRankTrack = page.locator('.slider-base').nth(0);
-                 const sliderLevelTrack = page.locator('.slider-base').nth(1);
+                const sliderRankTrack = page.locator('.slider-base').nth(0);
+                const sliderLevelTrack = page.locator('.slider-base').nth(1);
 
-                 const sliderRankOffsetWidth = await sliderRankTrack.evaluate(el => el.getBoundingClientRect().width);
-                 const sliderLevelOffsetWidth = await sliderLevelTrack.evaluate(el => el.getBoundingClientRect().width);
-                 const sliderHandleWidth = await page.$eval('.slider-handle-lower', el => el.getBoundingClientRect().width);
-                 const correctedSliderRankOffsetWidth = sliderRankOffsetWidth - sliderHandleWidth;
-                 const correctedSliderLevelOffsetWidth = sliderLevelOffsetWidth - sliderHandleWidth;
-                 const positionsRank = [];
-                 const positionsLevel = [];
+                const sliderRankOffsetWidth = await sliderRankTrack.evaluate(el => el.getBoundingClientRect().width);
+                const sliderLevelOffsetWidth = await sliderLevelTrack.evaluate(el => el.getBoundingClientRect().width);
+                const sliderHandleWidth = await page.$eval('.slider-handle-lower', el => el.getBoundingClientRect().width);
+                const correctedSliderRankOffsetWidth = sliderRankOffsetWidth - sliderHandleWidth;
+                const correctedSliderLevelOffsetWidth = sliderLevelOffsetWidth - sliderHandleWidth;
+                const positionsRank = [];
+                const positionsLevel = [];
 
-                 for (let valueLevel = levelMinValue; valueLevel <= levelMaxValue; valueLevel++) {
-                     const positionXLevel = valueLevel === levelMaxValue
-                         ? correctedSliderLevelOffsetWidth
-                         : (correctedSliderLevelOffsetWidth / (levelMaxValue - levelMinValue)) * (valueLevel - levelMinValue);
-                     positionsLevel.push(positionXLevel);
-                 }
+                for (let valueLevel = levelMinValue; valueLevel <= levelMaxValue; valueLevel++) {
+                    const positionXLevel = valueLevel === levelMaxValue
+                        ? correctedSliderLevelOffsetWidth
+                        : (correctedSliderLevelOffsetWidth / (levelMaxValue - levelMinValue)) * (valueLevel - levelMinValue);
+                    positionsLevel.push(positionXLevel);
+                }
 
-                 for (let valueRank = rankMinValue; valueRank <= rankMaxValue; valueRank++) {
-                     const positionXRank = valueRank === rankMaxValue
-                         ? correctedSliderRankOffsetWidth
-                         : (correctedSliderRankOffsetWidth / (rankMaxValue - rankMinValue)) * (valueRank - rankMinValue);
-                     positionsRank.push(positionXRank);
-                 }
+                for (let valueRank = rankMinValue; valueRank <= rankMaxValue; valueRank++) {
+                    const positionXRank = valueRank === rankMaxValue
+                        ? correctedSliderRankOffsetWidth
+                        : (correctedSliderRankOffsetWidth / (rankMaxValue - rankMinValue)) * (valueRank - rankMinValue);
+                    positionsRank.push(positionXRank);
+                }
 
-                 for (let i = 0; i < positionsLevel.length; i++) {
-                     await sliderLevelTrack.click({force: true, position: {x: positionsLevel[i], y: 0}});
-                     await sleep(1000);
-                     const currentLevelValue = await sliderLevelTrack.evaluate(el => {
-                         const handle = el.querySelector('.slider-handle-lower');
-                         return handle ? parseInt(handle.getAttribute('aria-valuenow'), 10) : null;
-                     });
-                     for (let j = 0; j < positionsRank.length; j++) {
-                         await sliderRankTrack.click({force: true, position: {x: positionsRank[j], y: 0}});
-                         await sleep(1000);
-                         const currentRankValue = await sliderRankTrack.evaluate(el => {
-                             const handle = el.querySelector('.slider-handle-lower');
-                             return handle ? parseInt(handle.getAttribute('aria-valuenow'), 10) : null;
-                         });
-                         console.log('Level:', currentLevelValue);
-                         console.log('Rank:', currentRankValue);
-                          //region mainStat
-
-                const mainStat = await page.$$eval('div.props.main div.list div.prop', items => {
-                    return items.map(item => {
-                        const propElement = item as HTMLElement;
-                        const nameElement = propElement.querySelector('div.name') as HTMLElement;
-                        const name = nameElement ? nameElement.innerText.trim() : null;
-                        const valElement = propElement.querySelector('div.val') as HTMLElement;
-                        const value = valElement ? valElement.textContent.trim() : null;
-                        return {name, value};
+                for (let i = 0; i < positionsLevel.length; i++) {
+                    await sliderLevelTrack.click({force: true, position: {x: positionsLevel[i], y: 0}});
+                    await sleep(1000);
+                    const currentLevelValue = await sliderLevelTrack.evaluate(el => {
+                        const handle = el.querySelector('.slider-handle-lower');
+                        return handle ? parseInt(handle.getAttribute('aria-valuenow'), 10) : null;
                     });
-                });
-                // console.log('Props data: \n', mainStat);
-                const entity = this.mapToEntity(mainStat);
-                // console.log('Entity:', entity);
-                const mainStatEntity = await this.saveMainStatToDatabase(entity);
-                //endregion
+                    for (let j = 0; j < positionsRank.length; j++) {
+                        await sliderRankTrack.click({force: true, position: {x: positionsRank[j], y: 0}});
+                        await sleep(1000);
+                        const currentRankValue = await sliderRankTrack.evaluate(el => {
+                            const handle = el.querySelector('.slider-handle-lower');
+                            return handle ? parseInt(handle.getAttribute('aria-valuenow'), 10) : null;
+                        });
+                        console.log('Level:', currentLevelValue);
+                        console.log('Rank:', currentRankValue);
+                        //region mainStat
 
-                //region get ability
-                const imageSrc = (await page.$eval('div.ability div.name img', (img: HTMLImageElement) => img.src)).trim();
-                // console.log('Image:', imageSrc);
-                const rank = (await page.$eval('div.ability div.rank', (element: HTMLElement) => element.textContent.trim())).replace('Rank ', '');
-                // console.log('rank:', rank);
-                const abilityDetail = (await page.$eval('div.ability div.container p', p => p.innerHTML.trim())).trim();
-                // console.log('Skill Detail:', abilityDetail);
-                const echoAbility = await this.saveAbilityToDatabase(imageSrc, parseInt(rank, 10), abilityDetail);
-                //endregion
+                        const mainStat = await page.$$eval('div.props.main div.list div.prop', items => {
+                            return items.map(item => {
+                                const propElement = item as HTMLElement;
+                                const nameElement = propElement.querySelector('div.name') as HTMLElement;
+                                const name = nameElement ? nameElement.innerText.trim() : null;
+                                const valElement = propElement.querySelector('div.val') as HTMLElement;
+                                const value = valElement ? valElement.textContent.trim() : null;
+                                return {name, value};
+                            });
+                        });
+                        // console.log('Props data: \n', mainStat);
+                        const entity = this.mapToEntity(mainStat);
+                        // console.log('Entity:', entity);
+                        const mainStatEntity = await this.saveMainStatToDatabase(entity);
+                        //endregion
 
-                //region save to db
-                const echo = await this.echoRepository.findOne({where: {href: request.url.replace('https://wuthering.gg', '')}});
+                        //region get ability
+                        const imageSrc = (await page.$eval('div.ability div.name img', (img: HTMLImageElement) => img.src)).trim();
+                        const rank = (await page.$eval('div.ability div.rank', (element: HTMLElement) => element.textContent.trim())).replace('Rank ', '');
+                        const abilityDetail = (await page.$eval('div.ability div.container p', p => p.innerHTML.trim())).trim();
+                        const echoAbility = await this.saveAbilityToDatabase(imageSrc, parseInt(rank, 10), abilityDetail);
+                        //endregion
 
-                try {
-                    const newRank = this.echoLevelRankRepository.create({
-                        rank: currentRankValue,
-                        level: currentLevelValue,
-                        echo: echo,
-                        echoMainStatEntity: mainStatEntity,
-                        echo_ability: [echoAbility]
-                    });
-                    const savedRank = await this.echoLevelRankRepository.save(newRank);
-                    console.log(`Saved Rank: ${savedRank.rank} : ${savedRank.level}`);
-                    await sleep(100);
-                } catch (error) {
-                    if (error.code === '23505') { // Unique constraint violation
-                        console.log('Rank already exists, skipping save.');
-                    } else {
-                        throw error;
+                        //region save to db
+                        const echo = await this.echoRepository.findOne({where: {href: request.url.replace('https://wuthering.gg', '')}});
+
+                        try {
+                            const newRank = this.echoLevelRankRepository.create({
+                                rank: currentRankValue,
+                                level: currentLevelValue,
+                                echo: echo,
+                                echoMainStatEntity: mainStatEntity,
+                                echo_ability: [echoAbility]
+                            });
+                            const savedRank = await this.echoLevelRankRepository.save(newRank);
+                            console.log(`Saved Rank: ${savedRank.rank} : ${savedRank.level}`);
+                            await sleep(100);
+                        } catch (error) {
+                            if (error.code === '23505') { // Unique constraint violation
+                                console.log('Rank already exists, skipping save.');
+                            } else {
+                                throw error;
+                            }
+                        }
+                        await sleep(1000);
+
+                        //endregion
                     }
                 }
-                await sleep(1000);
-
-                //endregion
-                     }
-                 }
                 //  //endregion
-
-
 
 
             }
@@ -1264,7 +1259,7 @@ export class ScraperService {
 
     async saveAbilityToDatabase(imageSrc: string, rank: number, abilityDetail: string) {
         const existingAbility = await this.echoAbilityRepository.findOne({
-            where: {imageUrl: imageSrc},
+            where: {imageUrl: imageSrc, rank: rank, value: abilityDetail},
         });
 
         if (!existingAbility) {

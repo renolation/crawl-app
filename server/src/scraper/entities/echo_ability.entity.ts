@@ -1,7 +1,8 @@
-import {Column, Entity, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToMany, PrimaryGeneratedColumn, Unique} from "typeorm";
 import {EchoLevelRank} from "./echo_level_rank.entity";
 
 @Entity()
+@Unique(['rank', 'value'])
 export class EchoAbilityEntity {
     @PrimaryGeneratedColumn()
     id: number;
