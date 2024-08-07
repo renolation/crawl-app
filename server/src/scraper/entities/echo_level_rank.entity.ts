@@ -4,7 +4,7 @@ import {
     JoinColumn,
     JoinTable,
     ManyToMany,
-    ManyToOne,
+    ManyToOne, OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
     Unique
@@ -15,7 +15,7 @@ import {EchoAbilityEntity} from "./echo_ability.entity";
 import {EchoMainStatEntity} from "./echo_main_stat.entity";
 
 @Entity()
-@Unique(['level', 'rank', 'echo','echoMainStatEntity'])
+@Unique(['level', 'rank', 'echo'])
 export class EchoLevelRank {
     @PrimaryGeneratedColumn()
     id: number;
@@ -33,8 +33,8 @@ export class EchoLevelRank {
     @JoinTable()
     echo_ability: EchoAbilityEntity[];
 
-    @OneToOne(() => EchoMainStatEntity, {cascade: true})
+    @OneToMany(() => EchoMainStatEntity, mainStat => mainStat.echoLevelRank, {cascade: true})
     @JoinColumn()
-    echoMainStatEntity: EchoMainStatEntity;
+    echoMainStatEntities: EchoMainStatEntity[];
 
 }

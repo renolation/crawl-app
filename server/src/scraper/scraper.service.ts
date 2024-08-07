@@ -1208,11 +1208,10 @@ export class ScraperService {
                                 rank: currentRankValue,
                                 level: currentLevelValue,
                                 echo: echo,
-                                echoMainStatEntity: mainStatEntity,
+                                echoMainStatEntities: [mainStatEntity],
                                 echo_ability: [echoAbility]
                             });
                             const savedRank = await this.echoLevelRankRepository.save(newRank);
-                            console.log(`Saved Rank: ${savedRank.rank} : ${savedRank.level}`);
                             await sleep(100);
                         } catch (error) {
                             if (error.code === '23505') { // Unique constraint violation
@@ -1304,14 +1303,11 @@ export class ScraperService {
             const newMainStat = this.echoMainStatRepository.create({
                 atk: mainStat.atk,
                 atk_percent: mainStat.atk_percent,
-
                 hp: mainStat.hp,
                 hp_percent: mainStat.hp_percent,
-
                 def_percent: mainStat.def_percent,
                 crit_rate: mainStat.crit_rate,
                 crit_dmg: mainStat.crit_dmg,
-
                 healing_bonus: mainStat.healing_bonus,
                 glacio_dmg_bonus: mainStat.glacio_dmg_bonus,
                 fusion_dmg_bonus: mainStat.fusion_dmg_bonus,
