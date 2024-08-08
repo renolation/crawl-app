@@ -867,6 +867,7 @@ export class ScraperService {
             .groupBy('echo.id')
             .addGroupBy('echo.name')
             .addGroupBy('echo.href')
+            .having('COUNT(levelRank.id) < 104')
             .orderBy('rank_count', 'ASC')
             .getMany();
 
@@ -1140,7 +1141,7 @@ export class ScraperService {
 
         const crawler = new PlaywrightCrawler({
             requestHandlerTimeoutSecs: 36009,
-            // headless: false,
+            headless: false,
             maxConcurrency: 1,
             requestHandler: async ({page, request}) => {
 
@@ -1199,7 +1200,7 @@ export class ScraperService {
                         const handle = el.querySelector('.slider-handle-lower');
                         return handle ? parseInt(handle.getAttribute('aria-valuenow'), 10) : null;
                     });
-                    for (let j = 1; j < positionsRank.length; j++) {
+                    for (let j = 0; j < positionsRank.length; j++) {
                         await sliderRankTrack.click({force: true, position: {x: positionsRank[j], y: 0}});
                         await sleep(1000);
                         const currentRankValue = await sliderRankTrack.evaluate(el => {
@@ -1328,13 +1329,33 @@ export class ScraperService {
                                 }
                             } else {
                                 // If it does not exist, create a new EchoLevelRank
+                                const newMainStat = this.echoMainStatRepository.create({
+                                    atk: entity.atk,
+                                    atk_percent: entity.atk_percent,
+                                    hp: entity.hp,
+                                    hp_percent: entity.hp_percent,
+                                    def_percent: entity.def_percent,
+                                    crit_rate: entity.crit_rate,
+                                    crit_dmg: entity.crit_dmg,
+                                    healing_bonus: entity.healing_bonus,
+                                    glacio_dmg_bonus: entity.glacio_dmg_bonus,
+                                    fusion_dmg_bonus: entity.fusion_dmg_bonus,
+                                    electro_dmg_bonus: entity.electro_dmg_bonus,
+                                    aero_dmg_bonus: entity.aero_dmg_bonus,
+                                    spectro_dmg_bonus: entity.spectro_dmg_bonus,
+                                    havoc_dmg_bonus: entity.havoc_dmg_bonus,
+                                    energy_regen: entity.energy_regen,
+                                    echoLevelRank: existingRank,
+                                });
                                 const newRank = this.echoLevelRankRepository.create({
                                     rank: currentRankValue,
                                     level: currentLevelValue,
                                     echo: echo,
-                                    echoMainStatEntity: entity,
+                                    echoMainStatEntity: newMainStat,
                                 });
-                                const savedRank = await this.echoLevelRankRepository.save(newRank);
+                                await this.echoMainStatRepository.save(newMainStat);
+                                newRank.echoMainStatEntity = newMainStat;
+                                await this.echoLevelRankRepository.save(newRank);
                                 await sleep(100);
                                 console.log('New Echo Rank created and saved.');
                             }
