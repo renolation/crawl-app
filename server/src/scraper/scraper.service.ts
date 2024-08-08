@@ -1293,7 +1293,7 @@ export class ScraperService {
 
             }
         });
-        await crawler.run(['https://wuthering.gg/echos/flautist']);
+        await crawler.run(hrefs);
     }
 
     toSnakeCase(str: string): string {
