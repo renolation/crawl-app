@@ -1212,7 +1212,11 @@ export class ScraperService {
                             return items.map(item => {
                                 const propElement = item as HTMLElement;
                                 const nameElement = propElement.querySelector('div.name') as HTMLElement;
-                                const name = nameElement ? nameElement.innerText.trim() : null;
+                                const fixedSpan = nameElement?.querySelector('.fixed') as HTMLElement;
+                                if (fixedSpan) {
+                                    fixedSpan.remove();
+                                }
+                                const name = nameElement?.innerText.trim() || null;
                                 const valElement = propElement.querySelector('div.val') as HTMLElement;
                                 const value = valElement ? valElement.textContent.trim() : null;
                                 return {name, value};

@@ -7,7 +7,7 @@ export class EchoMainStatEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({nullable: true})
     atk: string;
 
     @Column({nullable: true})
