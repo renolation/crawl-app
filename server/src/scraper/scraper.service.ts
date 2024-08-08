@@ -1231,11 +1231,11 @@ export class ScraperService {
                         const imageSrc = (await page.$eval('div.ability div.name img', (img: HTMLImageElement) => img.src)).trim();
                         const rank = (await page.$eval('div.ability div.rank', (element: HTMLElement) => element.textContent.trim())).replace('Rank ', '');
                         const abilityDetail = (await page.$eval('div.ability div.container p', p => p.innerHTML.trim())).trim();
-                        const echoAbility = await this.saveAbilityToDatabase(imageSrc, parseInt(rank, 10), abilityDetail);
                         //endregion
 
                         //region save to db
                         const echo = await this.echoRepository.findOne({where: {href: request.url.replace('https://wuthering.gg', '')}});
+                         await this.saveAbilityToDatabase(echo,imageSrc, parseInt(rank, 10), abilityDetail);
 
                         try {
                             // Save the main stat entity
@@ -1270,7 +1270,6 @@ export class ScraperService {
                                     level: currentLevelValue,
                                     echo: echo,
                                     echoMainStatEntity: mainStatEntity,
-                                    echo_ability: [echoAbility]
                                 });
                                 const savedRank = await this.echoLevelRankRepository.save(newRank);
                                 await sleep(100);
@@ -1319,7 +1318,7 @@ export class ScraperService {
         return plainToInstance(CreateEchoMainStatDto, dtoObject);
     }
 
-    async saveAbilityToDatabase(imageSrc: string, rank: number, abilityDetail: string) {
+    async saveAbilityToDatabase(echo: EchoEntity, imageSrc: string, rank: number, abilityDetail: string) {
         const existingAbility = await this.echoAbilityRepository.findOne({
             where: {imageUrl: imageSrc, rank: rank, value: abilityDetail},
         });
@@ -1329,6 +1328,7 @@ export class ScraperService {
                 imageUrl: imageSrc,
                 rank: rank,
                 value: abilityDetail,
+                echo: echo,
             });
             await this.echoAbilityRepository.save(newAbility);
             // console.log('Ability saved to database:', newAbility);

@@ -29,9 +29,6 @@ export class EchoLevelRank {
     @ManyToOne(() => EchoEntity, echo => echo.levelRanks)
     echo: EchoEntity;
 
-    @ManyToMany(() => EchoAbilityEntity, ability => ability.levelRanks)
-    @JoinTable()
-    echo_ability: EchoAbilityEntity[];
 
     @OneToOne(() => EchoMainStatEntity, mainStat => mainStat.echoLevelRank)
     @JoinColumn()

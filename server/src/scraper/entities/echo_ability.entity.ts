@@ -1,8 +1,9 @@
-import {Column, Entity, ManyToMany, PrimaryGeneratedColumn, Unique} from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, Unique} from "typeorm";
 import {EchoLevelRank} from "./echo_level_rank.entity";
+import {EchoEntity} from "./echo.entity";
 
 @Entity()
-@Unique(['rank', 'value'])
+@Unique(['imageUrl', 'rank', 'value'])
 export class EchoAbilityEntity {
     @PrimaryGeneratedColumn()
     id: number;
@@ -16,7 +17,7 @@ export class EchoAbilityEntity {
     @Column()
     value: string
 
-    @ManyToMany(() => EchoLevelRank, levelRank => levelRank.echo_ability)
-    levelRanks: EchoLevelRank[];
+    @ManyToOne(() => EchoEntity, echo => echo.echoAbility)
+    echo: EchoEntity;
 
 }
