@@ -18,6 +18,9 @@ export class EchoEntity {
     @Column()
     imageUrl: string
 
+    @Column({nullable: true})
+    class: string
+
     @Column()
     cost: number
 

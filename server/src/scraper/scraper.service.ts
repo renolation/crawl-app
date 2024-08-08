@@ -863,8 +863,25 @@ export class ScraperService {
         const echosHrefs = echos.map(echo => 'https://wuthering.gg' + echo.href);
         console.log(echosHrefs);
         console.log('Total weapons:', echos.length);
-        await this.scrapeEchoSubStat(echosHrefs);
+        await this.scrapeData(echosHrefs);
         return echosHrefs;
+    }
+
+    async scrapeData(hrefs: string[]) {
+        const crawler = new PlaywrightCrawler({
+            requestHandler: async ({page, request}) => {
+                const classText = await page.$$eval('section.echo div.left div.data div.class', items => {
+                    return items.length > 0 ? items[0].textContent.trim() : 'Class not found';
+                });
+
+                console.log('Class:', classText);
+                const echo = await this.echoRepository.findOne({where: {href: request.url.replace('https://wuthering.gg', '')}});
+                echo.class = classText;
+                await this.echoRepository.save(echo);
+            }
+
+        });
+        await crawler.run(hrefs);
     }
 
     async scrapeEchoSubStat(hrefs: string[]) {
@@ -879,6 +896,8 @@ export class ScraperService {
                         return {value};
                     });
                 });
+
+
                 console.log('Props data: \n', subStat);
                 const subStatObject = {
                     hp: subStat[0]?.value || '',
