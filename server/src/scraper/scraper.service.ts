@@ -1248,16 +1248,16 @@ export class ScraperService {
                                     level: currentLevelValue,
                                     echo: echo
                                 },
-                                relations: ['echoMainStatEntities']
+                                relations: ['echoMainStatEntity']
                             });
 
                             if (existingRank) {
-                                // Check if the mainStatEntity already belongs to the echoMainStatEntities
-                                const mainStatExists = existingRank.echoMainStatEntities.some(stat => stat.id === mainStatEntity.id);
+                                // Check if the mainStatEntity already belongs to the echoMainStatEntity
+                                const mainStatExists = existingRank.echoMainStatEntity.id === mainStatEntity.id;
 
                                 if (!mainStatExists) {
-                                    // If it does not belong, add the new mainStatEntity to the existing ones
-                                    existingRank.echoMainStatEntities.push(mainStatEntity);
+                                    // If it does not belong, add the new mainStatEntity to the existing one
+                                    existingRank.echoMainStatEntity = mainStatEntity;
                                     await this.echoLevelRankRepository.save(existingRank);
                                     console.log('Echo Rank updated with new main stat.');
                                 } else {
@@ -1269,7 +1269,7 @@ export class ScraperService {
                                     rank: currentRankValue,
                                     level: currentLevelValue,
                                     echo: echo,
-                                    echoMainStatEntities: [mainStatEntity],
+                                    echoMainStatEntity: mainStatEntity,
                                     echo_ability: [echoAbility]
                                 });
                                 const savedRank = await this.echoLevelRankRepository.save(newRank);

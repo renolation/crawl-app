@@ -53,17 +53,40 @@ export class GetterService {
     }
 
     async getEchoById(id: number) {
-    const echo = await this.echoRepository.findOne({
-      where: { id },
-      relations: ['levelRanks', 'levelRanks.echoMainStatEntities', 'levelRanks.echo_ability', 'echoSubStat'],
-    });
+        const echo = await this.echoRepository.findOne({
+            where: {id},
+            relations: ['levelRanks', 'levelRanks.echoMainStatEntity', 'levelRanks.echo_ability', 'echoSubStat'],
+        });
 
-    if (!echo) {
-      throw new Error(`Echo with id ${id} not found`);
+        if (!echo) {
+            throw new Error(`Echo with id ${id} not found`);
+        }
+
+        const uniqueEchoAbilities = new Map<number, any>();
+
+        echo.levelRanks
+            .filter(levelRank => levelRank.level === 0)
+            .forEach(levelRank => {
+                levelRank.echo_ability.forEach(ability => {
+                    if (!uniqueEchoAbilities.has(ability.rank)) {
+                        uniqueEchoAbilities.set(ability.rank, ability);
+                    }
+                });
+            });
+
+        const echoAbilitiesList = Array.from(uniqueEchoAbilities.values());
+
+        // Remove echo_ability from levelRanks
+        echo.levelRanks.forEach(levelRank => {
+            delete levelRank.echo_ability;
+        });
+
+
+        return {
+            ...echo,
+            echo_ability: echoAbilitiesList
+        };
     }
-
-    return echo;
-  }
 
 
     findAll() {

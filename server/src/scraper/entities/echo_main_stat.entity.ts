@@ -52,8 +52,7 @@ export class EchoMainStatEntity {
     @Column({nullable: true})
     energy_regen: string
 
-    @ManyToOne(() => EchoLevelRank, levelRank => levelRank.echoMainStatEntities)
-    @JoinColumn()
+    @ManyToOne(() => EchoLevelRank, levelRank => levelRank.echoMainStatEntity)
     echoLevelRank: EchoLevelRank;
 
 }
