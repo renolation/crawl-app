@@ -15,6 +15,18 @@ export class CharacterEntity {
     @Column()
     imageUrl: string
 
+    @Column({nullable: true})
+    mainImageUrl: string
+
+    @Column({nullable: true})
+    buble: string
+
+    @Column({nullable: true})
+    birthday: string
+
+    @Column({nullable: true})
+    introduction: string
+
     @ManyToOne(() => CharacterEntity, character => character.characterElement)
     characterElement: CharElementEntity;
 }

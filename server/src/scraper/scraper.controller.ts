@@ -69,7 +69,7 @@ export class ScraperController {
 
     @Get('echo/get_main_stat')
     async getMainStat() {
-        return await this.scraperService.scrapeEchoMainStat();
+        // return await this.scraperService.scrapeEchoMainStat();
     }
 
     @Get('char/get_elements')

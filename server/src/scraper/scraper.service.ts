@@ -859,11 +859,22 @@ export class ScraperService {
 
 
     async scrapeEchosHref() {
-        const echos = await this.echoRepository.find();
+
+        const echos = await this.echoRepository.createQueryBuilder('echo')
+            .leftJoinAndSelect('echo.levelRanks', 'levelRank')
+            .select(['echo.id', 'echo.name', 'echo.href'])
+            .addSelect('COUNT(levelRank.id)', 'rank_count')
+            .groupBy('echo.id')
+            .addGroupBy('echo.name')
+            .addGroupBy('echo.href')
+            .orderBy('rank_count', 'ASC')
+            .getMany();
+
+
         const echosHrefs = echos.map(echo => 'https://wuthering.gg' + echo.href);
         console.log(echosHrefs);
         console.log('Total weapons:', echos.length);
-        await this.scrapeData(echosHrefs);
+        await this.scrapeEchoMainStat(echosHrefs);
         return echosHrefs;
     }
 
@@ -1125,11 +1136,12 @@ export class ScraperService {
         }
     }
 
-    async scrapeEchoMainStat() {
+    async scrapeEchoMainStat(hrefs: string[]) {
 
 
         const crawler = new PlaywrightCrawler({
-            requestHandlerTimeoutSecs: 1800,
+            requestHandlerTimeoutSecs: 36009,
+            maxConcurrency: 5,
             // headless: false,
             requestHandler: async ({page, request}) => {
 
@@ -1249,7 +1261,7 @@ export class ScraperService {
 
             }
         });
-        await crawler.run(['https://wuthering.gg/echos/flautist']);
+        await crawler.run(hrefs);
     }
 
     toSnakeCase(str: string): string {
