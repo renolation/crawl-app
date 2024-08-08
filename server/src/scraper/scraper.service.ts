@@ -1138,11 +1138,10 @@ export class ScraperService {
 
     async scrapeEchoMainStat(hrefs: string[]) {
 
-
         const crawler = new PlaywrightCrawler({
             requestHandlerTimeoutSecs: 36009,
-            maxConcurrency: 2,
             // headless: false,
+            maxConcurrency: 1,
             requestHandler: async ({page, request}) => {
 
                 await page.waitForSelector('.slider-handle-lower', {timeout: 1000});
@@ -1189,7 +1188,10 @@ export class ScraperService {
                         : (correctedSliderRankOffsetWidth / (rankMaxValue - rankMinValue)) * (valueRank - rankMinValue);
                     positionsRank.push(positionXRank);
                 }
+                await sliderLevelTrack.click({force: true, position: {x: positionsLevel[0], y: 0}});
+                await sliderRankTrack.click({force: true, position: {x: positionsRank[0], y: 0}});
 
+                await sleep(1000);
                 for (let i = 0; i < positionsLevel.length; i++) {
                     await sliderLevelTrack.click({force: true, position: {x: positionsLevel[i], y: 0}});
                     await sleep(1000);
@@ -1206,6 +1208,7 @@ export class ScraperService {
                         });
                         console.log('Level:', currentLevelValue);
                         console.log('Rank:', currentRankValue);
+
                         //region mainStat
 
                         const mainStat = await page.$$eval('div.props.main div.list div.prop', items => {
@@ -1235,7 +1238,7 @@ export class ScraperService {
 
                         //region save to db
                         const echo = await this.echoRepository.findOne({where: {href: request.url.replace('https://wuthering.gg', '')}});
-                         await this.saveAbilityToDatabase(echo,imageSrc, parseInt(rank, 10), abilityDetail);
+                        await this.saveAbilityToDatabase(echo, imageSrc, parseInt(rank, 10), abilityDetail);
 
                         try {
                             // Save the main stat entity
