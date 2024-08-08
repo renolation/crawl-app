@@ -29,7 +29,7 @@ export class EchoLevelRank {
     @ManyToOne(() => EchoEntity, echo => echo.levelRanks)
     echo: EchoEntity;
 
-    @ManyToMany(() => EchoAbilityEntity)
+    @ManyToMany(() => EchoAbilityEntity, ability => ability.levelRanks)
     @JoinTable()
     echo_ability: EchoAbilityEntity[];
 

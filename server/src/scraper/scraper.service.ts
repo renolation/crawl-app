@@ -1225,7 +1225,6 @@ export class ScraperService {
                         // console.log('Props data: \n', mainStat);
                         const entity = this.mapToEntity(mainStat);
                         // console.log('Entity:', entity);
-                        const mainStatEntity = await this.saveMainStatToDatabase(entity);
                         //endregion
 
                         //region get ability
@@ -1239,15 +1238,44 @@ export class ScraperService {
                         const echo = await this.echoRepository.findOne({where: {href: request.url.replace('https://wuthering.gg', '')}});
 
                         try {
-                            const newRank = this.echoLevelRankRepository.create({
-                                rank: currentRankValue,
-                                level: currentLevelValue,
-                                echo: echo,
-                                echoMainStatEntities: [mainStatEntity],
-                                echo_ability: [echoAbility]
+                            // Save the main stat entity
+                            const mainStatEntity = await this.saveMainStatToDatabase(entity);
+
+                            // Check if the EchoLevelRank already exists
+                            const existingRank = await this.echoLevelRankRepository.findOne({
+                                where: {
+                                    rank: currentRankValue,
+                                    level: currentLevelValue,
+                                    echo: echo
+                                },
+                                relations: ['echoMainStatEntities']
                             });
-                            const savedRank = await this.echoLevelRankRepository.save(newRank);
-                            await sleep(100);
+
+                            if (existingRank) {
+                                // Check if the mainStatEntity already belongs to the echoMainStatEntities
+                                const mainStatExists = existingRank.echoMainStatEntities.some(stat => stat.id === mainStatEntity.id);
+
+                                if (!mainStatExists) {
+                                    // If it does not belong, add the new mainStatEntity to the existing ones
+                                    existingRank.echoMainStatEntities.push(mainStatEntity);
+                                    await this.echoLevelRankRepository.save(existingRank);
+                                    console.log('Echo Rank updated with new main stat.');
+                                } else {
+                                    console.log('Main stat already exists in the Echo Rank.');
+                                }
+                            } else {
+                                // If it does not exist, create a new EchoLevelRank
+                                const newRank = this.echoLevelRankRepository.create({
+                                    rank: currentRankValue,
+                                    level: currentLevelValue,
+                                    echo: echo,
+                                    echoMainStatEntities: [mainStatEntity],
+                                    echo_ability: [echoAbility]
+                                });
+                                const savedRank = await this.echoLevelRankRepository.save(newRank);
+                                await sleep(100);
+                                console.log('New Echo Rank created and saved.');
+                            }
                         } catch (error) {
                             if (error.code === '23505') { // Unique constraint violation
                                 console.log('Echo Rank already exists, skipping save.');
@@ -1265,7 +1293,7 @@ export class ScraperService {
 
             }
         });
-        await crawler.run(hrefs);
+        await crawler.run(['https://wuthering.gg/echos/flautist']);
     }
 
     toSnakeCase(str: string): string {
