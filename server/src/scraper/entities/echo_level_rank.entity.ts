@@ -33,8 +33,7 @@ export class EchoLevelRank {
     @JoinTable()
     echo_ability: EchoAbilityEntity[];
 
-    @OneToMany(() => EchoMainStatEntity, mainStat => mainStat.echoLevelRank, {cascade: true})
-    @JoinColumn()
+    @OneToMany(() => EchoMainStatEntity, mainStat => mainStat.echoLevelRank)
     echoMainStatEntities: EchoMainStatEntity[];
 
 }

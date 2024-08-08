@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn} from "typeorm";
 import {EchoLevelRank} from "./echo_level_rank.entity";
 
 @Entity()
@@ -53,6 +53,7 @@ export class EchoMainStatEntity {
     energy_regen: string
 
     @ManyToOne(() => EchoLevelRank, levelRank => levelRank.echoMainStatEntities)
+    @JoinColumn()
     echoLevelRank: EchoLevelRank;
 
 }

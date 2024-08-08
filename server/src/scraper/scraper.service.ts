@@ -1141,7 +1141,7 @@ export class ScraperService {
 
         const crawler = new PlaywrightCrawler({
             requestHandlerTimeoutSecs: 36009,
-            maxConcurrency: 5,
+            maxConcurrency: 2,
             // headless: false,
             requestHandler: async ({page, request}) => {
 
@@ -1250,7 +1250,7 @@ export class ScraperService {
                             await sleep(100);
                         } catch (error) {
                             if (error.code === '23505') { // Unique constraint violation
-                                console.log('Rank already exists, skipping save.');
+                                console.log('Echo Rank already exists, skipping save.');
                             } else {
                                 throw error;
                             }
@@ -1303,10 +1303,10 @@ export class ScraperService {
                 value: abilityDetail,
             });
             await this.echoAbilityRepository.save(newAbility);
-            console.log('Ability saved to database:', newAbility);
+            // console.log('Ability saved to database:', newAbility);
             return newAbility;
         } else {
-            console.log('Ability already exists:', existingAbility);
+            // console.log('Ability already exists:', existingAbility);
             return existingAbility;
         }
     }
