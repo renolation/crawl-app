@@ -1199,7 +1199,7 @@ export class ScraperService {
                         const handle = el.querySelector('.slider-handle-lower');
                         return handle ? parseInt(handle.getAttribute('aria-valuenow'), 10) : null;
                     });
-                    for (let j = 0; j < positionsRank.length; j++) {
+                    for (let j = 1; j < positionsRank.length; j++) {
                         await sliderRankTrack.click({force: true, position: {x: positionsRank[j], y: 0}});
                         await sleep(1000);
                         const currentRankValue = await sliderRankTrack.evaluate(el => {
@@ -1241,30 +1241,90 @@ export class ScraperService {
                         await this.saveAbilityToDatabase(echo, imageSrc, parseInt(rank, 10), abilityDetail);
 
                         try {
-                            // Save the main stat entity
-                            const mainStatEntity = await this.saveMainStatToDatabase(entity);
-
                             // Check if the EchoLevelRank already exists
                             const existingRank = await this.echoLevelRankRepository.findOne({
                                 where: {
                                     rank: currentRankValue,
                                     level: currentLevelValue,
-                                    echo: echo
+                                    echo: echo,
                                 },
-                                relations: ['echoMainStatEntity']
                             });
 
                             if (existingRank) {
-                                // Check if the mainStatEntity already belongs to the echoMainStatEntity
-                                const mainStatExists = existingRank.echoMainStatEntity.id === mainStatEntity.id;
+                                // Check if a main stat entity with the same attributes already exists
+                                const existMainStat = await this.echoMainStatRepository.findOne({
+                                    where: {
+                                        atk: entity.atk,
+                                        atk_percent: entity.atk_percent,
+                                        hp: entity.hp,
+                                        hp_percent: entity.hp_percent,
+                                        def_percent: entity.def_percent,
+                                        crit_rate: entity.crit_rate,
+                                        crit_dmg: entity.crit_dmg,
+                                        healing_bonus: entity.healing_bonus,
+                                        glacio_dmg_bonus: entity.glacio_dmg_bonus,
+                                        fusion_dmg_bonus: entity.fusion_dmg_bonus,
+                                        electro_dmg_bonus: entity.electro_dmg_bonus,
+                                        aero_dmg_bonus: entity.aero_dmg_bonus,
+                                        spectro_dmg_bonus: entity.spectro_dmg_bonus,
+                                        havoc_dmg_bonus: entity.havoc_dmg_bonus,
+                                        energy_regen: entity.energy_regen,
+                                    },
+                                    relations: ['echoLevelRank'],
+                                });
 
-                                if (!mainStatExists) {
-                                    // If it does not belong, add the new mainStatEntity to the existing one
-                                    existingRank.echoMainStatEntity = mainStatEntity;
+                                if (existMainStat) {
+                                    if (existMainStat.echoLevelRank && existMainStat.echoLevelRank.id === existingRank.id) {
+                                        console.log('Main stat already exists in the Echo Rank.');
+                                    } else {
+                                        // Create a new main stat entity and associate it with the current EchoLevelRank
+                                        const newMainStat = this.echoMainStatRepository.create({
+                                            atk: entity.atk,
+                                            atk_percent: entity.atk_percent,
+                                            hp: entity.hp,
+                                            hp_percent: entity.hp_percent,
+                                            def_percent: entity.def_percent,
+                                            crit_rate: entity.crit_rate,
+                                            crit_dmg: entity.crit_dmg,
+                                            healing_bonus: entity.healing_bonus,
+                                            glacio_dmg_bonus: entity.glacio_dmg_bonus,
+                                            fusion_dmg_bonus: entity.fusion_dmg_bonus,
+                                            electro_dmg_bonus: entity.electro_dmg_bonus,
+                                            aero_dmg_bonus: entity.aero_dmg_bonus,
+                                            spectro_dmg_bonus: entity.spectro_dmg_bonus,
+                                            havoc_dmg_bonus: entity.havoc_dmg_bonus,
+                                            energy_regen: entity.energy_regen,
+                                            echoLevelRank: existingRank,
+                                        });
+                                        await this.echoMainStatRepository.save(newMainStat);
+                                        existingRank.echoMainStatEntity = newMainStat;
+                                        await this.echoLevelRankRepository.save(existingRank);
+                                        console.log('Echo Rank updated with new main stat.');
+                                    }
+                                } else {
+                                    // Create a new main stat entity if it does not exist
+                                    const newMainStat = this.echoMainStatRepository.create({
+                                        atk: entity.atk,
+                                        atk_percent: entity.atk_percent,
+                                        hp: entity.hp,
+                                        hp_percent: entity.hp_percent,
+                                        def_percent: entity.def_percent,
+                                        crit_rate: entity.crit_rate,
+                                        crit_dmg: entity.crit_dmg,
+                                        healing_bonus: entity.healing_bonus,
+                                        glacio_dmg_bonus: entity.glacio_dmg_bonus,
+                                        fusion_dmg_bonus: entity.fusion_dmg_bonus,
+                                        electro_dmg_bonus: entity.electro_dmg_bonus,
+                                        aero_dmg_bonus: entity.aero_dmg_bonus,
+                                        spectro_dmg_bonus: entity.spectro_dmg_bonus,
+                                        havoc_dmg_bonus: entity.havoc_dmg_bonus,
+                                        energy_regen: entity.energy_regen,
+                                        echoLevelRank: existingRank,
+                                    });
+                                    await this.echoMainStatRepository.save(newMainStat);
+                                    existingRank.echoMainStatEntity = newMainStat;
                                     await this.echoLevelRankRepository.save(existingRank);
                                     console.log('Echo Rank updated with new main stat.');
-                                } else {
-                                    console.log('Main stat already exists in the Echo Rank.');
                                 }
                             } else {
                                 // If it does not exist, create a new EchoLevelRank
@@ -1272,7 +1332,7 @@ export class ScraperService {
                                     rank: currentRankValue,
                                     level: currentLevelValue,
                                     echo: echo,
-                                    echoMainStatEntity: mainStatEntity,
+                                    echoMainStatEntity: entity,
                                 });
                                 const savedRank = await this.echoLevelRankRepository.save(newRank);
                                 await sleep(100);
@@ -1342,19 +1402,16 @@ export class ScraperService {
         }
     }
 
-    async saveMainStatToDatabase(mainStat: CreateEchoMainStatDto) {
+    async saveMainStatToDatabase(existingRank: EchoLevelRank, mainStat: CreateEchoMainStatDto) {
         const existMainStat = await this.echoMainStatRepository.findOne({
             where: {
                 atk: mainStat.atk,
                 atk_percent: mainStat.atk_percent,
-
                 hp: mainStat.hp,
                 hp_percent: mainStat.hp_percent,
-
                 def_percent: mainStat.def_percent,
                 crit_rate: mainStat.crit_rate,
                 crit_dmg: mainStat.crit_dmg,
-
                 healing_bonus: mainStat.healing_bonus,
                 glacio_dmg_bonus: mainStat.glacio_dmg_bonus,
                 fusion_dmg_bonus: mainStat.fusion_dmg_bonus,
@@ -1364,8 +1421,19 @@ export class ScraperService {
                 havoc_dmg_bonus: mainStat.havoc_dmg_bonus,
                 energy_regen: mainStat.energy_regen,
             },
+            relations: ['echoLevelRank'],
         });
-        if (!existMainStat) {
+        if (existMainStat) {
+            if (existMainStat.echoLevelRank && existMainStat.echoLevelRank.id === existingRank.id) {
+                return existMainStat; // Skip if it already belongs
+            } else {
+                // Set the EchoLevelRank to the existing main stat entity
+                existMainStat.echoLevelRank = existingRank;
+                await this.echoMainStatRepository.save(existMainStat);
+                return existMainStat;
+            }
+        } else {
+            // Create a new main stat entity if it does not exist
             const newMainStat = this.echoMainStatRepository.create({
                 atk: mainStat.atk,
                 atk_percent: mainStat.atk_percent,
@@ -1382,13 +1450,11 @@ export class ScraperService {
                 spectro_dmg_bonus: mainStat.spectro_dmg_bonus,
                 havoc_dmg_bonus: mainStat.havoc_dmg_bonus,
                 energy_regen: mainStat.energy_regen,
-
+                echoLevelRank: existingRank,
             });
             await this.echoMainStatRepository.save(newMainStat);
             console.log('MainStat saved to database:', newMainStat);
             return newMainStat;
-        } else {
-            return existMainStat;
         }
     }
 }

@@ -31,7 +31,6 @@ export class EchoLevelRank {
 
 
     @OneToOne(() => EchoMainStatEntity, mainStat => mainStat.echoLevelRank)
-    @JoinColumn()
     echoMainStatEntity: EchoMainStatEntity;
 
 }
