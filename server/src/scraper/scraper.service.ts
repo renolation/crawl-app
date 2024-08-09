@@ -53,6 +53,8 @@ export class ScraperService {
         private echoAbilityRepository: Repository<EchoAbilityEntity>,
         @InjectRepository(EchoLevelRank)
         private echoLevelRankRepository: Repository<EchoLevelRank>,
+        @InjectRepository(CharacterEntity)
+        private characterEntityRepository: Repository<CharacterEntity>,
     ) {
     }
 
@@ -1477,5 +1479,25 @@ export class ScraperService {
             console.log('MainStat saved to database:', newMainStat);
             return newMainStat;
         }
+    }
+
+    async charGetInfo() {
+        const crawler = new PlaywrightCrawler({
+            requestHandler: async ({page, request}) => {
+                console.log(`Processing: ${request.url}`);
+                await page.waitForSelector('div.info', {timeout: 20000});
+                const description = await page.$eval('div.right div.info div.container p.description', item => item.textContent.trim());
+                const buble = await page.$eval(' div.right div.info div.bubles-info div.buble p', item => item.textContent.trim());
+                const birthday = await page.$eval(' div.right div.info div.bubles-info div.buble.birthday p', item => item.textContent.trim());
+
+
+                console.log('description:', description);
+                console.log('buble:', buble);
+                console.log('birthday:', birthday);
+            },
+            headless: false,
+
+        });
+        await crawler.run(['https://wuthering.gg/characters/lingyang']);
     }
 }

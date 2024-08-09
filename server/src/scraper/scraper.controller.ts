@@ -82,6 +82,11 @@ export class ScraperController {
         return await this.scraperService.scrapeCharacter();
     }
 
+    @Get('char/get_info')
+    async charGetInfo() {
+        return await this.scraperService.charGetInfo();
+    }
+
     @Post()
     create(@Body() createScraperDto: CreateScraperDto) {
         return this.scraperService.create(createScraperDto);

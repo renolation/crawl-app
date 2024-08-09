@@ -12,6 +12,10 @@ export class CharacterEntity {
     @Column()
     href: string
 
+
+    @Column({nullable: true})
+    rarity: number
+    
     @Column()
     imageUrl: string
 
@@ -20,6 +24,9 @@ export class CharacterEntity {
 
     @Column({nullable: true})
     buble: string
+
+    @Column({nullable: true})
+    description: string
 
     @Column({nullable: true})
     birthday: string

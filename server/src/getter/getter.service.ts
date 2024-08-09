@@ -55,7 +55,7 @@ export class GetterService {
     async getEchoById(id: number) {
         const echo = await this.echoRepository.findOne({
             where: {id},
-            relations: ['levelRanks', 'levelRanks.echoMainStatEntity', 'echoSubStat', 'echoAbility'],
+            relations: ['levelRanks', 'levelRanks.echoMainStatEntity', 'echoSubStat', 'echoAbility', 'sonataEffects'],
         });
 
         if (!echo) {
