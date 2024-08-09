@@ -31,7 +31,13 @@ export class GetterService {
     async findAllCharacters() {
         return await this.characterRepository.find(
             {
-                relations: ['characterElement']
+                relations: ['characterElement'],
+                select: {
+                    characterElement: {
+                        name: true, imageUrl: true
+                    }
+                }
+
             }
         );
     }

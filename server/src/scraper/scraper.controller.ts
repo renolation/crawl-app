@@ -84,7 +84,7 @@ export class ScraperController {
 
     @Get('char/get_info')
     async charGetInfo() {
-        return await this.scraperService.charGetInfo();
+        return await this.scraperService.scrapeAllCharacter();
     }
 
     @Post()

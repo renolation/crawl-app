@@ -585,6 +585,14 @@ export class ScraperService {
         console.log('Total weapons:', weapons.length);
     }
 
+    async scrapeAllCharacter() {
+        const characters = await this.characterRepository.find();
+        const characterHrefs = characters.map(weapon => 'https://wuthering.gg' + weapon.href);
+        await this.charGetInfo(characterHrefs);
+        console.log(characterHrefs);
+        console.log('Total weapons:', characters.length);
+    }
+
     async scrapeAllWeaponsDetail() {
         // const weapons = await this.weaponRepository.find();
         const weapons = await this.weaponRepository.createQueryBuilder('weapon')
@@ -1481,7 +1489,7 @@ export class ScraperService {
         }
     }
 
-    async charGetInfo() {
+    async charGetInfo(hrefs: string[]) {
         const crawler = new PlaywrightCrawler({
             requestHandler: async ({page, request}) => {
                 console.log(`Processing: ${request.url}`);
@@ -1490,14 +1498,18 @@ export class ScraperService {
                 const buble = await page.$eval(' div.right div.info div.bubles-info div.buble p', item => item.textContent.trim());
                 const birthday = await page.$eval(' div.right div.info div.bubles-info div.buble.birthday p', item => item.textContent.trim());
 
-
+                const character = await this.characterRepository.findOne({where: {href: request.url.replace('https://wuthering.gg', '')}});
                 console.log('description:', description);
                 console.log('buble:', buble);
                 console.log('birthday:', birthday);
+                character.buble = buble;
+                character.birthday = birthday;
+                character.description = description;
+                await this.characterRepository.save(character);
             },
-            headless: false,
-
+            // headless: false,
+            maxConcurrency: 1,
         });
-        await crawler.run(['https://wuthering.gg/characters/lingyang']);
+        await crawler.run(hrefs);
     }
 }
