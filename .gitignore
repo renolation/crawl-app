@@ -1,3 +1,4 @@
 ﻿storage
 node_modules
 dist
+server/src/common/files/renolation.json
