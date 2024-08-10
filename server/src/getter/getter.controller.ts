@@ -23,6 +23,11 @@ export class GetterController {
         return this.getterService.findAllCharacters();
     }
 
+        @Get('list-character-elements')
+    listCharacterElements() {
+        return this.getterService.findAllCharacterElements();
+    }
+
     @Get('list-echos')
     listEchos() {
         return this.getterService.findAllEchos();

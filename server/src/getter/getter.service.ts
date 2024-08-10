@@ -7,6 +7,7 @@ import {Repository} from "typeorm";
 import {EchoEntity} from "../scraper/entities/echo.entity";
 import {WeaponEntity} from "../scraper/entities/weapon.entity";
 import {ItemEntity} from "../scraper/entities/item.entity";
+import {CharElementEntity} from "../scraper/entities/char_element.entity";
 
 @Injectable()
 export class GetterService {
@@ -20,6 +21,8 @@ export class GetterService {
         private weaponRepository: Repository<WeaponEntity>,
         @InjectRepository(ItemEntity)
         private itemRepository: Repository<ItemEntity>,
+        @InjectRepository(CharElementEntity)
+        private charElementRepository: Repository<CharElementEntity>,
     ) {
     }
 
@@ -47,6 +50,11 @@ export class GetterService {
             {
                 relations: ['sonataEffects']
             }
+        );
+    }
+
+    async findAllCharacterElements() {
+        return await this.charElementRepository.find(
         );
     }
 
