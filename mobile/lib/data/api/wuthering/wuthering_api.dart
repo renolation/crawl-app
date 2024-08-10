@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:mobile/data/dto/character_element/character_element_dto.dart';
 import 'package:retrofit/retrofit.dart';
+
+import '../../../domains/character_element/character_element_entity.dart';
 
 
 part 'wuthering_api.g.dart';
@@ -12,6 +13,6 @@ abstract class WutheringApi {
   }) = _WutheringApi;
 
   @GET('/getter/list-character-elements')
-  Future<List<CharacterElementDTO>> getCharacterElements();
+  Future<List<CharacterElementEntity>> getCharacterElements();
 
 }

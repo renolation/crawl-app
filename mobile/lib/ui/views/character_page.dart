@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile/data/providers/get_character_elements.dart';
+import 'package:mobile/data/providers/fetch_character_elements.dart';
 
 class CharacterPage extends ConsumerWidget {
   const CharacterPage({super.key});
@@ -16,7 +16,7 @@ class CharacterPage extends ConsumerWidget {
       body: Column(
         children: [
           Consumer(builder: (context, ref, child) {
-          final characterElements = ref.watch(getCharacterElementsProvider);
+          final characterElements = ref.watch(fetchCharacterElementsProvider);
           return characterElements.when(data: (data) {
             // return Text(data.length.toString());
             return Expanded(

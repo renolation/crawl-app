@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'character_element_dto.dart';
+part of 'character_element_entity.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,35 +14,37 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-CharacterElementDTO _$CharacterElementDTOFromJson(Map<String, dynamic> json) {
+CharacterElementEntity _$CharacterElementEntityFromJson(
+    Map<String, dynamic> json) {
   return _CharacterElementDTO.fromJson(json);
 }
 
 /// @nodoc
-mixin _$CharacterElementDTO {
+mixin _$CharacterElementEntity {
   int? get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $CharacterElementDTOCopyWith<CharacterElementDTO> get copyWith =>
+  $CharacterElementEntityCopyWith<CharacterElementEntity> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $CharacterElementDTOCopyWith<$Res> {
-  factory $CharacterElementDTOCopyWith(
-          CharacterElementDTO value, $Res Function(CharacterElementDTO) then) =
-      _$CharacterElementDTOCopyWithImpl<$Res, CharacterElementDTO>;
+abstract class $CharacterElementEntityCopyWith<$Res> {
+  factory $CharacterElementEntityCopyWith(CharacterElementEntity value,
+          $Res Function(CharacterElementEntity) then) =
+      _$CharacterElementEntityCopyWithImpl<$Res, CharacterElementEntity>;
   @useResult
   $Res call({int? id, String? name, String? imageUrl});
 }
 
 /// @nodoc
-class _$CharacterElementDTOCopyWithImpl<$Res, $Val extends CharacterElementDTO>
-    implements $CharacterElementDTOCopyWith<$Res> {
-  _$CharacterElementDTOCopyWithImpl(this._value, this._then);
+class _$CharacterElementEntityCopyWithImpl<$Res,
+        $Val extends CharacterElementEntity>
+    implements $CharacterElementEntityCopyWith<$Res> {
+  _$CharacterElementEntityCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -75,7 +77,7 @@ class _$CharacterElementDTOCopyWithImpl<$Res, $Val extends CharacterElementDTO>
 
 /// @nodoc
 abstract class _$$CharacterElementDTOImplCopyWith<$Res>
-    implements $CharacterElementDTOCopyWith<$Res> {
+    implements $CharacterElementEntityCopyWith<$Res> {
   factory _$$CharacterElementDTOImplCopyWith(_$CharacterElementDTOImpl value,
           $Res Function(_$CharacterElementDTOImpl) then) =
       __$$CharacterElementDTOImplCopyWithImpl<$Res>;
@@ -86,7 +88,8 @@ abstract class _$$CharacterElementDTOImplCopyWith<$Res>
 
 /// @nodoc
 class __$$CharacterElementDTOImplCopyWithImpl<$Res>
-    extends _$CharacterElementDTOCopyWithImpl<$Res, _$CharacterElementDTOImpl>
+    extends _$CharacterElementEntityCopyWithImpl<$Res,
+        _$CharacterElementDTOImpl>
     implements _$$CharacterElementDTOImplCopyWith<$Res> {
   __$$CharacterElementDTOImplCopyWithImpl(_$CharacterElementDTOImpl _value,
       $Res Function(_$CharacterElementDTOImpl) _then)
@@ -133,7 +136,7 @@ class _$CharacterElementDTOImpl implements _CharacterElementDTO {
 
   @override
   String toString() {
-    return 'CharacterElementDTO(id: $id, name: $name, imageUrl: $imageUrl)';
+    return 'CharacterElementEntity(id: $id, name: $name, imageUrl: $imageUrl)';
   }
 
   @override
@@ -166,7 +169,7 @@ class _$CharacterElementDTOImpl implements _CharacterElementDTO {
   }
 }
 
-abstract class _CharacterElementDTO implements CharacterElementDTO {
+abstract class _CharacterElementDTO implements CharacterElementEntity {
   const factory _CharacterElementDTO(
       {final int? id,
       final String? name,

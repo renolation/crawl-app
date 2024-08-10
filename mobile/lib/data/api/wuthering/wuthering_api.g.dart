@@ -19,13 +19,13 @@ class _WutheringApi implements WutheringApi {
   String? baseUrl;
 
   @override
-  Future<List<CharacterElementDTO>> getCharacterElements() async {
+  Future<List<CharacterElementEntity>> getCharacterElements() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio
-        .fetch<List<dynamic>>(_setStreamType<List<CharacterElementDTO>>(Options(
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<CharacterElementEntity>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -43,7 +43,7 @@ class _WutheringApi implements WutheringApi {
             ))));
     var _value = _result.data!
         .map((dynamic i) =>
-            CharacterElementDTO.fromJson(i as Map<String, dynamic>))
+            CharacterElementEntity.fromJson(i as Map<String, dynamic>))
         .toList();
     return _value;
   }

@@ -1,27 +1,28 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_character_elements.dart';
+part of 'fetch_character_elements.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getCharacterElementsHash() =>
-    r'f231999f83d62cae108c4f6fcf84fbd2e2c31c2a';
+String _$fetchCharacterElementsHash() =>
+    r'1080298fc5ea65af82d6ce04302f297e626c9071';
 
-/// See also [GetCharacterElements].
-@ProviderFor(GetCharacterElements)
-final getCharacterElementsProvider = AsyncNotifierProvider<GetCharacterElements,
-    List<CharacterElementDTO>>.internal(
-  GetCharacterElements.new,
-  name: r'getCharacterElementsProvider',
+/// See also [fetchCharacterElements].
+@ProviderFor(fetchCharacterElements)
+final fetchCharacterElementsProvider =
+    FutureProvider<List<CharacterElementEntity>>.internal(
+  fetchCharacterElements,
+  name: r'fetchCharacterElementsProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$getCharacterElementsHash,
+      : _$fetchCharacterElementsHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$GetCharacterElements = AsyncNotifier<List<CharacterElementDTO>>;
+typedef FetchCharacterElementsRef
+    = FutureProviderRef<List<CharacterElementEntity>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
