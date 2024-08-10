@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile/config/routes.dart';
+import 'package:mobile/ui/views/character_page.dart';
 import 'package:mobile/ui/views/home_page.dart';
 
 // import 'package:google_nav_bar/google_nav_bar.dart';
@@ -26,15 +28,23 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             StatefulShellBranch(routes: [
               GoRoute(
                 path: '/breeding',
-                name: AppRoute.breeding.name,
+                name: 'AppRoute.breeding.name',
                 builder: (context, state) => const HomePage(),
               ),
             ]),
             StatefulShellBranch(navigatorKey: _sectionANavigatorKey, routes: [
               GoRoute(
-                path: '/',
-                name: AppRoute.home.name,
+                path: Routes.home,
+                name: Routes.home,
                 builder: (context, state) => const HomePage(),
+                routes: [
+                  GoRoute(
+                    path: Routes.character,
+                    name: Routes.character,
+                    builder: (context, state) => const CharacterPage(),
+                  ),
+
+                ]
               ),
 
               // GoRoute(
@@ -51,7 +61,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             StatefulShellBranch(routes: [
               GoRoute(
                 path: '/items',
-                name: AppRoute.item.name,
+                name: 'AppRoute.item.name',
                 builder: (context, state) => const HomePage(),
                 // routes: [
                 //   GoRoute(

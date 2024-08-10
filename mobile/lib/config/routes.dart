@@ -1,7 +1,7 @@
 abstract class Routes {
-  static const root = '/';
+  static const home = '/';
   static const login = '/login';
-  static const library = '/library';
+  static const character = 'character';
   static const listen = '/listen';
   static const search = '/search';
   static const artist = '/artist';

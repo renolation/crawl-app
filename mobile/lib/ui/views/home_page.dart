@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../config/routes.dart';
+import '../../core/enums/enums.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -17,7 +21,7 @@ class HomePage extends ConsumerWidget {
           children: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/character');
+                context.goNamed(Routes.character);
               },
               child: const Text('Character Page'),
             ),
