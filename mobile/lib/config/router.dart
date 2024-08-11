@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/config/routes.dart';
-import 'package:mobile/ui/views/character_page.dart';
-import 'package:mobile/ui/views/home_page.dart';
+import 'package:mobile/presentations/views/character_page.dart';
+import 'package:mobile/presentations/views/echo_page.dart';
+import 'package:mobile/presentations/views/home_page.dart';
 
 // import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -24,27 +25,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             return ScaffoldWithNavBar(navigationShell: navigationShell);
           },
           branches: [
-
-            StatefulShellBranch(routes: [
-              GoRoute(
-                path: '/breeding',
-                name: 'AppRoute.breeding.name',
-                builder: (context, state) => const HomePage(),
-              ),
-            ]),
             StatefulShellBranch(navigatorKey: _sectionANavigatorKey, routes: [
               GoRoute(
-                path: Routes.home,
-                name: Routes.home,
-                builder: (context, state) => const HomePage(),
-                routes: [
-                  GoRoute(
-                    path: Routes.character,
-                    name: Routes.character,
-                    builder: (context, state) => const CharacterPage(),
-                  ),
+                  path: Routes.home,
+                  name: Routes.home,
+                  builder: (context, state) => const HomePage(),
+                  routes: [
+                    GoRoute(
+                      path: Routes.character,
+                      name: Routes.character,
+                      builder: (context, state) => const CharacterPage(),
+                    ),
 
-                ]
+                  ]
               ),
 
               // GoRoute(
@@ -58,10 +51,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               //   },
               // ),
             ]),
+
             StatefulShellBranch(routes: [
               GoRoute(
-                path: '/items',
-                name: 'AppRoute.item.name',
+                path: Routes.echo,
+                name: Routes.echo,
+                builder: (context, state) => const EchoPage(),
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                path: Routes.settings,
+                name: Routes.settings,
                 builder: (context, state) => const HomePage(),
                 // routes: [
                 //   GoRoute(
@@ -82,7 +83,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   );
 });
 
-class ScaffoldWithNavBar extends StatelessWidget {
+class ScaffoldWithNavBar extends ConsumerWidget {
   const ScaffoldWithNavBar({
     required this.navigationShell,
     Key? key,
@@ -91,7 +92,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    Future(() {
+      ref.read(navigationShellProvider.notifier).state = navigationShell;
+    });
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: Container(
@@ -141,3 +145,5 @@ class ScaffoldWithNavBar extends StatelessWidget {
     );
   }
 }
+
+final navigationShellProvider = StateProvider<StatefulNavigationShell?>((ref) => null);

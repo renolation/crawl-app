@@ -1,6 +1,6 @@
 abstract class Routes {
   static const home = '/';
-  static const login = '/login';
+  static const echo = '/echo';
   static const character = 'character';
   static const listen = '/listen';
   static const search = '/search';
