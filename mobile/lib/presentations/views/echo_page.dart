@@ -27,7 +27,7 @@ class EchoPage extends HookConsumerWidget {
         children: [
           Consumer(builder: (context, ref, child) {
             final sonataData = ref.watch(fetchSonataEffectProvider);
-            return Container(
+            return SizedBox(
               height: 100,
               child: switch (sonataData) {
                 AsyncData(:final value) => ListView.builder(

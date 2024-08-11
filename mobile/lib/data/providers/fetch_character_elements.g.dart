@@ -38,5 +38,33 @@ final fetchEchoesProvider = FutureProvider<List<EchoEntity>>.internal(
 );
 
 typedef FetchEchoesRef = FutureProviderRef<List<EchoEntity>>;
+String _$fetchWeaponsHash() => r'75a7de5e687cb007cdd2b0ce1618a846bdde927a';
+
+/// See also [fetchWeapons].
+@ProviderFor(fetchWeapons)
+final fetchWeaponsProvider = FutureProvider<List<WeaponEntity>>.internal(
+  fetchWeapons,
+  name: r'fetchWeaponsProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$fetchWeaponsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef FetchWeaponsRef = FutureProviderRef<List<WeaponEntity>>;
+String _$fetchItemsHash() => r'd39daf32a2a1573158f57013e444273b4a164666';
+
+/// See also [fetchItems].
+@ProviderFor(fetchItems)
+final fetchItemsProvider = FutureProvider<List<ItemEntity>>.internal(
+  fetchItems,
+  name: r'fetchItemsProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$fetchItemsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef FetchItemsRef = FutureProviderRef<List<ItemEntity>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

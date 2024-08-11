@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:mobile/domains/character/character_entity.dart';
 import 'package:mobile/domains/echo/echo_entity.dart';
+import 'package:mobile/domains/item/item_entity.dart';
+import 'package:mobile/domains/weapon/weapon_entity.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../domains/character_element/character_element_entity.dart';
@@ -24,4 +26,12 @@ abstract class WutheringApi {
 
   @GET('/getter/list-echos')
   Future<List<EchoEntity>> getEchoes();
+
+
+  @GET('/getter/list-weapons')
+  Future<List<WeaponEntity>> getWeapons();
+
+
+  @GET('/getter/list-items')
+  Future<List<ItemEntity>> getItems();
 }
