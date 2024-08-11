@@ -1,0 +1,74 @@
+[
+  {
+    "id": 6,
+    "name": "Sierra Gale",
+    "imageUrl": "/_ipx/q_70&s_100x100/images/IconElement/T_IconElementWind1.png",
+    "index": 4,
+    "two_set": "Aero DMG + 10%.",
+    "five_set": "Aero DMG + 30% for 15s after releasing Intro Skill."
+  },
+  {
+    "id": 3,
+    "name": "Lingering Tunes",
+    "imageUrl": "/_ipx/q_70&s_100x100/images/IconAttribute/T_Iconpropertyattacktag_UI.png",
+    "index": 9,
+    "two_set": "ATK +10%.",
+    "five_set": " While on the field, ATK increases by 5% every 1.5s. This effect stacks up to 4 times. Outro Skill DMG + 60%."
+  },
+  {
+    "id": 8,
+    "name": "Sun-sinking Eclipse",
+    "imageUrl": "/_ipx/q_70&s_100x100/images/IconElement/T_IconElementDark1.png",
+    "index": 6,
+    "two_set": "Havoc DMG + 10%.",
+    "five_set": "Havoc DMG + 7.5% after releasing Basic Attack or Heavy Attack. This effect stacks up to 4 times, each stack lasts 15s."
+  },
+  {
+    "id": 7,
+    "name": "Celestial Light",
+    "imageUrl": "/_ipx/q_70&s_100x100/images/IconElement/T_IconElementLight1.png",
+    "index": 5,
+    "two_set": "Spectro DMG + 10%.",
+    "five_set": "Spectro DMG + 30% for 15s after releasing Intro Skill."
+  },
+  {
+    "id": 2,
+    "name": "Void Thunder",
+    "imageUrl": "/_ipx/q_70&s_100x100/images/IconElement/T_IconElementThunder1.png",
+    "index": 3,
+    "two_set": "Electro DMG + 10%.",
+    "five_set": "Electro DMG + 15% after releasing Heavy Attack or Resonance Skill. This effect stacks up to 2 times, each stack lasts 15s."
+  },
+  {
+    "id": 9,
+    "name": "Freezing Frost",
+    "imageUrl": "/_ipx/q_70&s_100x100/images/IconElement/T_IconElementIce1.png",
+    "index": 1,
+    "two_set": "Glacio DMG + 10%.",
+    "five_set": "Glacio DMG + 10% after releasing Basic Attack or Heavy Attack. This effect stacks up to 3 times, each stack lasts 15s."
+  },
+  {
+    "id": 5,
+    "name": "Molten Rift",
+    "imageUrl": "/_ipx/q_70&s_100x100/images/IconElement/T_IconElementFire1.png",
+    "index": 2,
+    "two_set": "Fusion DMG + 10%.",
+    "five_set": "Fusion DMG + 30% for 15s after releasing Resonance Skill."
+  },
+  {
+    "id": 4,
+    "name": "Moonlit Clouds",
+    "imageUrl": "/_ipx/q_70&s_100x100/images/IconAttribute/T_Iconpropertyswitchtag_UI.png",
+    "index": 8,
+    "two_set": "Energy Regen + 10%.",
+    "five_set": "Upon using Outro Skill, increases the ATK of the next Resonator by 22.5% for 15s."
+  },
+  {
+    "id": 1,
+    "name": "Rejuvenating Glow",
+    "imageUrl": "/_ipx/q_70&s_100x100/images/IconAttribute/T_Iconpropertyhealingtag_UI.png",
+    "index": 7,
+    "two_set": "Healing Bonus + 10%.",
+    "five_set": "Increases the ATK of all party members by 15% for 30s upon healing allies."
+  }
+]

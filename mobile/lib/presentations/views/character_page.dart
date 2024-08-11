@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile/core/extensions/string_ext.dart';
 import 'package:mobile/data/providers/character_controller.dart';
 import 'package:mobile/data/providers/fetch_character_elements.dart';
 import 'package:mobile/domains/character/character_entity.dart';
@@ -54,7 +55,7 @@ class CharacterPage extends HookConsumerWidget {
 
                           },
                           child: CachedNetworkImage(
-                              height: 100, width: 100, imageUrl: 'https://wuthering.gg${data[index].imageUrl!}'),
+                              height: 100, width: 100, imageUrl: data[index].imageUrl!.withUrlCheck()),
                         );
                       }),
                 );

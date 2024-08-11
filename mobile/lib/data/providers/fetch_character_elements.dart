@@ -1,3 +1,4 @@
+import 'package:mobile/domains/echo/echo_entity.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domains/character_element/character_element_entity.dart';
@@ -10,3 +11,10 @@ Future<List<CharacterElementEntity>> fetchCharacterElements(FetchCharacterElemen
   final wutheringRepo = ref.watch(wutheringApiProvider);
   return await wutheringRepo.getCharacterElements();
 }
+
+@Riverpod(keepAlive: true)
+Future<List<EchoEntity>> fetchEchoes(FetchEchoesRef ref) async {
+  final wutheringRepo = ref.watch(wutheringApiProvider);
+  return await wutheringRepo.getEchoes();
+}
+

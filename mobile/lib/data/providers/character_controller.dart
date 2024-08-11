@@ -18,5 +18,4 @@ class CharacterController extends _$CharacterController {
     final wutheringRepo = ref.watch(wutheringApiProvider);
     return wutheringRepo.getCharacters();
   }
-
 }
