@@ -12,7 +12,6 @@ export class CharacterEntity {
     @Column()
     href: string
 
-
     @Column({nullable: true})
     rarity: number
     
@@ -34,6 +33,6 @@ export class CharacterEntity {
     @Column({nullable: true})
     introduction: string
 
-    @ManyToOne(() => CharacterEntity, character => character.characterElement)
+    @ManyToOne(() => CharElementEntity, character => character.characters)
     characterElement: CharElementEntity;
 }
