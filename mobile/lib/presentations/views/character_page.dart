@@ -4,10 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/data/providers/character_controller.dart';
 import 'package:mobile/data/providers/fetch_character_elements.dart';
 import 'package:mobile/domains/character/character_entity.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '../../config/router.dart';
 
-class CharacterPage extends ConsumerWidget {
+class CharacterPage extends HookConsumerWidget {
   const CharacterPage({super.key});
 
   @override
@@ -21,6 +23,8 @@ class CharacterPage extends ConsumerWidget {
         );
       }
     }
+
+    final searchItems = useState('All');
 
     return Scaffold(
       appBar: AppBar(
@@ -40,8 +44,18 @@ class CharacterPage extends ConsumerWidget {
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         // return Text(data[index].name!);
-                        return CachedNetworkImage(
-                            height: 100, width: 100, imageUrl: 'https://wuthering.gg${data[index].imageUrl!}');
+                        return InkWell(
+                          onTap: (){
+                            if(searchItems.value == 'All'){
+                              searchItems.value = data[index].name!;
+                            } else {
+                              searchItems.value = 'All';
+                            }
+
+                          },
+                          child: CachedNetworkImage(
+                              height: 100, width: 100, imageUrl: 'https://wuthering.gg${data[index].imageUrl!}'),
+                        );
                       }),
                 );
               },
@@ -53,12 +67,34 @@ class CharacterPage extends ConsumerWidget {
             final character = ref.watch(characterControllerProvider);
             return character.when(
               data: (data) {
+                List<CharacterEntity> listCharacter= [];
+                if (searchItems.value == 'All') {
+                  listCharacter = data;
+                } else {
+                  listCharacter = data.where((character) => character.characterElement!.name == searchItems.value).toList();
+                }
                 return Expanded(
-                  child: ListView.builder(
-                    itemCount: data.length,
+                  child: GridView.builder(
+                    itemCount: listCharacter.length,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                    ),
                     itemBuilder: (context, index) {
-                      CharacterEntity character = data[index];
-                      return Text(character.name!);
+                      CharacterEntity character = listCharacter[index];
+                      return Card(
+                          child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Text(character.name!),
+                              CachedNetworkImage(
+                                  height: 30,
+                                  imageUrl: 'https://wuthering.gg${character.characterElement!.imageUrl!}'),
+                            ],
+                          ),
+                          CachedNetworkImage(imageUrl: 'https://wuthering.gg${character.imageUrl!}'),
+                        ],
+                      ));
                     },
                   ),
                 );

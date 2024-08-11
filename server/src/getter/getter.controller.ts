@@ -18,6 +18,11 @@ export class GetterController {
         return this.getterService.findAll();
     }
 
+            @Get('list-sonata')
+    async listSonata()  {
+        return await this.getterService.findSonata();
+    }
+
     @Get('list-characters')
     listCharacters() {
         return this.getterService.findAllCharacters();

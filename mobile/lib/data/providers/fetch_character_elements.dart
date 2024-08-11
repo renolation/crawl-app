@@ -6,10 +6,7 @@ import 'wuthering_api_provider.dart';
 part 'fetch_character_elements.g.dart';
 
 @Riverpod(keepAlive: true)
-Future<List<CharacterElementEntity>> fetchCharacterElements(
-    FetchCharacterElementsRef ref
-    ) async {
+Future<List<CharacterElementEntity>> fetchCharacterElements(FetchCharacterElementsRef ref) async {
   final wutheringRepo = ref.watch(wutheringApiProvider);
   return await wutheringRepo.getCharacterElements();
 }
-

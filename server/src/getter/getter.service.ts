@@ -8,6 +8,7 @@ import {EchoEntity} from "../scraper/entities/echo.entity";
 import {WeaponEntity} from "../scraper/entities/weapon.entity";
 import {ItemEntity} from "../scraper/entities/item.entity";
 import {CharElementEntity} from "../scraper/entities/char_element.entity";
+import {SonataEffectEntity} from "../scraper/entities/sonata_effect.entity";
 
 @Injectable()
 export class GetterService {
@@ -23,6 +24,8 @@ export class GetterService {
         private itemRepository: Repository<ItemEntity>,
         @InjectRepository(CharElementEntity)
         private charElementRepository: Repository<CharElementEntity>,
+        @InjectRepository(SonataEffectEntity)
+        private sonataEffectRepository: Repository<SonataEffectEntity>,
     ) {
     }
 
@@ -98,5 +101,9 @@ export class GetterService {
 
     remove(id: number) {
         return `This action removes a #${id} getter`;
+    }
+
+    async findSonata() {
+        return await this.sonataEffectRepository.find();
     }
 }
