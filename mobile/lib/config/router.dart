@@ -6,6 +6,8 @@ import 'package:mobile/config/routes.dart';
 import 'package:mobile/presentations/views/character_page.dart';
 import 'package:mobile/presentations/views/echo_page.dart';
 import 'package:mobile/presentations/views/home_page.dart';
+import 'package:mobile/presentations/views/item_page.dart';
+import 'package:mobile/presentations/views/weapon_page.dart';
 
 // import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -18,7 +20,7 @@ final GlobalKey<NavigatorState> _sectionANavigatorKey = GlobalKey<NavigatorState
 final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/',
+    initialLocation: Routes.home,
     routes: [
       StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
@@ -59,23 +61,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const EchoPage(),
               ),
             ]),
+
             StatefulShellBranch(routes: [
               GoRoute(
-                path: Routes.settings,
-                name: Routes.settings,
-                builder: (context, state) => const HomePage(),
-                // routes: [
-                //   GoRoute(
-                //     path: ':slug',
-                //     name: AppRoute.itemDetail.name,
-                //     builder: (context, state) {
-                //       // String slug = state.pathParameters['slug']!;
-                //       ItemEntity item = state.extra as ItemEntity;
-                //       return ItemDetailScreen(
-                //           key: state.pageKey, itemEntity: item);
-                //     },
-                //   ),
-                // ]
+                path: Routes.weapon,
+                name: Routes.weapon,
+                builder: (context, state) => const WeaponPage(),
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                path: Routes.item,
+                name: Routes.item,
+                builder: (context, state) => const ItemPage(),
               ),
             ]),
           ]),
@@ -115,15 +113,19 @@ class ScaffoldWithNavBar extends ConsumerWidget {
               items: [
                 SalomonBottomBarItem(
                   icon: const Icon(FontAwesomeIcons.house),
-                  title: const Text('Pals'),
+                  title: const Text('Home'),
                 ),
                 SalomonBottomBarItem(
                   icon: const Icon(FontAwesomeIcons.heart),
-                  title: const Text('Breeding'),
+                  title: const Text('Echo'),
                 ),
                 SalomonBottomBarItem(
                   icon: const Icon(FontAwesomeIcons.gun),
-                  title: const Text('Items'),
+                  title: const Text('Weapon'),
+                ),
+                SalomonBottomBarItem(
+                  icon: const Icon(FontAwesomeIcons.gun),
+                  title: const Text('Item'),
                 ),
 
               ],
