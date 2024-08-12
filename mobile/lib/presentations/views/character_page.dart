@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mobile/core/enums/enums.dart';
 import 'package:mobile/core/extensions/string_ext.dart';
 import 'package:mobile/data/providers/character_controller.dart';
 import 'package:mobile/data/providers/fetch_character_elements.dart';
@@ -25,8 +27,10 @@ class CharacterPage extends HookConsumerWidget {
       }
     }
 
-    final searchItems = useState('All');
-
+    final elements = useState('All');
+    final textEditingController = useTextEditingController();
+    final weaponType = useState(WeaponType.Any);
+    final rarity = useState(CharacterRarity.any);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -34,6 +38,28 @@ class CharacterPage extends HookConsumerWidget {
       ),
       body: Column(
         children: [
+          TextField(
+            controller: textEditingController,
+            decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                filled: true,
+                isDense: true,
+                suffixIcon: const Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child: Icon(FontAwesomeIcons.magnifyingGlass),
+                ),
+                fillColor: Colors.grey.withOpacity(0.4),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                )),
+            onChanged: (newText) {
+              textEditingController.text = newText;
+              textEditingController.selection =
+                  TextSelection.fromPosition(TextPosition(offset: textEditingController.text.length));
+              print(textEditingController.text);
+            },
+          ),
           Consumer(builder: (context, ref, child) {
             final characterElements = ref.watch(fetchCharacterElementsProvider);
             return characterElements.when(
@@ -46,13 +72,12 @@ class CharacterPage extends HookConsumerWidget {
                       itemBuilder: (context, index) {
                         // return Text(data[index].name!);
                         return InkWell(
-                          onTap: (){
-                            if(searchItems.value == 'All'){
-                              searchItems.value = data[index].name!;
+                          onTap: () {
+                            if (elements.value == 'All') {
+                              elements.value = data[index].name!;
                             } else {
-                              searchItems.value = 'All';
+                              elements.value = 'All';
                             }
-
                           },
                           child: CachedNetworkImage(
                               height: 100, width: 100, imageUrl: data[index].imageUrl!.withUrlCheck()),
@@ -65,15 +90,65 @@ class CharacterPage extends HookConsumerWidget {
             );
           }),
           Consumer(builder: (context, ref, child) {
+            return Row(
+              children: [
+                DropdownButton<CharacterRarity>(
+                  value: rarity.value,
+                  onChanged: (value) {
+                    rarity.value = value!;
+                  },
+                  items: [
+                    for (CharacterRarity characterRarity in CharacterRarity.values)
+                      DropdownMenuItem(
+                        value: characterRarity,
+                        child: Text(characterRarity.name),
+                      )
+                  ],
+                ),
+                DropdownButton<WeaponType>(
+                  value: weaponType.value,
+                  onChanged: (value) {
+                    weaponType.value = value!;
+                  },
+                  items: [
+                    for (WeaponType weaponType in WeaponType.values)
+                      DropdownMenuItem(
+                        value: weaponType,
+                        child: Text(weaponType.name),
+                      )
+                  ],
+                ),
+              ],
+            );
+          }),
+          Consumer(builder: (context, ref, child) {
             final character = ref.watch(characterControllerProvider);
             return character.when(
               data: (data) {
-                List<CharacterEntity> listCharacter= [];
-                if (searchItems.value == 'All') {
-                  listCharacter = data;
-                } else {
-                  listCharacter = data.where((character) => character.characterElement!.name == searchItems.value).toList();
+                List<CharacterEntity> listCharacter = elements.value == 'All'
+                    ? data
+                    : data.where((character) => character.characterElement!.name == elements.value).toList();
+
+                if (textEditingController.text.isNotEmpty) {
+                  print(textEditingController.text);
+                  listCharacter = listCharacter
+                      .where(
+                          (element) => element.name!.toLowerCase().contains(textEditingController.text.toLowerCase()))
+                      .toList();
                 }
+                if (rarity.value != CharacterRarity.any) {
+                  listCharacter = listCharacter
+                      .where((element) => element.rarity == (rarity.value == CharacterRarity.fourStars ? 4 : 5))
+                      .toList();
+                }
+
+                if(weaponType.value != WeaponType.Any){
+                  listCharacter = listCharacter
+                      .where((element) => element.buble! == weaponType.value.name)
+                      .toList();
+                }
+
+
                 return Expanded(
                   child: GridView.builder(
                     itemCount: listCharacter.length,
@@ -88,9 +163,9 @@ class CharacterPage extends HookConsumerWidget {
                           Row(
                             children: [
                               Text(character.name!),
+                              Text('${character.rarity?? 0}'),
                               CachedNetworkImage(
-                                  height: 30,
-                                  imageUrl: 'https://wuthering.gg${character.characterElement!.imageUrl!}'),
+                                  height: 30, imageUrl: 'https://wuthering.gg${character.characterElement!.imageUrl!}'),
                             ],
                           ),
                           CachedNetworkImage(imageUrl: 'https://wuthering.gg${character.imageUrl!}'),

@@ -27,6 +27,7 @@ Map<String, dynamic> _$$WeaponEntityImplToJson(_$WeaponEntityImpl instance) =>
     };
 
 const _$WeaponTypeEnumMap = {
+  WeaponType.Any: 'Any',
   WeaponType.Broadblade: 'Broadblade',
   WeaponType.Gauntlets: 'Gauntlets',
   WeaponType.Pistols: 'Pistols',
