@@ -85,6 +85,47 @@ export class GetterService {
 
         };
     }
+    async getWeaponById(id: number) {
+        const item = await this.weaponRepository.findOne({
+            where: {id},
+            relations: ['levelRanks', 'levelRanks.items', 'levelRanks.skills'],
+            select: {
+                levelRanks: {
+                    id: true,
+                    level: true,
+                    rank: true,
+                    stat1_name: true,
+                    stat1_value: true,
+                    stat2_name: true,
+                    stat2_value: true,
+                    ascension_max_level: true,
+                    about: true,
+                    items: {
+                        id: true,
+                        name: true,
+                        rank: true,
+                        imageUrl: true,
+                    },
+                    itemCounts: true,
+                    skills: {
+                        id: true,
+                        name: true,
+                        value: true,
+
+                    }
+                }
+            }
+        });
+
+        if (!item) {
+            throw new Error(`Echo with id ${id} not found`);
+        }
+
+
+        return {
+            ...item,
+        };
+    }
 
 
     findAll() {

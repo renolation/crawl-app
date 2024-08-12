@@ -18,8 +18,8 @@ export class GetterController {
         return this.getterService.findAll();
     }
 
-            @Get('list-sonata')
-    async listSonata()  {
+    @Get('list-sonata')
+    async listSonata() {
         return await this.getterService.findSonata();
     }
 
@@ -28,7 +28,7 @@ export class GetterController {
         return this.getterService.findAllCharacters();
     }
 
-        @Get('list-character-elements')
+    @Get('list-character-elements')
     listCharacterElements() {
         return this.getterService.findAllCharacterElements();
     }
@@ -46,6 +46,11 @@ export class GetterController {
     @Get('list-items')
     listItems() {
         return this.getterService.findAllItems();
+    }
+
+        @Get('weapon/:id')
+    async getWeaponById(@Param('id') id: number) {
+        return this.getterService.getWeaponById(id);
     }
 
     @Get('echo/:id')
