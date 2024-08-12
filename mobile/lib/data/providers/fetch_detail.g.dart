@@ -154,5 +154,133 @@ class _FetchWeaponByIdProviderElement
   @override
   int get id => (origin as FetchWeaponByIdProvider).id;
 }
+
+String _$fetchEchoByIdHash() => r'3f5154c26e768e5a758e8181ee38cfd44752d399';
+
+/// See also [fetchEchoById].
+@ProviderFor(fetchEchoById)
+const fetchEchoByIdProvider = FetchEchoByIdFamily();
+
+/// See also [fetchEchoById].
+class FetchEchoByIdFamily extends Family<AsyncValue<EchoEntity>> {
+  /// See also [fetchEchoById].
+  const FetchEchoByIdFamily();
+
+  /// See also [fetchEchoById].
+  FetchEchoByIdProvider call({
+    required int id,
+  }) {
+    return FetchEchoByIdProvider(
+      id: id,
+    );
+  }
+
+  @override
+  FetchEchoByIdProvider getProviderOverride(
+    covariant FetchEchoByIdProvider provider,
+  ) {
+    return call(
+      id: provider.id,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'fetchEchoByIdProvider';
+}
+
+/// See also [fetchEchoById].
+class FetchEchoByIdProvider extends FutureProvider<EchoEntity> {
+  /// See also [fetchEchoById].
+  FetchEchoByIdProvider({
+    required int id,
+  }) : this._internal(
+          (ref) => fetchEchoById(
+            ref as FetchEchoByIdRef,
+            id: id,
+          ),
+          from: fetchEchoByIdProvider,
+          name: r'fetchEchoByIdProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$fetchEchoByIdHash,
+          dependencies: FetchEchoByIdFamily._dependencies,
+          allTransitiveDependencies:
+              FetchEchoByIdFamily._allTransitiveDependencies,
+          id: id,
+        );
+
+  FetchEchoByIdProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.id,
+  }) : super.internal();
+
+  final int id;
+
+  @override
+  Override overrideWith(
+    FutureOr<EchoEntity> Function(FetchEchoByIdRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: FetchEchoByIdProvider._internal(
+        (ref) => create(ref as FetchEchoByIdRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        id: id,
+      ),
+    );
+  }
+
+  @override
+  FutureProviderElement<EchoEntity> createElement() {
+    return _FetchEchoByIdProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchEchoByIdProvider && other.id == id;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, id.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin FetchEchoByIdRef on FutureProviderRef<EchoEntity> {
+  /// The parameter `id` of this provider.
+  int get id;
+}
+
+class _FetchEchoByIdProviderElement extends FutureProviderElement<EchoEntity>
+    with FetchEchoByIdRef {
+  _FetchEchoByIdProviderElement(super.provider);
+
+  @override
+  int get id => (origin as FetchEchoByIdProvider).id;
+}
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

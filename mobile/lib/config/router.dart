@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/config/routes.dart';
+import 'package:mobile/domains/echo/echo_entity.dart';
 import 'package:mobile/domains/item/item_entity.dart';
 import 'package:mobile/presentations/views/character_page.dart';
+import 'package:mobile/presentations/views/echo_detail_page.dart';
 import 'package:mobile/presentations/views/echo_page.dart';
 import 'package:mobile/presentations/views/home_page.dart';
 import 'package:mobile/presentations/views/weapon_detail_page.dart';
@@ -62,6 +64,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: Routes.echo,
                 name: Routes.echo,
                 builder: (context, state) => const EchoPage(),
+                  routes: [
+                    GoRoute(
+                      path: 'echo/:id',
+                      name: Routes.echoDetail.name,
+                      builder: (context, state) {
+                        int id = int.parse(state.pathParameters['id']!);
+                        EchoEntity echo = state.extra as EchoEntity;
+                        return EchoDetailPage(
+                          key: state.pageKey,
+                          id: id,
+                          echoEntity: echo,
+                        );
+                      },
+                    ),
+                  ]
               ),
             ]),
 
@@ -78,11 +95,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         int id = int.parse(state.pathParameters['id']!);
                         WeaponEntity weapon = state.extra as WeaponEntity;
                         return WeaponDetailPage(
-                          key: state.pageKey, id: id, weaponEntity: weapon,);
+                          key: state.pageKey,
+                          id: id,
+                          weaponEntity: weapon,
+                        );
                       },
                     ),
-                  ]
-              ),
+                  ]),
             ]),
             StatefulShellBranch(routes: [
               GoRoute(

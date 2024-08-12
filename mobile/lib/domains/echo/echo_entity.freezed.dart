@@ -26,6 +26,13 @@ mixin _$EchoEntity {
   String? get imageUrl => throw _privateConstructorUsedError;
   String? get echoEntityClass => throw _privateConstructorUsedError;
   int? get cost => throw _privateConstructorUsedError;
+  @JsonKey(name: "levelRanks")
+  List<EchoLevelRankEntity>? get echoLevelRank =>
+      throw _privateConstructorUsedError;
+  @JsonKey(name: "echoSubStat")
+  EchoSubStat? get echoSubStat => throw _privateConstructorUsedError;
+  @JsonKey(name: "echoAbility")
+  List<EchoAbility>? get echoAbility => throw _privateConstructorUsedError;
   List<SonataEffectEntity>? get sonataEffects =>
       throw _privateConstructorUsedError;
 
@@ -48,7 +55,12 @@ abstract class $EchoEntityCopyWith<$Res> {
       String? imageUrl,
       String? echoEntityClass,
       int? cost,
+      @JsonKey(name: "levelRanks") List<EchoLevelRankEntity>? echoLevelRank,
+      @JsonKey(name: "echoSubStat") EchoSubStat? echoSubStat,
+      @JsonKey(name: "echoAbility") List<EchoAbility>? echoAbility,
       List<SonataEffectEntity>? sonataEffects});
+
+  $EchoSubStatCopyWith<$Res>? get echoSubStat;
 }
 
 /// @nodoc
@@ -70,6 +82,9 @@ class _$EchoEntityCopyWithImpl<$Res, $Val extends EchoEntity>
     Object? imageUrl = freezed,
     Object? echoEntityClass = freezed,
     Object? cost = freezed,
+    Object? echoLevelRank = freezed,
+    Object? echoSubStat = freezed,
+    Object? echoAbility = freezed,
     Object? sonataEffects = freezed,
   }) {
     return _then(_value.copyWith(
@@ -97,11 +112,35 @@ class _$EchoEntityCopyWithImpl<$Res, $Val extends EchoEntity>
           ? _value.cost
           : cost // ignore: cast_nullable_to_non_nullable
               as int?,
+      echoLevelRank: freezed == echoLevelRank
+          ? _value.echoLevelRank
+          : echoLevelRank // ignore: cast_nullable_to_non_nullable
+              as List<EchoLevelRankEntity>?,
+      echoSubStat: freezed == echoSubStat
+          ? _value.echoSubStat
+          : echoSubStat // ignore: cast_nullable_to_non_nullable
+              as EchoSubStat?,
+      echoAbility: freezed == echoAbility
+          ? _value.echoAbility
+          : echoAbility // ignore: cast_nullable_to_non_nullable
+              as List<EchoAbility>?,
       sonataEffects: freezed == sonataEffects
           ? _value.sonataEffects
           : sonataEffects // ignore: cast_nullable_to_non_nullable
               as List<SonataEffectEntity>?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $EchoSubStatCopyWith<$Res>? get echoSubStat {
+    if (_value.echoSubStat == null) {
+      return null;
+    }
+
+    return $EchoSubStatCopyWith<$Res>(_value.echoSubStat!, (value) {
+      return _then(_value.copyWith(echoSubStat: value) as $Val);
+    });
   }
 }
 
@@ -120,7 +159,13 @@ abstract class _$$EchoEntityImplCopyWith<$Res>
       String? imageUrl,
       String? echoEntityClass,
       int? cost,
+      @JsonKey(name: "levelRanks") List<EchoLevelRankEntity>? echoLevelRank,
+      @JsonKey(name: "echoSubStat") EchoSubStat? echoSubStat,
+      @JsonKey(name: "echoAbility") List<EchoAbility>? echoAbility,
       List<SonataEffectEntity>? sonataEffects});
+
+  @override
+  $EchoSubStatCopyWith<$Res>? get echoSubStat;
 }
 
 /// @nodoc
@@ -140,6 +185,9 @@ class __$$EchoEntityImplCopyWithImpl<$Res>
     Object? imageUrl = freezed,
     Object? echoEntityClass = freezed,
     Object? cost = freezed,
+    Object? echoLevelRank = freezed,
+    Object? echoSubStat = freezed,
+    Object? echoAbility = freezed,
     Object? sonataEffects = freezed,
   }) {
     return _then(_$EchoEntityImpl(
@@ -167,6 +215,18 @@ class __$$EchoEntityImplCopyWithImpl<$Res>
           ? _value.cost
           : cost // ignore: cast_nullable_to_non_nullable
               as int?,
+      echoLevelRank: freezed == echoLevelRank
+          ? _value._echoLevelRank
+          : echoLevelRank // ignore: cast_nullable_to_non_nullable
+              as List<EchoLevelRankEntity>?,
+      echoSubStat: freezed == echoSubStat
+          ? _value.echoSubStat
+          : echoSubStat // ignore: cast_nullable_to_non_nullable
+              as EchoSubStat?,
+      echoAbility: freezed == echoAbility
+          ? _value._echoAbility
+          : echoAbility // ignore: cast_nullable_to_non_nullable
+              as List<EchoAbility>?,
       sonataEffects: freezed == sonataEffects
           ? _value._sonataEffects
           : sonataEffects // ignore: cast_nullable_to_non_nullable
@@ -185,8 +245,14 @@ class _$EchoEntityImpl implements _EchoEntity {
       this.imageUrl,
       this.echoEntityClass,
       this.cost,
+      @JsonKey(name: "levelRanks")
+      final List<EchoLevelRankEntity>? echoLevelRank,
+      @JsonKey(name: "echoSubStat") this.echoSubStat,
+      @JsonKey(name: "echoAbility") final List<EchoAbility>? echoAbility,
       final List<SonataEffectEntity>? sonataEffects})
-      : _sonataEffects = sonataEffects;
+      : _echoLevelRank = echoLevelRank,
+        _echoAbility = echoAbility,
+        _sonataEffects = sonataEffects;
 
   factory _$EchoEntityImpl.fromJson(Map<String, dynamic> json) =>
       _$$EchoEntityImplFromJson(json);
@@ -203,6 +269,31 @@ class _$EchoEntityImpl implements _EchoEntity {
   final String? echoEntityClass;
   @override
   final int? cost;
+  final List<EchoLevelRankEntity>? _echoLevelRank;
+  @override
+  @JsonKey(name: "levelRanks")
+  List<EchoLevelRankEntity>? get echoLevelRank {
+    final value = _echoLevelRank;
+    if (value == null) return null;
+    if (_echoLevelRank is EqualUnmodifiableListView) return _echoLevelRank;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @JsonKey(name: "echoSubStat")
+  final EchoSubStat? echoSubStat;
+  final List<EchoAbility>? _echoAbility;
+  @override
+  @JsonKey(name: "echoAbility")
+  List<EchoAbility>? get echoAbility {
+    final value = _echoAbility;
+    if (value == null) return null;
+    if (_echoAbility is EqualUnmodifiableListView) return _echoAbility;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   final List<SonataEffectEntity>? _sonataEffects;
   @override
   List<SonataEffectEntity>? get sonataEffects {
@@ -215,7 +306,7 @@ class _$EchoEntityImpl implements _EchoEntity {
 
   @override
   String toString() {
-    return 'EchoEntity(id: $id, name: $name, href: $href, imageUrl: $imageUrl, echoEntityClass: $echoEntityClass, cost: $cost, sonataEffects: $sonataEffects)';
+    return 'EchoEntity(id: $id, name: $name, href: $href, imageUrl: $imageUrl, echoEntityClass: $echoEntityClass, cost: $cost, echoLevelRank: $echoLevelRank, echoSubStat: $echoSubStat, echoAbility: $echoAbility, sonataEffects: $sonataEffects)';
   }
 
   @override
@@ -232,6 +323,12 @@ class _$EchoEntityImpl implements _EchoEntity {
                 other.echoEntityClass == echoEntityClass) &&
             (identical(other.cost, cost) || other.cost == cost) &&
             const DeepCollectionEquality()
+                .equals(other._echoLevelRank, _echoLevelRank) &&
+            (identical(other.echoSubStat, echoSubStat) ||
+                other.echoSubStat == echoSubStat) &&
+            const DeepCollectionEquality()
+                .equals(other._echoAbility, _echoAbility) &&
+            const DeepCollectionEquality()
                 .equals(other._sonataEffects, _sonataEffects));
   }
 
@@ -245,6 +342,9 @@ class _$EchoEntityImpl implements _EchoEntity {
       imageUrl,
       echoEntityClass,
       cost,
+      const DeepCollectionEquality().hash(_echoLevelRank),
+      echoSubStat,
+      const DeepCollectionEquality().hash(_echoAbility),
       const DeepCollectionEquality().hash(_sonataEffects));
 
   @JsonKey(ignore: true)
@@ -269,6 +369,10 @@ abstract class _EchoEntity implements EchoEntity {
       final String? imageUrl,
       final String? echoEntityClass,
       final int? cost,
+      @JsonKey(name: "levelRanks")
+      final List<EchoLevelRankEntity>? echoLevelRank,
+      @JsonKey(name: "echoSubStat") final EchoSubStat? echoSubStat,
+      @JsonKey(name: "echoAbility") final List<EchoAbility>? echoAbility,
       final List<SonataEffectEntity>? sonataEffects}) = _$EchoEntityImpl;
 
   factory _EchoEntity.fromJson(Map<String, dynamic> json) =
@@ -286,6 +390,15 @@ abstract class _EchoEntity implements EchoEntity {
   String? get echoEntityClass;
   @override
   int? get cost;
+  @override
+  @JsonKey(name: "levelRanks")
+  List<EchoLevelRankEntity>? get echoLevelRank;
+  @override
+  @JsonKey(name: "echoSubStat")
+  EchoSubStat? get echoSubStat;
+  @override
+  @JsonKey(name: "echoAbility")
+  List<EchoAbility>? get echoAbility;
   @override
   List<SonataEffectEntity>? get sonataEffects;
   @override

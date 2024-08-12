@@ -27,6 +27,8 @@ abstract class WutheringApi {
   @GET('/getter/list-echos')
   Future<List<EchoEntity>> getEchoes();
 
+  @GET('/getter/echo/{id}')
+  Future<EchoEntity> getEchoById(@Path() String id);
 
   @GET('/getter/list-weapons')
   Future<List<WeaponEntity>> getWeapons();

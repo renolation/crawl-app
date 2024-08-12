@@ -4,6 +4,8 @@ abstract class Routes {
 
 
   static const echo = '/echo';
+  static const echoDetail = 'echoDetail';
+
 
   static const weapon = '/weapon';
   static const weaponDetail = 'weaponDetail';

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile/core/enums/enums.dart';
 import 'package:mobile/core/extensions/extensions.dart';
@@ -10,6 +11,7 @@ import 'package:mobile/data/providers/fetch_character_elements.dart';
 import 'package:mobile/domains/echo/echo_entity.dart';
 import 'package:mobile/providers/providers.dart';
 
+import '../../config/routes.dart';
 import '../../data/providers/local_json_provider.dart';
 
 class EchoPage extends HookConsumerWidget {
@@ -148,26 +150,36 @@ class EchoPage extends HookConsumerWidget {
                     ),
                     itemBuilder: (context, index) {
                       EchoEntity echo = listEchoes[index];
-                      return Card(
-                          child: Column(
-                            children: [
-                              Text(echo.name!),
-                              Row(
-                                children: [
-                                  for(var sonataEffect in echo.sonataEffects!)
-                                    CachedNetworkImage(
-                                      color: Colors.red,
-                                      height: 30,
-                                      imageUrl: sonataEffect.imageUrl!.withUrlCheck(),
-                                    )
-                                ],
-                              ),
-                              Text(echo.cost!.toString()),
-                              CachedNetworkImage(
-                                  height: 100,
-                                  imageUrl: echo.imageUrl!.withUrlCheck()),
-                            ],
-                          ));
+                      return InkWell(
+                        onTap: (){
+                          print(echo.name!);
+                          context.pushNamed(
+                            Routes.echoDetail.name,
+                            pathParameters: {'id': echo.id!.toString()},
+                            extra: echo,
+                          );
+                        },
+                        child: Card(
+                            child: Column(
+                              children: [
+                                Text(echo.name!),
+                                Row(
+                                  children: [
+                                    for(var sonataEffect in echo.sonataEffects!)
+                                      CachedNetworkImage(
+                                        color: Colors.red,
+                                        height: 30,
+                                        imageUrl: sonataEffect.imageUrl!.withUrlCheck(),
+                                      )
+                                  ],
+                                ),
+                                Text(echo.cost!.toString()),
+                                CachedNetworkImage(
+                                    height: 100,
+                                    imageUrl: echo.imageUrl!.withUrlCheck()),
+                              ],
+                            )),
+                      );
                     },
                   ),
                 );
