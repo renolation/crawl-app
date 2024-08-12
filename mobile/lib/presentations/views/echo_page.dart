@@ -1,11 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mobile/core/enums/enums.dart';
 import 'package:mobile/core/extensions/extensions.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:mobile/data/providers/fetch_character_elements.dart';
 import 'package:mobile/domains/echo/echo_entity.dart';
+import 'package:mobile/providers/providers.dart';
 
 import '../../data/providers/local_json_provider.dart';
 
@@ -15,8 +18,9 @@ class EchoPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final searchItems = useState('All');
-
+    final sonataEffects = useState('All');
+    final textEditingController = useTextEditingController();
+    final echoCost = useState(EchoCost.any);
 
     return Scaffold(
       appBar: AppBar(
@@ -25,6 +29,55 @@ class EchoPage extends HookConsumerWidget {
       ),
       body: Column(
         children: [
+          Container(
+            height: 100,
+            width: double.infinity,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: textEditingController,
+                    decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        filled: true,
+                        isDense: true,
+                        suffixIcon: const Padding(
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          child: Icon(FontAwesomeIcons.magnifyingGlass),
+                        ),
+                        fillColor: Colors.grey.withOpacity(0.4),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        )),
+                    onChanged: (newText) {
+                      textEditingController.text = newText;
+                      textEditingController.selection =
+                          TextSelection.fromPosition(TextPosition(offset: textEditingController.text.length));
+                      ref.read(searchEchoProvider.notifier).state = newText;
+                    },
+                  ),
+                ),
+                Container(
+                  width: 100,
+                  height: 100,
+                  child: DropdownButton<EchoCost>(
+                    value: echoCost.value,
+                    onChanged: (value) {
+                      echoCost.value = value!;
+                    },
+                    items: [
+                      for (EchoCost echoCost in EchoCost.values)
+                        DropdownMenuItem(
+                          value: echoCost,
+                          child: Text(echoCost.name),
+                        )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
           Consumer(builder: (context, ref, child) {
             final sonataData = ref.watch(fetchSonataEffectProvider);
             return SizedBox(
@@ -36,10 +89,10 @@ class EchoPage extends HookConsumerWidget {
                     itemBuilder: (context, index) {
                     return InkWell(
                       onTap: (){
-                        if(searchItems.value == 'All'){
-                          searchItems.value = value[index].name!;
+                        if(sonataEffects.value == 'All'){
+                          sonataEffects.value = value[index].name!;
                         } else {
-                          searchItems.value = 'All';
+                          sonataEffects.value = 'All';
                         }
                       },
                       child: CachedNetworkImage(
@@ -55,16 +108,37 @@ class EchoPage extends HookConsumerWidget {
             );
           }),
           Consumer(builder: (context, ref, child) {
-            final character = ref.watch(fetchEchoesProvider);
-            return character.when(
+            final echoes = ref.watch(fetchEchoesProvider);
+            final searchText = ref.watch(searchEchoProvider);
+            return echoes.when(
               data: (data) {
-                List<EchoEntity> listEchoes= [];
-                if (searchItems.value == 'All') {
-                  listEchoes = data;
-                } else {
-                  listEchoes = data.where((echo) => echo.sonataEffects!.any(
-                      (element) => element.name == searchItems.value
-                  )).toList();
+
+                List<EchoEntity> listEchoes = sonataEffects.value == 'All'
+                ? data
+                    : data.where((echo) => echo.sonataEffects!.any(
+                        (element) => element.name == sonataEffects.value
+                    )).toList();
+                if (searchText != '') {
+                  listEchoes = listEchoes
+                      .where(
+                          (element) => element.name!.toLowerCase().contains(searchText.toLowerCase()))
+                      .toList();
+                }
+
+                if(echoCost.value != EchoCost.any){
+
+                  switch(echoCost.value){
+                    case EchoCost.any:
+                      break;
+                    case EchoCost.oneCost:
+                      listEchoes = listEchoes.where((element) => element.cost == 1).toList();
+                      break;
+                    case EchoCost.threeCost:
+                      listEchoes = listEchoes.where((element) => element.cost == 3).toList();
+                    case EchoCost.fourCost:
+                      listEchoes = listEchoes.where((element) => element.cost == 4).toList();
+                  }
+
                 }
                 return Expanded(
                   child: GridView.builder(
@@ -73,14 +147,14 @@ class EchoPage extends HookConsumerWidget {
                       crossAxisCount: 2,
                     ),
                     itemBuilder: (context, index) {
-                      EchoEntity character = listEchoes[index];
+                      EchoEntity echo = listEchoes[index];
                       return Card(
                           child: Column(
                             children: [
-                              Text(character.name!),
+                              Text(echo.name!),
                               Row(
                                 children: [
-                                  for(var sonataEffect in character.sonataEffects!)
+                                  for(var sonataEffect in echo.sonataEffects!)
                                     CachedNetworkImage(
                                       color: Colors.red,
                                       height: 30,
@@ -88,9 +162,10 @@ class EchoPage extends HookConsumerWidget {
                                     )
                                 ],
                               ),
+                              Text(echo.cost!.toString()),
                               CachedNetworkImage(
                                   height: 100,
-                                  imageUrl: character.imageUrl!.withUrlCheck()),
+                                  imageUrl: echo.imageUrl!.withUrlCheck()),
                             ],
                           ));
                     },
