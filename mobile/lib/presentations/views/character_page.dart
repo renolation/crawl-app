@@ -9,6 +9,7 @@ import 'package:mobile/data/providers/fetch_character_elements.dart';
 import 'package:mobile/domains/character/character_entity.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:mobile/providers/providers.dart';
 
 import '../../config/router.dart';
 
@@ -31,6 +32,7 @@ class CharacterPage extends HookConsumerWidget {
     final textEditingController = useTextEditingController();
     final weaponType = useState(WeaponType.Any);
     final rarity = useState(CharacterRarity.any);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -57,7 +59,7 @@ class CharacterPage extends HookConsumerWidget {
               textEditingController.text = newText;
               textEditingController.selection =
                   TextSelection.fromPosition(TextPosition(offset: textEditingController.text.length));
-              print(textEditingController.text);
+              ref.read(searchCharacterProvider.notifier).state = newText;
             },
           ),
           Consumer(builder: (context, ref, child) {
@@ -70,7 +72,6 @@ class CharacterPage extends HookConsumerWidget {
                       itemCount: data.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
-                        // return Text(data[index].name!);
                         return InkWell(
                           onTap: () {
                             if (elements.value == 'All') {
@@ -123,17 +124,17 @@ class CharacterPage extends HookConsumerWidget {
           }),
           Consumer(builder: (context, ref, child) {
             final character = ref.watch(characterControllerProvider);
+            final searchText = ref.watch(searchCharacterProvider);
             return character.when(
               data: (data) {
                 List<CharacterEntity> listCharacter = elements.value == 'All'
                     ? data
                     : data.where((character) => character.characterElement!.name == elements.value).toList();
 
-                if (textEditingController.text.isNotEmpty) {
-                  print(textEditingController.text);
+                if (searchText != '') {
                   listCharacter = listCharacter
                       .where(
-                          (element) => element.name!.toLowerCase().contains(textEditingController.text.toLowerCase()))
+                          (element) => element.name!.toLowerCase().contains(searchText.toLowerCase()))
                       .toList();
                 }
                 if (rarity.value != CharacterRarity.any) {
@@ -148,7 +149,6 @@ class CharacterPage extends HookConsumerWidget {
                       .toList();
                 }
 
-
                 return Expanded(
                   child: GridView.builder(
                     itemCount: listCharacter.length,
@@ -159,18 +159,18 @@ class CharacterPage extends HookConsumerWidget {
                       CharacterEntity character = listCharacter[index];
                       return Card(
                           child: Column(
-                        children: [
-                          Row(
                             children: [
-                              Text(character.name!),
-                              Text('${character.rarity?? 0}'),
-                              CachedNetworkImage(
-                                  height: 30, imageUrl: 'https://wuthering.gg${character.characterElement!.imageUrl!}'),
+                              Row(
+                                children: [
+                                  Text(character.name!),
+                                  Text('${character.rarity?? 0}'),
+                                  CachedNetworkImage(
+                                      height: 30, imageUrl: 'https://wuthering.gg${character.characterElement!.imageUrl!}'),
+                                ],
+                              ),
+                              CachedNetworkImage(imageUrl: 'https://wuthering.gg${character.imageUrl!}'),
                             ],
-                          ),
-                          CachedNetworkImage(imageUrl: 'https://wuthering.gg${character.imageUrl!}'),
-                        ],
-                      ));
+                          ));
                     },
                   ),
                 );
