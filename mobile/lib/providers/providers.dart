@@ -13,3 +13,4 @@ final searchCharacterProvider = StateProvider.autoDispose((ref) {
 });
 final searchEchoProvider = StateProvider.autoDispose((ref) => '');
 final searchWeaponProvider = StateProvider.autoDispose((ref) => '');
+final searchItemProvider = StateProvider.autoDispose((ref) => '');

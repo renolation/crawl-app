@@ -44,6 +44,20 @@ enum WeaponRarity {
   final int value;
 }
 
+enum ItemRarity {
+  all('All', 0),
+  oneStars('1 Star', 1),
+  twoStars('2 Stars', 2),
+  threeStars('3 Stars', 3),
+  fourStars('4 Stars', 4),
+  fiveStars('5 Stars', 5);
+
+  const ItemRarity(this.name, this.value);
+
+  final String name;
+  final int value;
+}
+
 
 enum ItemType {
   All('All'),
