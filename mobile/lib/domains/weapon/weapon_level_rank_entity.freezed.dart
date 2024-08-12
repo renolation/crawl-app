@@ -24,10 +24,15 @@ mixin _$WeaponLevelRankEntity {
   int? get id => throw _privateConstructorUsedError;
   int? get level => throw _privateConstructorUsedError;
   int? get rank => throw _privateConstructorUsedError;
+  @JsonKey(name: 'stat1_name')
   String? get stat1Name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'stat1_value')
   String? get stat1Value => throw _privateConstructorUsedError;
+  @JsonKey(name: 'stat2_name')
   String? get stat2Name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'stat2_value')
   String? get stat2Value => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ascension_max_level')
   int? get ascensionMaxLevel => throw _privateConstructorUsedError;
   String? get about => throw _privateConstructorUsedError;
   List<int>? get itemCounts => throw _privateConstructorUsedError;
@@ -50,11 +55,11 @@ abstract class $WeaponLevelRankEntityCopyWith<$Res> {
       {int? id,
       int? level,
       int? rank,
-      String? stat1Name,
-      String? stat1Value,
-      String? stat2Name,
-      String? stat2Value,
-      int? ascensionMaxLevel,
+      @JsonKey(name: 'stat1_name') String? stat1Name,
+      @JsonKey(name: 'stat1_value') String? stat1Value,
+      @JsonKey(name: 'stat2_name') String? stat2Name,
+      @JsonKey(name: 'stat2_value') String? stat2Value,
+      @JsonKey(name: 'ascension_max_level') int? ascensionMaxLevel,
       String? about,
       List<int>? itemCounts,
       List<ItemEntity>? items,
@@ -154,11 +159,11 @@ abstract class _$$WeaponLevelRankEntityImplCopyWith<$Res>
       {int? id,
       int? level,
       int? rank,
-      String? stat1Name,
-      String? stat1Value,
-      String? stat2Name,
-      String? stat2Value,
-      int? ascensionMaxLevel,
+      @JsonKey(name: 'stat1_name') String? stat1Name,
+      @JsonKey(name: 'stat1_value') String? stat1Value,
+      @JsonKey(name: 'stat2_name') String? stat2Name,
+      @JsonKey(name: 'stat2_value') String? stat2Value,
+      @JsonKey(name: 'ascension_max_level') int? ascensionMaxLevel,
       String? about,
       List<int>? itemCounts,
       List<ItemEntity>? items,
@@ -250,11 +255,11 @@ class _$WeaponLevelRankEntityImpl implements _WeaponLevelRankEntity {
       {this.id,
       this.level,
       this.rank,
-      this.stat1Name,
-      this.stat1Value,
-      this.stat2Name,
-      this.stat2Value,
-      this.ascensionMaxLevel,
+      @JsonKey(name: 'stat1_name') this.stat1Name,
+      @JsonKey(name: 'stat1_value') this.stat1Value,
+      @JsonKey(name: 'stat2_name') this.stat2Name,
+      @JsonKey(name: 'stat2_value') this.stat2Value,
+      @JsonKey(name: 'ascension_max_level') this.ascensionMaxLevel,
       this.about,
       final List<int>? itemCounts,
       final List<ItemEntity>? items,
@@ -273,14 +278,19 @@ class _$WeaponLevelRankEntityImpl implements _WeaponLevelRankEntity {
   @override
   final int? rank;
   @override
+  @JsonKey(name: 'stat1_name')
   final String? stat1Name;
   @override
+  @JsonKey(name: 'stat1_value')
   final String? stat1Value;
   @override
+  @JsonKey(name: 'stat2_name')
   final String? stat2Name;
   @override
+  @JsonKey(name: 'stat2_value')
   final String? stat2Value;
   @override
+  @JsonKey(name: 'ascension_max_level')
   final int? ascensionMaxLevel;
   @override
   final String? about;
@@ -381,11 +391,11 @@ abstract class _WeaponLevelRankEntity implements WeaponLevelRankEntity {
       {final int? id,
       final int? level,
       final int? rank,
-      final String? stat1Name,
-      final String? stat1Value,
-      final String? stat2Name,
-      final String? stat2Value,
-      final int? ascensionMaxLevel,
+      @JsonKey(name: 'stat1_name') final String? stat1Name,
+      @JsonKey(name: 'stat1_value') final String? stat1Value,
+      @JsonKey(name: 'stat2_name') final String? stat2Name,
+      @JsonKey(name: 'stat2_value') final String? stat2Value,
+      @JsonKey(name: 'ascension_max_level') final int? ascensionMaxLevel,
       final String? about,
       final List<int>? itemCounts,
       final List<ItemEntity>? items,
@@ -401,14 +411,19 @@ abstract class _WeaponLevelRankEntity implements WeaponLevelRankEntity {
   @override
   int? get rank;
   @override
+  @JsonKey(name: 'stat1_name')
   String? get stat1Name;
   @override
+  @JsonKey(name: 'stat1_value')
   String? get stat1Value;
   @override
+  @JsonKey(name: 'stat2_name')
   String? get stat2Name;
   @override
+  @JsonKey(name: 'stat2_value')
   String? get stat2Value;
   @override
+  @JsonKey(name: 'ascension_max_level')
   int? get ascensionMaxLevel;
   @override
   String? get about;
