@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/config/routes.dart';
+import 'package:mobile/domains/item/item_entity.dart';
 import 'package:mobile/presentations/views/character_page.dart';
 import 'package:mobile/presentations/views/echo_page.dart';
 import 'package:mobile/presentations/views/home_page.dart';
+import 'package:mobile/presentations/views/item_detail_page.dart';
 import 'package:mobile/presentations/views/item_page.dart';
 import 'package:mobile/presentations/views/weapon_page.dart';
 
@@ -74,6 +76,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: Routes.item,
                 name: Routes.item,
                 builder: (context, state) => const ItemPage(),
+                routes: [
+                  GoRoute(
+                    path: 'item/:id',
+                    name: Routes.itemDetail.name,
+                    builder: (context, state) {
+                      int id = int.parse(state.pathParameters['id']!);
+                      ItemEntity item = state.extra as ItemEntity;
+
+                      return ItemDetailPage(
+                          key: state.pageKey, id: id, itemEntity: item,);
+                    },
+                  ),
+                ]
               ),
             ]),
           ]),

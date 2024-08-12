@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile/core/enums/enums.dart';
 import 'package:mobile/core/extensions/extensions.dart';
@@ -8,6 +9,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:mobile/domains/item/item_entity.dart';
 import 'package:mobile/providers/providers.dart';
+
+import '../../config/routes.dart';
 class ItemPage extends HookConsumerWidget {
   const ItemPage({super.key});
 
@@ -113,29 +116,39 @@ class ItemPage extends HookConsumerWidget {
                     itemCount: listItems.length,
                     itemBuilder: (context, index) {
                       ItemEntity item = listItems[index];
-                      return Card(
-                        child: Stack(
-                          children: [
-                            Image.network(
-                              item.imageUrl!.withUrlCheck(),
-                              height: 100,
-                              width: 100,
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: Container(
-                                color: Colors.black.withOpacity(0.5),
-                                child: Text(
-                                  item.name! + ' ' + item.rank.toString() + ' ' + item.type!,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                      return InkWell(
+                        onTap: (){
+                          print(item.name!);
+                          context.pushNamed(
+                              Routes.itemDetail.name,
+                              pathParameters: {'id': item.id!.toString()},
+                              extra: item,
+                          );
+                        },
+                        child: Card(
+                          child: Stack(
+                            children: [
+                              Image.network(
+                                item.imageUrl!.withUrlCheck(),
+                                height: 100,
+                                width: 100,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: Container(
+                                  color: Colors.black.withOpacity(0.5),
+                                  child: Text(
+                                    item.name! + ' ' + item.rank.toString() + ' ' + item.type!,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     });

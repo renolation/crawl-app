@@ -100,7 +100,7 @@ class HomePage extends ConsumerWidget {
               child: InkWell(
                 onTap: () {
                   context.goNamed(Routes.character);
-                  switchBranch(context, 2);
+                  switchBranch(context, 3);
                 },
                 child:  Center(
                   child: Stack(
