@@ -7,7 +7,7 @@ import 'package:mobile/domains/item/item_entity.dart';
 import 'package:mobile/presentations/views/character_page.dart';
 import 'package:mobile/presentations/views/echo_page.dart';
 import 'package:mobile/presentations/views/home_page.dart';
-import 'package:mobile/presentations/views/item_detail_page.dart';
+import 'package:mobile/presentations/views/weapon_detail_page.dart';
 import 'package:mobile/presentations/views/item_page.dart';
 import 'package:mobile/presentations/views/weapon_page.dart';
 
@@ -15,6 +15,7 @@ import 'package:mobile/presentations/views/weapon_page.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import '../core/enums/enums.dart';
+import '../domains/weapon/weapon_entity.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState> _sectionANavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'sectionANav');
@@ -69,6 +70,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: Routes.weapon,
                 name: Routes.weapon,
                 builder: (context, state) => const WeaponPage(),
+                  routes: [
+                    GoRoute(
+                      path: 'weapon/:id',
+                      name: Routes.weaponDetail.name,
+                      builder: (context, state) {
+                        int id = int.parse(state.pathParameters['id']!);
+                        WeaponEntity weapon = state.extra as WeaponEntity;
+                        return WeaponDetailPage(
+                          key: state.pageKey, id: id, weaponEntity: weapon,);
+                      },
+                    ),
+                  ]
               ),
             ]),
             StatefulShellBranch(routes: [
@@ -76,19 +89,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: Routes.item,
                 name: Routes.item,
                 builder: (context, state) => const ItemPage(),
-                routes: [
-                  GoRoute(
-                    path: 'item/:id',
-                    name: Routes.itemDetail.name,
-                    builder: (context, state) {
-                      int id = int.parse(state.pathParameters['id']!);
-                      ItemEntity item = state.extra as ItemEntity;
 
-                      return ItemDetailPage(
-                          key: state.pageKey, id: id, itemEntity: item,);
-                    },
-                  ),
-                ]
               ),
             ]),
           ]),

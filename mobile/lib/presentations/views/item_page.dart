@@ -119,11 +119,7 @@ class ItemPage extends HookConsumerWidget {
                       return InkWell(
                         onTap: (){
                           print(item.name!);
-                          context.pushNamed(
-                              Routes.itemDetail.name,
-                              pathParameters: {'id': item.id!.toString()},
-                              extra: item,
-                          );
+
                         },
                         child: Card(
                           child: Stack(
