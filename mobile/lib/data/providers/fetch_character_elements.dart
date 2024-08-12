@@ -33,4 +33,10 @@ Future<List<ItemEntity>> fetchItems(FetchItemsRef ref) async {
   return await wutheringRepo.getItems();
 }
 
+@Riverpod(keepAlive: true)
+Future<WeaponEntity> fetchWeaponById(FetchWeaponByIdRef ref, String id) async {
+  final wutheringRepo = ref.watch(wutheringApiProvider);
+  return await wutheringRepo.getWeaponById(id);
+}
+
 

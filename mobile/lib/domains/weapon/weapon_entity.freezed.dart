@@ -26,6 +26,9 @@ mixin _$WeaponEntity {
   int? get rank => throw _privateConstructorUsedError;
   WeaponType? get type => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'levelRanks')
+  List<WeaponLevelRankEntity>? get weaponLevelRank =>
+      throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -45,7 +48,9 @@ abstract class $WeaponEntityCopyWith<$Res> {
       String? href,
       int? rank,
       WeaponType? type,
-      String? imageUrl});
+      String? imageUrl,
+      @JsonKey(name: 'levelRanks')
+      List<WeaponLevelRankEntity>? weaponLevelRank});
 }
 
 /// @nodoc
@@ -67,6 +72,7 @@ class _$WeaponEntityCopyWithImpl<$Res, $Val extends WeaponEntity>
     Object? rank = freezed,
     Object? type = freezed,
     Object? imageUrl = freezed,
+    Object? weaponLevelRank = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -93,6 +99,10 @@ class _$WeaponEntityCopyWithImpl<$Res, $Val extends WeaponEntity>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      weaponLevelRank: freezed == weaponLevelRank
+          ? _value.weaponLevelRank
+          : weaponLevelRank // ignore: cast_nullable_to_non_nullable
+              as List<WeaponLevelRankEntity>?,
     ) as $Val);
   }
 }
@@ -111,7 +121,9 @@ abstract class _$$WeaponEntityImplCopyWith<$Res>
       String? href,
       int? rank,
       WeaponType? type,
-      String? imageUrl});
+      String? imageUrl,
+      @JsonKey(name: 'levelRanks')
+      List<WeaponLevelRankEntity>? weaponLevelRank});
 }
 
 /// @nodoc
@@ -131,6 +143,7 @@ class __$$WeaponEntityImplCopyWithImpl<$Res>
     Object? rank = freezed,
     Object? type = freezed,
     Object? imageUrl = freezed,
+    Object? weaponLevelRank = freezed,
   }) {
     return _then(_$WeaponEntityImpl(
       id: freezed == id
@@ -157,6 +170,10 @@ class __$$WeaponEntityImplCopyWithImpl<$Res>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      weaponLevelRank: freezed == weaponLevelRank
+          ? _value._weaponLevelRank
+          : weaponLevelRank // ignore: cast_nullable_to_non_nullable
+              as List<WeaponLevelRankEntity>?,
     ));
   }
 }
@@ -165,7 +182,15 @@ class __$$WeaponEntityImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$WeaponEntityImpl implements _WeaponEntity {
   const _$WeaponEntityImpl(
-      {this.id, this.name, this.href, this.rank, this.type, this.imageUrl});
+      {this.id,
+      this.name,
+      this.href,
+      this.rank,
+      this.type,
+      this.imageUrl,
+      @JsonKey(name: 'levelRanks')
+      final List<WeaponLevelRankEntity>? weaponLevelRank})
+      : _weaponLevelRank = weaponLevelRank;
 
   factory _$WeaponEntityImpl.fromJson(Map<String, dynamic> json) =>
       _$$WeaponEntityImplFromJson(json);
@@ -182,10 +207,20 @@ class _$WeaponEntityImpl implements _WeaponEntity {
   final WeaponType? type;
   @override
   final String? imageUrl;
+  final List<WeaponLevelRankEntity>? _weaponLevelRank;
+  @override
+  @JsonKey(name: 'levelRanks')
+  List<WeaponLevelRankEntity>? get weaponLevelRank {
+    final value = _weaponLevelRank;
+    if (value == null) return null;
+    if (_weaponLevelRank is EqualUnmodifiableListView) return _weaponLevelRank;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'WeaponEntity(id: $id, name: $name, href: $href, rank: $rank, type: $type, imageUrl: $imageUrl)';
+    return 'WeaponEntity(id: $id, name: $name, href: $href, rank: $rank, type: $type, imageUrl: $imageUrl, weaponLevelRank: $weaponLevelRank)';
   }
 
   @override
@@ -199,13 +234,15 @@ class _$WeaponEntityImpl implements _WeaponEntity {
             (identical(other.rank, rank) || other.rank == rank) &&
             (identical(other.type, type) || other.type == type) &&
             (identical(other.imageUrl, imageUrl) ||
-                other.imageUrl == imageUrl));
+                other.imageUrl == imageUrl) &&
+            const DeepCollectionEquality()
+                .equals(other._weaponLevelRank, _weaponLevelRank));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, name, href, rank, type, imageUrl);
+  int get hashCode => Object.hash(runtimeType, id, name, href, rank, type,
+      imageUrl, const DeepCollectionEquality().hash(_weaponLevelRank));
 
   @JsonKey(ignore: true)
   @override
@@ -228,7 +265,9 @@ abstract class _WeaponEntity implements WeaponEntity {
       final String? href,
       final int? rank,
       final WeaponType? type,
-      final String? imageUrl}) = _$WeaponEntityImpl;
+      final String? imageUrl,
+      @JsonKey(name: 'levelRanks')
+      final List<WeaponLevelRankEntity>? weaponLevelRank}) = _$WeaponEntityImpl;
 
   factory _WeaponEntity.fromJson(Map<String, dynamic> json) =
       _$WeaponEntityImpl.fromJson;
@@ -245,6 +284,9 @@ abstract class _WeaponEntity implements WeaponEntity {
   WeaponType? get type;
   @override
   String? get imageUrl;
+  @override
+  @JsonKey(name: 'levelRanks')
+  List<WeaponLevelRankEntity>? get weaponLevelRank;
   @override
   @JsonKey(ignore: true)
   _$$WeaponEntityImplCopyWith<_$WeaponEntityImpl> get copyWith =>

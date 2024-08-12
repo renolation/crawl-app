@@ -48,7 +48,7 @@ export class GetterController {
         return this.getterService.findAllItems();
     }
 
-        @Get('weapon/:id')
+    @Get('weapon/:id')
     async getWeaponById(@Param('id') id: number) {
         return this.getterService.getWeaponById(id);
     }

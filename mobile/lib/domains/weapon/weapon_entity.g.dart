@@ -14,6 +14,10 @@ _$WeaponEntityImpl _$$WeaponEntityImplFromJson(Map<String, dynamic> json) =>
       rank: (json['rank'] as num?)?.toInt(),
       type: $enumDecodeNullable(_$WeaponTypeEnumMap, json['type']),
       imageUrl: json['imageUrl'] as String?,
+      weaponLevelRank: (json['levelRanks'] as List<dynamic>?)
+          ?.map(
+              (e) => WeaponLevelRankEntity.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$$WeaponEntityImplToJson(_$WeaponEntityImpl instance) =>
@@ -24,6 +28,7 @@ Map<String, dynamic> _$$WeaponEntityImplToJson(_$WeaponEntityImpl instance) =>
       'rank': instance.rank,
       'type': _$WeaponTypeEnumMap[instance.type],
       'imageUrl': instance.imageUrl,
+      'levelRanks': instance.weaponLevelRank,
     };
 
 const _$WeaponTypeEnumMap = {
