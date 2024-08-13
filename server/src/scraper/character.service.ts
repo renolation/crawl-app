@@ -15,7 +15,6 @@ export class CharacterService {
     constructor(
         @InjectRepository(CharacterEntity)
         private characterEntityRepository: Repository<CharacterEntity>,
-
         @InjectRepository(ItemEntity)
         private itemRepository: Repository<ItemEntity>,
         @InjectRepository(CharacterLevelEntity)
@@ -24,7 +23,7 @@ export class CharacterService {
     }
 
     async getAllTopStats() {
-         const characters = await this.characterEntityRepository.createQueryBuilder('character')
+        const characters = await this.characterEntityRepository.createQueryBuilder('character')
             .leftJoinAndSelect('character.levels', 'level')
             .select(['character.id', 'character.name', 'character.href'])
             .addSelect('COUNT(level.id)', 'level_count')
@@ -33,7 +32,7 @@ export class CharacterService {
             .addGroupBy('character.href')
             .orderBy('level_count', 'ASC')
             .getMany();
-        const characterHrefs = characters.map(character => 'https://wuthering.gg' +character.href);
+        const characterHrefs = characters.map(character => 'https://wuthering.gg' + character.href);
         await this.getCharacterTopById(characterHrefs);
         console.log(characterHrefs);
     }
@@ -125,7 +124,7 @@ export class CharacterService {
                             }
                         });
 
-                        if(!existingLevel){
+                        if (!existingLevel) {
                             const characterLevelEntity = new CharacterLevelEntity();
                             characterLevelEntity.level = currentLevelValue;
                             characterLevelEntity.hp = topStat.hp;
@@ -135,7 +134,7 @@ export class CharacterService {
                             characterLevelEntity.crit_dmg = topStat.crit_dmg;
                             characterLevelEntity.energy_regen = topStat.energy_regen;
                             characterLevelEntity.max_resonance_energy = topStat.max_resonance_energy;
-                            characterLevelEntity.items =itemIds;
+                            characterLevelEntity.items = itemIds;
                             characterLevelEntity.itemCounts = costs;
                             characterLevelEntity.ascension_max_level = parseInt(maxLevel, 10);
 
@@ -144,13 +143,12 @@ export class CharacterService {
                         }
 
 
-
-                    } catch (error){
-                         if (error.code === '23505') { // Unique constraint violation
-                                console.log('Echo Rank already exists, skipping save.');
-                            } else {
-                                throw error;
-                            }
+                    } catch (error) {
+                        if (error.code === '23505') { // Unique constraint violation
+                            console.log('Echo Rank already exists, skipping save.');
+                        } else {
+                            throw error;
+                        }
                     }
                     //endregion
                     await sleep(500);
@@ -161,15 +159,17 @@ export class CharacterService {
     }
 
     async getItemsFromConsume(consume: any[]): Promise<{ items: ItemEntity[], costs: number[] }> {
-        const names: string[] = [];
+        const items: ItemEntity[] = [];
         const costs: number[] = [];
-        for (const item of consume) {
-            names.push(item.name);
-            costs.push(parseInt(item.cost, 10));
+
+        for (let i = 0; i < consume.length; i++) {
+            const item = await this.itemRepository.findOneBy({name: consume[i].name});
+            if (item) {
+                items.push(item);
+                costs.push(parseInt(consume[i].cost, 10));
+            }
+
         }
-        const items = await this.itemRepository.find({
-            where: {name: In(names)},
-        });
         return {items, costs};
     }
 

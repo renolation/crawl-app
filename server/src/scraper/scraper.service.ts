@@ -643,15 +643,17 @@ export class ScraperService {
 
 
     async getItemsFromConsume(consume: any[]): Promise<{ items: ItemEntity[], costs: number[] }> {
-        const names: string[] = [];
+        const items: ItemEntity[] = [];
         const costs: number[] = [];
-        for (const item of consume) {
-            names.push(item.name);
-            costs.push(parseInt(item.cost, 10));
+
+        for (let i = 0; i < consume.length; i++) {
+            const item = await this.itemRepository.findOneBy({name: consume[i].name});
+            if (item) {
+                items.push(item);
+                costs.push(parseInt(consume[i].cost, 10));
+            }
+
         }
-        const items = await this.itemRepository.find({
-            where: {name: In(names)},
-        });
         return {items, costs};
     }
 
