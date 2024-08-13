@@ -1,5 +1,6 @@
 import {Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {CharElementEntity} from "./char_element.entity";
+import {CharacterLevelEntity} from "./character_level_entity";
 
 @Entity()
 export class CharacterEntity {
@@ -33,6 +34,13 @@ export class CharacterEntity {
     @Column({nullable: true})
     introduction: string
 
+    //stats
+
     @ManyToOne(() => CharElementEntity, character => character.characters)
     characterElement: CharElementEntity;
+
+    @OneToMany(() => CharacterLevelEntity, level => level.character)
+    levels: CharacterLevelEntity[];
+
+
 }
