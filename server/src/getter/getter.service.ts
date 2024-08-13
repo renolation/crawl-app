@@ -9,6 +9,7 @@ import {WeaponEntity} from "../scraper/entities/weapon.entity";
 import {ItemEntity} from "../scraper/entities/item.entity";
 import {CharElementEntity} from "../scraper/entities/char_element.entity";
 import {SonataEffectEntity} from "../scraper/entities/sonata_effect.entity";
+import {CharacterLevelEntity} from "../scraper/entities/character_level_entity";
 
 @Injectable()
 export class GetterService {
@@ -26,6 +27,8 @@ export class GetterService {
         private charElementRepository: Repository<CharElementEntity>,
         @InjectRepository(SonataEffectEntity)
         private sonataEffectRepository: Repository<SonataEffectEntity>,
+        @InjectRepository(CharacterLevelEntity)
+        private characterLevelRepository: Repository<CharacterLevelEntity>,
     ) {
     }
 
@@ -85,6 +88,7 @@ export class GetterService {
 
         };
     }
+
     async getWeaponById(id: number) {
         const item = await this.weaponRepository.findOne({
             where: {id},
@@ -127,6 +131,12 @@ export class GetterService {
         };
     }
 
+    async getCharacterById(id: number) {
+        return this.characterRepository.findOne({
+            where: {id},
+            relations: ['levels', 'levels.items'],
+        });
+    }
 
     findAll() {
         return `This action returns all getter`;
@@ -147,4 +157,6 @@ export class GetterService {
     async findSonata() {
         return await this.sonataEffectRepository.find();
     }
+
+
 }

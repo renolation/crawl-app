@@ -58,6 +58,11 @@ export class GetterController {
         return this.getterService.getEchoById(id);
     }
 
+        @Get('character/:id')
+    async getCharacterById(@Param('id') id: number) {
+        return this.getterService.getCharacterById(id);
+    }
+
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.getterService.findOne(+id);
