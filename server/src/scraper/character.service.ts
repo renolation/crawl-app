@@ -23,10 +23,26 @@ export class CharacterService {
     ) {
     }
 
-    async getCharacterTopById() {
+    async getAllTopStats() {
+         const characters = await this.characterEntityRepository.createQueryBuilder('character')
+            .leftJoinAndSelect('character.levels', 'level')
+            .select(['character.id', 'character.name', 'character.href'])
+            .addSelect('COUNT(level.id)', 'level_count')
+            .groupBy('character.id')
+            .addGroupBy('character.name')
+            .addGroupBy('character.href')
+            .orderBy('level_count', 'ASC')
+            .getMany();
+        const characterHrefs = characters.map(character => 'https://wuthering.gg' +character.href);
+        await this.getCharacterTopById(characterHrefs);
+        console.log(characterHrefs);
+    }
+
+    async getCharacterTopById(hrefs: string[]) {
         const crawler = new PlaywrightCrawler({
             headless: false,
             requestHandlerTimeoutSecs: 36000,
+            maxConcurrency: 10,
             requestHandler: async ({page, request}) => {
                 console.log(`Processing: ${request.url}`);
                 await page.waitForSelector('section.character', {timeout: 10000});
@@ -37,7 +53,7 @@ export class CharacterService {
                     const slider = document.querySelector('section.character div.top div.right div.level div.slider-target.slider-ltr.slider-horizontal.slider-txt-dir-ltr div.slider-base') as HTMLElement;
                     if (slider) {
                         const currentWidth = slider.getBoundingClientRect().width;
-                        slider.style.width = `${currentWidth * 3}px`;
+                        slider.style.width = `${currentWidth * 5}px`;
                     }
                 });
                 const levelMinValue = 1;
@@ -141,7 +157,7 @@ export class CharacterService {
                 }
             },
         });
-        await crawler.run(['https://wuthering.gg/characters/lingyang']);
+        await crawler.run(hrefs);
     }
 
     async getItemsFromConsume(consume: any[]): Promise<{ items: ItemEntity[], costs: number[] }> {

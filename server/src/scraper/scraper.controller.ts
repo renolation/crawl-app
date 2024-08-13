@@ -93,7 +93,7 @@ export class ScraperController {
 
     @Get('char/top')
     async charTop() {
-        return await this.characterService.getCharacterTopById();
+        return await this.characterService.getAllTopStats();
     }
 
     @Post()
