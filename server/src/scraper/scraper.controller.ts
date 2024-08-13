@@ -2,10 +2,14 @@ import {Controller, Get, Post, Body, Patch, Param, Delete} from '@nestjs/common'
 import {ScraperService} from './scraper.service';
 import {CreateScraperDto} from './dto/create-scraper.dto';
 import {UpdateScraperDto} from './dto/update-scraper.dto';
+import {CharacterService} from "./character.service";
 
 @Controller('scraper')
 export class ScraperController {
-    constructor(private readonly scraperService: ScraperService) {
+    constructor
+    (private readonly scraperService: ScraperService,
+     private readonly characterService: CharacterService,
+    ) {
     }
 
 
@@ -85,6 +89,11 @@ export class ScraperController {
     @Get('char/get_info')
     async charGetInfo() {
         return await this.scraperService.scrapeAllCharacter();
+    }
+
+    @Get('char/top')
+    async charTop() {
+        return await this.characterService.getCharacterTopById();
     }
 
     @Post()

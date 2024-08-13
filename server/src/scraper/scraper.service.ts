@@ -238,7 +238,7 @@ export class ScraperService {
                         const weapon = await this.weaponRepository.findOne({where: {href: request.url}});
                         // console.log('Weapon:', weapon);
                         const skill = await this.saveSkillToDatabase(skillEntity);
-                            console.log('rank, level:', currentRankValue, currentLevelValue, request.url);
+                        console.log('rank, level:', currentRankValue, currentLevelValue, request.url);
                         try {
                             const newRank = this.weaponLevelRankRepository.create({
                                 rank: currentRankValue,

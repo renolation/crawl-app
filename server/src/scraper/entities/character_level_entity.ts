@@ -1,9 +1,10 @@
-import {Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, Unique} from "typeorm";
 import {CharacterEntity} from "./character_entity";
 import {ItemEntity} from "./item.entity";
 
 
 @Entity()
+@Unique(['level', 'character'])
 export class CharacterLevelEntity {
     @PrimaryGeneratedColumn()
     id: number;
@@ -12,25 +13,28 @@ export class CharacterLevelEntity {
     level: number
 
     @Column()
-    hp: number
+    hp: string
 
     @Column()
-    atk: number
+    atk: string
 
     @Column()
-    def: number
+    def: string
 
     @Column()
-    crit_rate: number
+    crit_rate: string
 
     @Column()
-    crit_dmg: number
+    crit_dmg: string
 
     @Column()
-    energy_regen: number
+    energy_regen: string
 
     @Column()
-    max_resonance_energy: number
+    max_resonance_energy: string
+
+    @Column()
+    ascension_max_level: number
 
     @ManyToOne(() => CharacterEntity, character => character.levels)
     character: CharacterEntity;
