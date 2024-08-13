@@ -117,7 +117,7 @@ export class ScraperService {
             maxConcurrency: 1,
 
             requestHandler: async ({page, request}) => {
-
+                console.log(`Processing: ${request.url}`);
                 await page.route('**/*', (route) => {
                     const request = route.request();
                     if (request.resourceType() === 'image') {
@@ -136,7 +136,7 @@ export class ScraperService {
                     const slider = document.querySelector('.slider-base') as HTMLElement;
                     if (slider) {
                         const currentWidth = slider.getBoundingClientRect().width;
-                        slider.style.width = `${currentWidth * 3}px`;
+                        slider.style.width = `${currentWidth * 8}px`;
                     }
                 });
 
@@ -195,6 +195,8 @@ export class ScraperService {
                             const handle = el.querySelector('.slider-handle-lower');
                             return handle ? parseInt(handle.getAttribute('aria-valuenow'), 10) : null;
                         });
+
+
                         //: stats
                         const stats = await page.$$eval('div.stats.head div.item', items =>
                             items.map(item => ({
@@ -223,7 +225,7 @@ export class ScraperService {
                         const skillName = (await page.$eval('div.about.ability h3', name => name.textContent.trim())).trim();
                         // console.log('Skill Name:', skillName);
                         const skillDetail = (await page.$eval('div.about.ability div.container p', p => p.innerHTML.trim())).trim();
-                        console.log('Skill Detail:', skillDetail);
+                        // console.log('Skill Detail:', skillDetail);
 
                         const skillEntity = {
                             name: skillName,
@@ -236,7 +238,7 @@ export class ScraperService {
                         const weapon = await this.weaponRepository.findOne({where: {href: request.url}});
                         // console.log('Weapon:', weapon);
                         const skill = await this.saveSkillToDatabase(skillEntity);
-
+                            console.log('rank, level:', currentRankValue, currentLevelValue, request.url);
                         try {
                             const newRank = this.weaponLevelRankRepository.create({
                                 rank: currentRankValue,
@@ -253,7 +255,7 @@ export class ScraperService {
                                 about: skillAbout,
                             });
                             const savedRank = await this.weaponLevelRankRepository.save(newRank);
-                            console.log(savedRank);
+                            // console.log(savedRank);
                             await sleep(100);
                         } catch (error) {
                             if (error.code === '23505') { // Unique constraint violation
@@ -580,7 +582,7 @@ export class ScraperService {
     async scrapeAllWeapons() {
         const weapons = await this.weaponRepository.find();
         const weaponHrefs = weapons.map(weapon => weapon.href);
-        await this.scrapeWeapon(weaponHrefs);
+        // await this.scrapeWeapon(weaponHrefs);
         console.log(weaponHrefs);
         console.log('Total weapons:', weapons.length);
     }
@@ -622,7 +624,7 @@ export class ScraperService {
                     name: skill.name,
                     value: skill.value,
                 });
-                console.log(newSkill);
+                // console.log(newSkill);
                 return await this.skillRepository.save(newSkill);
             }
 
