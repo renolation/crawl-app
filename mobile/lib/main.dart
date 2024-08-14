@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/router.dart';
+import 'utils/theme.dart';
+import 'utils/util.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,15 +21,18 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final goRouter = ref.watch(goRouterProvider);
+    final brightness = View.of(context).platformDispatcher.platformBrightness;
+    TextTheme textTheme = createTextTheme(context, "Roboto Condensed", "Roboto");
+    MaterialTheme theme = MaterialTheme(textTheme);
 
     return MaterialApp.router(
       title: 'Flutter Demo',
       routerConfig: goRouter,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      // theme: brightness == Brightness.light ? theme.light() : theme.dark(),
+      theme: theme.dark(),
+      themeMode: ThemeMode.dark,
+
     );
   }
 }

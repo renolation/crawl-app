@@ -37,7 +37,6 @@ class CharacterPage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Character Page'),
       ),
       body: Column(

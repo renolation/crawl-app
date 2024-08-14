@@ -5,7 +5,7 @@ List<String> getNonNullProperties(Object instance) {
   List<String> nonNullProperties = [];
 
   instanceMap.forEach((key, value) {
-    if (value != null && key != 'id') {
+    if (value != null && key != 'id' && key != 'itemCounts' && key != 'items') {
       key = convertBackToNormal(key);
       nonNullProperties.add('$key: $value');
     }

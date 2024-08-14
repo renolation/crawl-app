@@ -18,11 +18,14 @@ _$CharacterEntityImpl _$$CharacterEntityImplFromJson(
       buble: json['buble'] as String?,
       description: json['description'] as String?,
       birthday: json['birthday'] as String?,
-      introduction: json['introduction'],
+      introduction: json['introduction'] as String?,
       characterElement: json['characterElement'] == null
           ? null
           : CharacterElementEntity.fromJson(
               json['characterElement'] as Map<String, dynamic>),
+      characterLevels: (json['levels'] as List<dynamic>?)
+          ?.map((e) => CharacterLevelEntity.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$$CharacterEntityImplToJson(
@@ -39,4 +42,5 @@ Map<String, dynamic> _$$CharacterEntityImplToJson(
       'birthday': instance.birthday,
       'introduction': instance.introduction,
       'characterElement': instance.characterElement,
+      'levels': instance.characterLevels,
     };

@@ -29,8 +29,11 @@ mixin _$CharacterEntity {
   String? get buble => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   String? get birthday => throw _privateConstructorUsedError;
-  dynamic get introduction => throw _privateConstructorUsedError;
+  String? get introduction => throw _privateConstructorUsedError;
   CharacterElementEntity? get characterElement =>
+      throw _privateConstructorUsedError;
+  @JsonKey(name: "levels")
+  List<CharacterLevelEntity>? get characterLevels =>
       throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -55,8 +58,9 @@ abstract class $CharacterEntityCopyWith<$Res> {
       String? buble,
       String? description,
       String? birthday,
-      dynamic introduction,
-      CharacterElementEntity? characterElement});
+      String? introduction,
+      CharacterElementEntity? characterElement,
+      @JsonKey(name: "levels") List<CharacterLevelEntity>? characterLevels});
 
   $CharacterElementEntityCopyWith<$Res>? get characterElement;
 }
@@ -85,6 +89,7 @@ class _$CharacterEntityCopyWithImpl<$Res, $Val extends CharacterEntity>
     Object? birthday = freezed,
     Object? introduction = freezed,
     Object? characterElement = freezed,
+    Object? characterLevels = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -126,11 +131,15 @@ class _$CharacterEntityCopyWithImpl<$Res, $Val extends CharacterEntity>
       introduction: freezed == introduction
           ? _value.introduction
           : introduction // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as String?,
       characterElement: freezed == characterElement
           ? _value.characterElement
           : characterElement // ignore: cast_nullable_to_non_nullable
               as CharacterElementEntity?,
+      characterLevels: freezed == characterLevels
+          ? _value.characterLevels
+          : characterLevels // ignore: cast_nullable_to_non_nullable
+              as List<CharacterLevelEntity>?,
     ) as $Val);
   }
 
@@ -166,8 +175,9 @@ abstract class _$$CharacterEntityImplCopyWith<$Res>
       String? buble,
       String? description,
       String? birthday,
-      dynamic introduction,
-      CharacterElementEntity? characterElement});
+      String? introduction,
+      CharacterElementEntity? characterElement,
+      @JsonKey(name: "levels") List<CharacterLevelEntity>? characterLevels});
 
   @override
   $CharacterElementEntityCopyWith<$Res>? get characterElement;
@@ -195,6 +205,7 @@ class __$$CharacterEntityImplCopyWithImpl<$Res>
     Object? birthday = freezed,
     Object? introduction = freezed,
     Object? characterElement = freezed,
+    Object? characterLevels = freezed,
   }) {
     return _then(_$CharacterEntityImpl(
       id: freezed == id
@@ -236,11 +247,15 @@ class __$$CharacterEntityImplCopyWithImpl<$Res>
       introduction: freezed == introduction
           ? _value.introduction
           : introduction // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as String?,
       characterElement: freezed == characterElement
           ? _value.characterElement
           : characterElement // ignore: cast_nullable_to_non_nullable
               as CharacterElementEntity?,
+      characterLevels: freezed == characterLevels
+          ? _value._characterLevels
+          : characterLevels // ignore: cast_nullable_to_non_nullable
+              as List<CharacterLevelEntity>?,
     ));
   }
 }
@@ -259,7 +274,10 @@ class _$CharacterEntityImpl implements _CharacterEntity {
       this.description,
       this.birthday,
       this.introduction,
-      this.characterElement});
+      this.characterElement,
+      @JsonKey(name: "levels")
+      final List<CharacterLevelEntity>? characterLevels})
+      : _characterLevels = characterLevels;
 
   factory _$CharacterEntityImpl.fromJson(Map<String, dynamic> json) =>
       _$$CharacterEntityImplFromJson(json);
@@ -283,13 +301,23 @@ class _$CharacterEntityImpl implements _CharacterEntity {
   @override
   final String? birthday;
   @override
-  final dynamic introduction;
+  final String? introduction;
   @override
   final CharacterElementEntity? characterElement;
+  final List<CharacterLevelEntity>? _characterLevels;
+  @override
+  @JsonKey(name: "levels")
+  List<CharacterLevelEntity>? get characterLevels {
+    final value = _characterLevels;
+    if (value == null) return null;
+    if (_characterLevels is EqualUnmodifiableListView) return _characterLevels;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'CharacterEntity(id: $id, name: $name, href: $href, rarity: $rarity, imageUrl: $imageUrl, mainImageUrl: $mainImageUrl, buble: $buble, description: $description, birthday: $birthday, introduction: $introduction, characterElement: $characterElement)';
+    return 'CharacterEntity(id: $id, name: $name, href: $href, rarity: $rarity, imageUrl: $imageUrl, mainImageUrl: $mainImageUrl, buble: $buble, description: $description, birthday: $birthday, introduction: $introduction, characterElement: $characterElement, characterLevels: $characterLevels)';
   }
 
   @override
@@ -310,10 +338,12 @@ class _$CharacterEntityImpl implements _CharacterEntity {
                 other.description == description) &&
             (identical(other.birthday, birthday) ||
                 other.birthday == birthday) &&
-            const DeepCollectionEquality()
-                .equals(other.introduction, introduction) &&
+            (identical(other.introduction, introduction) ||
+                other.introduction == introduction) &&
             (identical(other.characterElement, characterElement) ||
-                other.characterElement == characterElement));
+                other.characterElement == characterElement) &&
+            const DeepCollectionEquality()
+                .equals(other._characterLevels, _characterLevels));
   }
 
   @JsonKey(ignore: true)
@@ -329,8 +359,9 @@ class _$CharacterEntityImpl implements _CharacterEntity {
       buble,
       description,
       birthday,
-      const DeepCollectionEquality().hash(introduction),
-      characterElement);
+      introduction,
+      characterElement,
+      const DeepCollectionEquality().hash(_characterLevels));
 
   @JsonKey(ignore: true)
   @override
@@ -349,17 +380,20 @@ class _$CharacterEntityImpl implements _CharacterEntity {
 
 abstract class _CharacterEntity implements CharacterEntity {
   const factory _CharacterEntity(
-      {final int? id,
-      final String? name,
-      final String? href,
-      final int? rarity,
-      final String? imageUrl,
-      final String? mainImageUrl,
-      final String? buble,
-      final String? description,
-      final String? birthday,
-      final dynamic introduction,
-      final CharacterElementEntity? characterElement}) = _$CharacterEntityImpl;
+          {final int? id,
+          final String? name,
+          final String? href,
+          final int? rarity,
+          final String? imageUrl,
+          final String? mainImageUrl,
+          final String? buble,
+          final String? description,
+          final String? birthday,
+          final String? introduction,
+          final CharacterElementEntity? characterElement,
+          @JsonKey(name: "levels")
+          final List<CharacterLevelEntity>? characterLevels}) =
+      _$CharacterEntityImpl;
 
   factory _CharacterEntity.fromJson(Map<String, dynamic> json) =
       _$CharacterEntityImpl.fromJson;
@@ -383,9 +417,12 @@ abstract class _CharacterEntity implements CharacterEntity {
   @override
   String? get birthday;
   @override
-  dynamic get introduction;
+  String? get introduction;
   @override
   CharacterElementEntity? get characterElement;
+  @override
+  @JsonKey(name: "levels")
+  List<CharacterLevelEntity>? get characterLevels;
   @override
   @JsonKey(ignore: true)
   _$$CharacterEntityImplCopyWith<_$CharacterEntityImpl> get copyWith =>
