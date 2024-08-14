@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile/core/enums/enums.dart';
 import 'package:mobile/core/extensions/string_ext.dart';
 import 'package:mobile/data/providers/character_controller.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:mobile/providers/providers.dart';
 
 import '../../config/router.dart';
+import '../../config/routes.dart';
 
 class CharacterPage extends HookConsumerWidget {
   const CharacterPage({super.key});
@@ -157,7 +159,15 @@ class CharacterPage extends HookConsumerWidget {
                     ),
                     itemBuilder: (context, index) {
                       CharacterEntity character = listCharacter[index];
-                      return Card(
+                      return InkWell(
+                         onTap: (){
+                          context.pushNamed(
+                            Routes.characterDetail.name,
+                            pathParameters: {'id': character.id!.toString()},
+                            extra: character,
+                          );
+                        },
+                        child: Card(
                           child: Column(
                             children: [
                               Row(
@@ -170,8 +180,8 @@ class CharacterPage extends HookConsumerWidget {
                               ),
                               CachedNetworkImage(imageUrl: 'https://wuthering.gg${character.imageUrl!}'),
                             ],
-                          ));
-                    },
+                          )
+                    ));},
                   ),
                 );
               },

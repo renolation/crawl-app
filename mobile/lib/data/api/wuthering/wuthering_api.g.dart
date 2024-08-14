@@ -190,6 +190,33 @@ class _WutheringApi implements WutheringApi {
   }
 
   @override
+  Future<CharacterEntity> getCharacterById(String id) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<CharacterEntity>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/getter/character/${id}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final _value = CharacterEntity.fromJson(_result.data!);
+    return _value;
+  }
+
+  @override
   Future<List<ItemEntity>> getItems() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

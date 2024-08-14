@@ -282,5 +282,134 @@ class _FetchEchoByIdProviderElement extends FutureProviderElement<EchoEntity>
   @override
   int get id => (origin as FetchEchoByIdProvider).id;
 }
+
+String _$fetchCharacterByIdHash() =>
+    r'3a7211d6d179878dfdf1690a302bd8804a801476';
+
+/// See also [fetchCharacterById].
+@ProviderFor(fetchCharacterById)
+const fetchCharacterByIdProvider = FetchCharacterByIdFamily();
+
+/// See also [fetchCharacterById].
+class FetchCharacterByIdFamily extends Family<AsyncValue<CharacterEntity>> {
+  /// See also [fetchCharacterById].
+  const FetchCharacterByIdFamily();
+
+  /// See also [fetchCharacterById].
+  FetchCharacterByIdProvider call({
+    required int id,
+  }) {
+    return FetchCharacterByIdProvider(
+      id: id,
+    );
+  }
+
+  @override
+  FetchCharacterByIdProvider getProviderOverride(
+    covariant FetchCharacterByIdProvider provider,
+  ) {
+    return call(
+      id: provider.id,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'fetchCharacterByIdProvider';
+}
+
+/// See also [fetchCharacterById].
+class FetchCharacterByIdProvider extends FutureProvider<CharacterEntity> {
+  /// See also [fetchCharacterById].
+  FetchCharacterByIdProvider({
+    required int id,
+  }) : this._internal(
+          (ref) => fetchCharacterById(
+            ref as FetchCharacterByIdRef,
+            id: id,
+          ),
+          from: fetchCharacterByIdProvider,
+          name: r'fetchCharacterByIdProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$fetchCharacterByIdHash,
+          dependencies: FetchCharacterByIdFamily._dependencies,
+          allTransitiveDependencies:
+              FetchCharacterByIdFamily._allTransitiveDependencies,
+          id: id,
+        );
+
+  FetchCharacterByIdProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.id,
+  }) : super.internal();
+
+  final int id;
+
+  @override
+  Override overrideWith(
+    FutureOr<CharacterEntity> Function(FetchCharacterByIdRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: FetchCharacterByIdProvider._internal(
+        (ref) => create(ref as FetchCharacterByIdRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        id: id,
+      ),
+    );
+  }
+
+  @override
+  FutureProviderElement<CharacterEntity> createElement() {
+    return _FetchCharacterByIdProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchCharacterByIdProvider && other.id == id;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, id.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin FetchCharacterByIdRef on FutureProviderRef<CharacterEntity> {
+  /// The parameter `id` of this provider.
+  int get id;
+}
+
+class _FetchCharacterByIdProviderElement
+    extends FutureProviderElement<CharacterEntity> with FetchCharacterByIdRef {
+  _FetchCharacterByIdProviderElement(super.provider);
+
+  @override
+  int get id => (origin as FetchCharacterByIdProvider).id;
+}
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

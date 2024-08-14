@@ -1,6 +1,5 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:mobile/core/enums/enums.dart';
 
 part 'item_entity.freezed.dart';
 part 'item_entity.g.dart';

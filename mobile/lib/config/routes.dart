@@ -1,6 +1,7 @@
 abstract class Routes {
   static const home = '/';
   static const character = 'character';
+  static const characterDetail = 'characterDetail';
 
 
   static const echo = '/echo';

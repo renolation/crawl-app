@@ -1,3 +1,4 @@
+import 'package:mobile/domains/character/character_entity.dart';
 import 'package:mobile/domains/echo/echo_entity.dart';
 import 'package:mobile/domains/weapon/weapon_entity.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -18,4 +19,10 @@ Future<WeaponEntity> fetchWeaponById(FetchWeaponByIdRef ref,{required int id}) a
 Future<EchoEntity> fetchEchoById(FetchEchoByIdRef ref,{required int id}) async {
   final wutheringRepo = ref.watch(wutheringApiProvider);
   return await wutheringRepo.getEchoById(id.toString());
+}
+
+@Riverpod(keepAlive: true)
+Future<CharacterEntity> fetchCharacterById(FetchCharacterByIdRef ref,{required int id}) async {
+  final wutheringRepo = ref.watch(wutheringApiProvider);
+  return await wutheringRepo.getCharacterById(id.toString());
 }
