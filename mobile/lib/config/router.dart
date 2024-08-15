@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:mobile/config/routes.dart';
 import 'package:mobile/domains/character/character_entity.dart';
 import 'package:mobile/domains/echo/echo_entity.dart';
@@ -10,6 +12,7 @@ import 'package:mobile/presentations/views/character_page.dart';
 import 'package:mobile/presentations/views/echo_detail_page.dart';
 import 'package:mobile/presentations/views/echo_page.dart';
 import 'package:mobile/presentations/views/home_page.dart';
+import 'package:mobile/presentations/views/settings_page.dart';
 import 'package:mobile/presentations/views/weapon_detail_page.dart';
 import 'package:mobile/presentations/views/item_page.dart';
 import 'package:mobile/presentations/views/weapon_page.dart';
@@ -32,48 +35,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             return ScaffoldWithNavBar(navigationShell: navigationShell);
           },
           branches: [
-            StatefulShellBranch(navigatorKey: _sectionANavigatorKey, routes: [
-              GoRoute(
-                  path: Routes.home,
-                  name: Routes.home,
-                  builder: (context, state) => const HomePage(),
-                  routes: [
-                    GoRoute(
-                      path: Routes.character,
-                      name: Routes.character,
-                      builder: (context, state) => const CharacterPage(),
-                      routes: [
-                        GoRoute(
-                      path: 'character/:id',
-                      name: Routes.characterDetail.name,
-                      builder: (context, state) {
-                        int id = int.parse(state.pathParameters['id']!);
-                        CharacterEntity character = state.extra as CharacterEntity;
-                        return CharacterDetailPage(
-                          key: state.pageKey,
-                          id: id,
-                          characterEntity: character,
-                        );
-                      },
-                    ),
-                      ]
-                    ),
 
-                  ]
-              ),
 
-              // GoRoute(
-              //   path: '/detail/:slug',
-              //   name: AppRoute.detail.name,
-              //   builder: (context, state) {
-              //     String slug = state.pathParameters['slug']!;
-              //     String name = state.extra as String;
-              //     return DetailScreen(
-              //         key: state.pageKey, slug: slug, name :name);
-              //   },
-              // ),
-            ]),
-
+            //echo
             StatefulShellBranch(routes: [
               GoRoute(
                 path: Routes.echo,
@@ -97,6 +61,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
             ]),
 
+            //weapon
             StatefulShellBranch(routes: [
               GoRoute(
                 path: Routes.weapon,
@@ -118,12 +83,66 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     ),
                   ]),
             ]),
+
+            //home-character
+            StatefulShellBranch(navigatorKey: _sectionANavigatorKey, routes: [
+              GoRoute(
+                  path: Routes.home,
+                  name: Routes.home,
+                  builder: (context, state) => const HomePage(),
+                  routes: [
+                    GoRoute(
+                        path: Routes.character,
+                        name: Routes.character,
+                        builder: (context, state) => const CharacterPage(),
+                        routes: [
+                          GoRoute(
+                            path: 'character/:id',
+                            name: Routes.characterDetail.name,
+                            builder: (context, state) {
+                              int id = int.parse(state.pathParameters['id']!);
+                              CharacterEntity character = state.extra as CharacterEntity;
+                              return CharacterDetailPage(
+                                key: state.pageKey,
+                                id: id,
+                                characterEntity: character,
+                              );
+                            },
+                          ),
+                        ]
+                    ),
+
+                  ]
+              ),
+              // GoRoute(
+              //   path: '/detail/:slug',
+              //   name: AppRoute.detail.name,
+              //   builder: (context, state) {
+              //     String slug = state.pathParameters['slug']!;
+              //     String name = state.extra as String;
+              //     return DetailScreen(
+              //         key: state.pageKey, slug: slug, name :name);
+              //   },
+              // ),
+            ]),
+
+            //item
             StatefulShellBranch(routes: [
               GoRoute(
                 path: Routes.item,
                 name: Routes.item,
                 builder: (context, state) => const ItemPage(),
 
+              ),
+            ]),
+
+
+            //settings
+            StatefulShellBranch(routes: [
+              GoRoute(
+                path: Routes.settings,
+                name: Routes.settings,
+                builder: (context, state) => const SettingsPage(),
               ),
             ]),
           ]),
@@ -158,31 +177,42 @@ class ScaffoldWithNavBar extends ConsumerWidget {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4),
-            child: SalomonBottomBar(
-              selectedItemColor: Colors.blueAccent,
-              items: [
-                SalomonBottomBarItem(
-                  icon: const Icon(FontAwesomeIcons.house),
-                  title: const Text('Home'),
+            child: GNav(
+              gap: 10,
+              color: Colors.grey[600],
+              activeColor: Colors.white,
+              rippleColor: Colors.grey[800]!,
+              hoverColor: Colors.grey[700]!,
+              iconSize: 20,
+              textStyle: TextStyle(fontSize: 16, color: Colors.white),
+              tabBackgroundColor: Colors.grey[900]!,
+              padding:
+              EdgeInsets.symmetric(horizontal: 20, vertical: 16.5),
+              duration: Duration(milliseconds: 800),
+              tabs: [
+                GButton(
+                  icon: FontAwesomeIcons.wandMagicSparkles,
+                  text: 'Echoes',
                 ),
-                SalomonBottomBarItem(
-                  icon: const Icon(FontAwesomeIcons.heart),
-                  title: const Text('Echo'),
+                GButton(
+                  icon: FontAwesomeIcons.gun,
+                  text: 'Weapons',
                 ),
-                SalomonBottomBarItem(
-                  icon: const Icon(FontAwesomeIcons.gun),
-                  title: const Text('Weapon'),
+                GButton(
+                  icon: FontAwesomeIcons.house,
+                  text: 'Home',
                 ),
-                SalomonBottomBarItem(
-                  icon: const Icon(FontAwesomeIcons.gun),
-                  title: const Text('Item'),
+                GButton(
+                  icon: FontAwesomeIcons.shield,
+                  text: 'Items',
                 ),
-
+                GButton(
+                  icon: FontAwesomeIcons.gears,
+                  text: 'Settings',
+                ),
               ],
-              currentIndex: navigationShell.currentIndex,
-              onTap: (index) {
-                _onTap(context, index);
-              },
+              selectedIndex: navigationShell.currentIndex,
+              onTabChange: (index) => _onTap(context, index),
             ),
           ),
         ),

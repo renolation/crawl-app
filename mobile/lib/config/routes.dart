@@ -13,6 +13,8 @@ abstract class Routes {
 
   static const item = '/item';
 
+  static const settings = '/settings';
+
 }
 
 extension RouteName on String {
