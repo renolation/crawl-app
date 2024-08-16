@@ -1,0 +1,2 @@
+
+String characterElement = 'All';
