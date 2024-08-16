@@ -24,6 +24,7 @@ mixin _$SonataEffectEntity {
   String? get name => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
   int? get index => throw _privateConstructorUsedError;
+  String? get color => throw _privateConstructorUsedError;
   String? get two_set => throw _privateConstructorUsedError;
   String? get five_set => throw _privateConstructorUsedError;
 
@@ -44,6 +45,7 @@ abstract class $SonataEffectEntityCopyWith<$Res> {
       String? name,
       String? imageUrl,
       int? index,
+      String? color,
       String? two_set,
       String? five_set});
 }
@@ -65,6 +67,7 @@ class _$SonataEffectEntityCopyWithImpl<$Res, $Val extends SonataEffectEntity>
     Object? name = freezed,
     Object? imageUrl = freezed,
     Object? index = freezed,
+    Object? color = freezed,
     Object? two_set = freezed,
     Object? five_set = freezed,
   }) {
@@ -85,6 +88,10 @@ class _$SonataEffectEntityCopyWithImpl<$Res, $Val extends SonataEffectEntity>
           ? _value.index
           : index // ignore: cast_nullable_to_non_nullable
               as int?,
+      color: freezed == color
+          ? _value.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as String?,
       two_set: freezed == two_set
           ? _value.two_set
           : two_set // ignore: cast_nullable_to_non_nullable
@@ -110,6 +117,7 @@ abstract class _$$SonataEffectEntityImplCopyWith<$Res>
       String? name,
       String? imageUrl,
       int? index,
+      String? color,
       String? two_set,
       String? five_set});
 }
@@ -129,6 +137,7 @@ class __$$SonataEffectEntityImplCopyWithImpl<$Res>
     Object? name = freezed,
     Object? imageUrl = freezed,
     Object? index = freezed,
+    Object? color = freezed,
     Object? two_set = freezed,
     Object? five_set = freezed,
   }) {
@@ -149,6 +158,10 @@ class __$$SonataEffectEntityImplCopyWithImpl<$Res>
           ? _value.index
           : index // ignore: cast_nullable_to_non_nullable
               as int?,
+      color: freezed == color
+          ? _value.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as String?,
       two_set: freezed == two_set
           ? _value.two_set
           : two_set // ignore: cast_nullable_to_non_nullable
@@ -169,6 +182,7 @@ class _$SonataEffectEntityImpl implements _SonataEffectEntity {
       this.name,
       this.imageUrl,
       this.index,
+      this.color,
       this.two_set,
       this.five_set});
 
@@ -184,13 +198,15 @@ class _$SonataEffectEntityImpl implements _SonataEffectEntity {
   @override
   final int? index;
   @override
+  final String? color;
+  @override
   final String? two_set;
   @override
   final String? five_set;
 
   @override
   String toString() {
-    return 'SonataEffectEntity(id: $id, name: $name, imageUrl: $imageUrl, index: $index, two_set: $two_set, five_set: $five_set)';
+    return 'SonataEffectEntity(id: $id, name: $name, imageUrl: $imageUrl, index: $index, color: $color, two_set: $two_set, five_set: $five_set)';
   }
 
   @override
@@ -203,6 +219,7 @@ class _$SonataEffectEntityImpl implements _SonataEffectEntity {
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
             (identical(other.index, index) || other.index == index) &&
+            (identical(other.color, color) || other.color == color) &&
             (identical(other.two_set, two_set) || other.two_set == two_set) &&
             (identical(other.five_set, five_set) ||
                 other.five_set == five_set));
@@ -210,8 +227,8 @@ class _$SonataEffectEntityImpl implements _SonataEffectEntity {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, name, imageUrl, index, two_set, five_set);
+  int get hashCode => Object.hash(
+      runtimeType, id, name, imageUrl, index, color, two_set, five_set);
 
   @JsonKey(ignore: true)
   @override
@@ -234,6 +251,7 @@ abstract class _SonataEffectEntity implements SonataEffectEntity {
       final String? name,
       final String? imageUrl,
       final int? index,
+      final String? color,
       final String? two_set,
       final String? five_set}) = _$SonataEffectEntityImpl;
 
@@ -248,6 +266,8 @@ abstract class _SonataEffectEntity implements SonataEffectEntity {
   String? get imageUrl;
   @override
   int? get index;
+  @override
+  String? get color;
   @override
   String? get two_set;
   @override

@@ -11,6 +11,7 @@ class SonataEffectEntity with _$SonataEffectEntity {
     String? name,
     String? imageUrl,
     int? index,
+    String? color,
     String? two_set,
     String? five_set,
   }) = _SonataEffectEntity;

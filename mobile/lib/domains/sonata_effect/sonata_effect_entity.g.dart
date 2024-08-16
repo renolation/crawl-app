@@ -13,6 +13,7 @@ _$SonataEffectEntityImpl _$$SonataEffectEntityImplFromJson(
       name: json['name'] as String?,
       imageUrl: json['imageUrl'] as String?,
       index: (json['index'] as num?)?.toInt(),
+      color: json['color'] as String?,
       two_set: json['two_set'] as String?,
       five_set: json['five_set'] as String?,
     );
@@ -24,6 +25,7 @@ Map<String, dynamic> _$$SonataEffectEntityImplToJson(
       'name': instance.name,
       'imageUrl': instance.imageUrl,
       'index': instance.index,
+      'color': instance.color,
       'two_set': instance.two_set,
       'five_set': instance.five_set,
     };
