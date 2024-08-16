@@ -189,25 +189,30 @@ class ScaffoldWithNavBar extends ConsumerWidget {
               padding:
               EdgeInsets.symmetric(horizontal: 20, vertical: 16.5),
               duration: Duration(milliseconds: 800),
-              tabs: [
+              tabs:  [
                 GButton(
                   icon: FontAwesomeIcons.wandMagicSparkles,
                   text: 'Echoes',
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 GButton(
                   icon: FontAwesomeIcons.gun,
                   text: 'Weapons',
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 GButton(
                   icon: FontAwesomeIcons.house,
+                  borderRadius: BorderRadius.circular(12),
                   text: 'Home',
                 ),
                 GButton(
                   icon: FontAwesomeIcons.shield,
+                  borderRadius: BorderRadius.circular(12),
                   text: 'Items',
                 ),
                 GButton(
                   icon: FontAwesomeIcons.gears,
+                  borderRadius: BorderRadius.circular(12),
                   text: 'Settings',
                 ),
               ],
