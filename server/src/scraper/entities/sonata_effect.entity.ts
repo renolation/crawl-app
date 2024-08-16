@@ -22,6 +22,9 @@ export class SonataEffectEntity {
     @Column({nullable: true})
     five_set: string
 
+    @Column({nullable: true})
+    color: string
+
     @ManyToMany(() => EchoEntity, echo => echo.sonataEffects)
     @JoinTable()
     echoes: EchoEntity[];
