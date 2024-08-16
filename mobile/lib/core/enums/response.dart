@@ -32,11 +32,11 @@ enum EchoCost {
 
 enum WeaponRarity {
   any('Any', 0, 'f0744e'),
-  oneStars('1 Star', 1, 'f0744e'),
-  twoStars('2 Stars', 2, '6c42f5'),
-  threeStars('3 Stars', 3, 'f0744e'),
-  fourStars('4 Stars', 4, 'f0744e'),
-  fiveStars('5 Stars', 5, 'f0744e');
+  oneStars('1 Star', 1, 'D3D3D3'),
+  twoStars('2 Stars', 2, '19EB5B'),
+  threeStars('3 Stars', 3, '00B5FF'),
+  fourStars('4 Stars', 4, 'CA6CFF'),
+  fiveStars('5 Stars', 5, 'FFE659');
 
   const WeaponRarity(this.name, this.value, this.color);
 
