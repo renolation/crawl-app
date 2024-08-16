@@ -16,6 +16,7 @@ import '../../config/constants.dart';
 import '../../config/router.dart';
 import '../../config/routes.dart';
 import '../widgets/character_card.dart';
+import '../widgets/title_widget.dart';
 
 class CharacterPage extends HookConsumerWidget {
   const CharacterPage({super.key});
@@ -39,7 +40,7 @@ class CharacterPage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Character Page'),
+        title: const TitleWidget(text: 'Characters'),
       ),
       body: CustomScrollView(
         slivers: [

@@ -12,6 +12,7 @@ import 'package:mobile/presentations/widgets/item_card.dart';
 import 'package:mobile/providers/providers.dart';
 
 import '../../config/routes.dart';
+import '../widgets/title_widget.dart';
 
 class ItemPage extends HookConsumerWidget {
   const ItemPage({super.key});
@@ -24,7 +25,7 @@ class ItemPage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Item Page'),
+        title: const TitleWidget(text: 'Items'),
       ),
       body: CustomScrollView(
         slivers: [
@@ -112,6 +113,9 @@ class ItemPage extends HookConsumerWidget {
             ),
           ),
           SliverToBoxAdapter(
+            child: const SizedBox(height: 8),
+          ),
+          SliverToBoxAdapter(
             child: LayoutBuilder(builder: (context, constraints) {
               final totalWidth = constraints.maxWidth;
               final column1Width = (totalWidth-36) * 1 / 10;
@@ -125,10 +129,10 @@ class ItemPage extends HookConsumerWidget {
                       child: const Center(child: SizedBox())),
                   SizedBox(
                       width: column2Width,
-                      child: const Center(child: Text('Name'))),
+                      child: const Center(child: Text('Name', style: TextStyle(fontSize: 18),))),
                   SizedBox(
                       width: column3Width,
-                      child: const Center(child: Text('Description'))),
+                      child: const Center(child: Text('Description', style: TextStyle(fontSize: 18),))),
                 ],
               );
             }),
@@ -155,7 +159,15 @@ class ItemPage extends HookConsumerWidget {
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       ItemEntity item = listItems[index];
-                      return ItemCard(item: item);
+                      return Column(
+                        children: [
+                          ItemCard(item: item),
+                          if (index < listItems.length - 1) Divider(
+                            height: 1,
+                          ), // Add Divider between items
+
+                        ],
+                      );
                     }, childCount: listItems.length),
                   ),
                 );

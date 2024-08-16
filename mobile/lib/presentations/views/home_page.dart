@@ -28,7 +28,22 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         // 
-        title:  Text('Wuthering Tools',style: textTheme.headlineMedium,),
+        title:  RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                  text: 'Wuthering',
+                  style: textTheme.titleLarge
+              ),
+              TextSpan(
+                text: ' Tools',
+                style: textTheme.titleLarge!.copyWith(
+                    color: Colors.yellowAccent
+                ),
+              ),
+            ],
+          ),
+        )
       ),
       body: Center(
 

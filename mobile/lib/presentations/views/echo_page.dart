@@ -14,6 +14,7 @@ import 'package:mobile/providers/providers.dart';
 import '../../config/routes.dart';
 import '../../data/providers/local_json_provider.dart';
 import '../widgets/echo_card.dart';
+import '../widgets/title_widget.dart';
 
 class EchoPage extends HookConsumerWidget {
   const EchoPage({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class EchoPage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Echo Page'),
+        title: const TitleWidget(text: 'Echoes'),
       ),
       body: CustomScrollView(
         slivers: [

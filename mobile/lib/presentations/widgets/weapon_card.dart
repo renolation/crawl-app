@@ -28,7 +28,7 @@ class WeaponCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.4),
+          color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: getWeaponColor(weaponEntity), width: 2),
         ),
@@ -37,6 +37,7 @@ class WeaponCard extends StatelessWidget {
             AspectRatio(
               aspectRatio: 0.9,
               child: Container(
+                margin: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   image: DecorationImage(
