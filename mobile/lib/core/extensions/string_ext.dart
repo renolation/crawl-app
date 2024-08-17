@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/domains/character/character_entity.dart';
 import 'package:mobile/domains/item/item_entity.dart';
 
 import '../../domains/weapon/weapon_entity.dart';
@@ -29,6 +30,14 @@ Color getItemColor(ItemEntity itemEntity) {
   ItemRarity? matchingRarity = ItemRarity.values.firstWhere(
         (rarity) => rarity.value == itemEntity.rank,
     orElse: () => ItemRarity.all,
+  );
+  return hexStringToColor(matchingRarity.color);
+}
+
+Color getCharacterColor(CharacterEntity characterEntity) {
+  CharacterRarity? matchingRarity = CharacterRarity.values.firstWhere(
+        (rarity) => rarity.value == characterEntity.rarity,
+    orElse: () => CharacterRarity.any,
   );
   return hexStringToColor(matchingRarity.color);
 }

@@ -8,14 +8,15 @@ enum WeaponType {
 }
 
 enum CharacterRarity {
-  any('Any', 0),
-  fourStars('4 Stars', 4),
-  fiveStars('5 Stars', 5);
+  any('Any', 0, 'ffffff'),
+  fourStars('4 Stars', 4, 'c96dff'),
+  fiveStars('5 Stars', 5, 'ffd66b');
 
-  const CharacterRarity(this.name, this.value);
+  const CharacterRarity(this.name, this.value, this.color);
 
   final String name;
   final int value;
+  final String color;
 }
 
 enum EchoCost {
