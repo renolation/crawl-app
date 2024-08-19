@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'config/router.dart';
+import 'providers/theme_provider.dart';
 import 'utils/theme.dart';
 import 'utils/util.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  final sharedPreferences = await SharedPreferences.getInstance();
 
-
-  runApp(const ProviderScope(
-    child: MyApp(),
+  runApp(ProviderScope(
+    overrides: [
+      sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+    ],
+    child: const MyApp(),
   ),);
 }
 
@@ -21,17 +26,19 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final goRouter = ref.watch(goRouterProvider);
+    final isDark = ref.watch(isDarkProvider);
     final brightness = View.of(context).platformDispatcher.platformBrightness;
     TextTheme textTheme = createTextTheme(context, "Roboto Condensed", "Roboto");
     MaterialTheme theme = MaterialTheme(textTheme);
 
     return MaterialApp.router(
-      title: 'Flutter Demo',
+      title: 'Wuthering Tools',
       routerConfig: goRouter,
       debugShowCheckedModeBanner: false,
       // theme: brightness == Brightness.light ? theme.light() : theme.dark(),
-      theme: theme.dark(),
-      themeMode: ThemeMode.dark,
+      theme: theme.light(),
+      darkTheme: theme.dark(),
+      themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
 
     );
   }

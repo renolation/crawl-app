@@ -16,6 +16,7 @@ class CharacterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return InkWell(
         onTap: (){
           context.pushNamed(
@@ -25,55 +26,58 @@ class CharacterCard extends StatelessWidget {
           );
         },
         child: Card(
-            child: Stack(
-              children: [
-                Positioned(
-                  top: 10,
-                  left: 10,
-                  child: CachedNetworkImage(
-                      height: 30, imageUrl: character.characterElement!.imageUrl!.withUrlCheck()),
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(height: 8,),
-                      Stack(
-                        children: [
-                          Container(
-                            height: 100,
-                            width: 100,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: character.rarity! == 4 ? Color(0xffc96dff) : Color(0xffffd56b),
-                            ),
-                          ),
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            child: Container(
-                              width: 96,
-                              height: 96,
+            child: Container(
+              color: theme.colorScheme.onPrimary,
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 10,
+                    left: 10,
+                    child: CachedNetworkImage(
+                        height: 30, imageUrl: character.characterElement!.imageUrl!.withUrlCheck()),
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(height: 8,),
+                        Stack(
+                          children: [
+                            Container(
+                              height: 100,
+                              width: 100,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                image: DecorationImage(
-                                  image: CachedNetworkImageProvider(character.imageUrl!.withUrlCheck()),
-                                  fit: BoxFit.cover,
-                                ),
+                                color: character.rarity! == 4 ? Color(0xffc96dff) : Color(0xffffd56b),
                               ),
-                            )
-                          ),
+                            ),
+                            Positioned(
+                              left: 0,
+                              top: 0,
+                              child: Container(
+                                width: 96,
+                                height: 96,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context).colorScheme.onPrimary,
+                                  image: DecorationImage(
+                                    image: CachedNetworkImageProvider(character.imageUrl!.withUrlCheck()),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              )
+                            ),
 
-                        ],
-                      ),
-                      SizedBox(height: 8,),
-                      Text(character.name!, style: Theme.of(context).textTheme.titleMedium,),
-                    ],
+                          ],
+                        ),
+                        SizedBox(height: 8,),
+                        Text(character.name!, style: Theme.of(context).textTheme.titleMedium,),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             )
         ));
   }

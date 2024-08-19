@@ -29,7 +29,7 @@ class EchoCard extends StatelessWidget {
       },
       child: Container(
           decoration: BoxDecoration(
-            color: colorScheme.primaryContainer,
+            color: colorScheme.onPrimary,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: colorScheme.secondaryContainer, width: 2),
           ),
