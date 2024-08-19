@@ -53,6 +53,7 @@ class EchoDetailPage extends HookConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -275,14 +276,20 @@ class EchoDetailPage extends HookConsumerWidget {
                         ],
                       ),
                     ),
-
-                    const Text(
-                      'Possible Sonata Effect',
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      child: Text(
+                        'Possible Sonata Effect',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                     ),
                     for (var sonataEffect in data.sonataEffects!)
                       Container(
                         padding: const EdgeInsets.only(bottom: 8),
-                        margin: const EdgeInsets.symmetric(horizontal: 12),
+                        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
                           color: theme.colorScheme.primaryContainer,
                           borderRadius: BorderRadius.circular(8),
@@ -331,9 +338,12 @@ class EchoDetailPage extends HookConsumerWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 8),
                               child: RichText(
                                   text: TextSpan(children: [
-                                const TextSpan(text: '2-Set: ', style: TextStyle(
-                                  decoration: TextDecoration.underline,
-                                ),),
+                                const TextSpan(
+                                  text: '2-Set: ',
+                                  style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
                                 TextSpan(
                                   text: sonataEffect.two_set!,
                                 ),
@@ -346,9 +356,12 @@ class EchoDetailPage extends HookConsumerWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 8),
                               child: RichText(
                                   text: TextSpan(children: [
-                                const TextSpan(text: '5-Set: ', style: TextStyle(
-                                  decoration: TextDecoration.underline,
-                                ),),
+                                const TextSpan(
+                                  text: '5-Set: ',
+                                  style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
                                 TextSpan(
                                   text: sonataEffect.five_set!,
                                 ),
