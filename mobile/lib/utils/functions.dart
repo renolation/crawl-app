@@ -38,6 +38,7 @@ String convertBackToNormal(String str) {
       .replaceAll('Atk', 'ATK') // Convert 'Atk' to 'ATK'
       .replaceAll('Atk %', 'ATK %') //
        .replaceAll('hp', 'HP') // Convert 'Atk' to 'ATK'
+       .replaceAll('Hp', 'HP') // Convert 'Atk' to 'ATK'
        .replaceAll('Def', 'DEF') // Convert 'Atk' to 'ATK'
       .replaceAll('Hp %', 'HP %') // Convert 'Atk %' to 'ATK %'
       .replaceAll('Crit', 'Crit.') // Convert 'crit_rate' to 'Crit. Rate'
