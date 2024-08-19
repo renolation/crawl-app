@@ -24,6 +24,7 @@ class EchoPage extends HookConsumerWidget {
     final sonataEffects = useState('All');
     final textEditingController = useTextEditingController();
     final echoCost = useState(EchoCost.any);
+    final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -125,8 +126,9 @@ class EchoPage extends HookConsumerWidget {
                                   child: Container(
                                     margin: const EdgeInsets.symmetric(horizontal: 4),
                                     decoration: BoxDecoration(
-                                      color:sonataEffects.value != value[index].name ? Theme.of(context).colorScheme.onSecondary :
-                                      hexStringToColor(value[index].color!).withOpacity(0.2),
+                                      color: sonataEffects.value != value[index].name
+                                          ? Color(4281151295)
+                                          : hexStringToColor(value[index].color!).withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
                                           color: sonataEffects.value != value[index].name
@@ -135,6 +137,7 @@ class EchoPage extends HookConsumerWidget {
                                           width: 3),
                                     ),
                                     child: CachedNetworkImage(
+                                      color: Color(4291085785),
                                       height: 40,
                                       imageUrl: value[index].imageUrl!.withUrlCheck(),
                                     ),
@@ -158,8 +161,8 @@ class EchoPage extends HookConsumerWidget {
                 List<EchoEntity> listEchoes = sonataEffects.value == 'All'
                     ? data
                     : data
-                    .where((echo) => echo.sonataEffects!.any((element) => element.name == sonataEffects.value))
-                    .toList();
+                        .where((echo) => echo.sonataEffects!.any((element) => element.name == sonataEffects.value))
+                        .toList();
                 if (searchText != '') {
                   listEchoes = listEchoes
                       .where((element) => element.name!.toLowerCase().contains(searchText.toLowerCase()))
@@ -183,11 +186,7 @@ class EchoPage extends HookConsumerWidget {
                   padding: const EdgeInsets.all(8),
                   sliver: SliverGrid(
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 9/10
-                    ),
+                        crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 9 / 10),
                     delegate: SliverChildBuilderDelegate((context, index) {
                       EchoEntity echo = listEchoes[index];
                       return EchoCard(echo: echo);
@@ -204,4 +203,3 @@ class EchoPage extends HookConsumerWidget {
     );
   }
 }
-

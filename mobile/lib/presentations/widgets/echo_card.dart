@@ -69,7 +69,7 @@ class EchoCard extends StatelessWidget {
                             border: Border.all(color: hexStringToColor(sonataEffect.color!), width: 3),
                           ),
                           child: CachedNetworkImage(
-                            // color: Colors.red,
+                            color: colorScheme.primary,
                             height: 25,
                             imageUrl: sonataEffect.imageUrl!.withUrlCheck(),
                           ),
