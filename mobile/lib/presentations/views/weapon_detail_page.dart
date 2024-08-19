@@ -49,14 +49,16 @@ class WeaponDetailPage extends HookConsumerWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: Container(
-                                color: theme.colorScheme.primary,
-                                child: CachedNetworkImage(
-                                  imageUrl: data.imageUrl!.withUrlCheck(),
-                                ),
-                              )),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary,
+                              border: Border.all(color: getWeaponColor(weaponEntity), width: 3),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: CachedNetworkImage(
+                              imageUrl: data.imageUrl!.withUrlCheck(),
+                            ),
+                          ),
                           Expanded(
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
