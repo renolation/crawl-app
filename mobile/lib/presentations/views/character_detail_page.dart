@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,7 +33,7 @@ class CharacterDetailPage extends HookConsumerWidget {
                   data: (data) {
                     final characterLevelEntity =
                         data.characterLevels!.firstWhere((element) => element.level == levelSlider.value.toInt());
-                    final topStats = getNonNullProperties(characterLevelEntity);
+                    final topStats = getProperties(characterLevelEntity);
 
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -62,7 +63,7 @@ class CharacterDetailPage extends HookConsumerWidget {
                             border: Border.all(color: Colors.black),
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Center(
                           child: Column(
                             children: [
@@ -74,7 +75,7 @@ class CharacterDetailPage extends HookConsumerWidget {
                             ],
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Row(
@@ -126,9 +127,9 @@ class CharacterDetailPage extends HookConsumerWidget {
                             ],
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Row(
                             children: [
                               Text('Level', style: theme.textTheme.titleMedium!),
@@ -152,23 +153,106 @@ class CharacterDetailPage extends HookConsumerWidget {
                             onChanged: (value) => levelSlider.value = value.roundToDouble(),
                           ),
                         ),
-                        Text('Main Stat'),
-                        for (var property in topStats) Text(property),
+                        const SizedBox(height: 8),
                         Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
                           children: [
                             for (int i = 0; i < characterLevelEntity.itemCounts!.length; i++)
-                              Container(
-                                width: 100,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(characterLevelEntity.itemCounts![i].toString()),
-                                    Text(characterLevelEntity.items![i].name!),
-                                  ],
-                                ),
+                              Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  Container(
+                                    width: 120,
+                                    height: 110,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: theme.colorScheme.primaryContainer,
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const SizedBox(height: 8,),
+                                        CachedNetworkImage(
+                                          imageUrl: characterLevelEntity.items![i].imageUrl!.withUrlCheck(),
+                                          // height: 70,
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            width: 120,
+                                            height: 40,
+                                            margin: const EdgeInsets.all(3),
+                                            decoration: BoxDecoration(
+                                              color: theme.colorScheme.onPrimary,
+                                              borderRadius: BorderRadius.circular(3),
+                                            ),
+                                            child: Center(
+                                              child: AutoSizeText(
+                                                characterLevelEntity.items![i].name!,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: -10,
+                                    left: 0,
+                                    right: 0,
+                                    child: Center(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                                        decoration: BoxDecoration(
+                                          color: theme.colorScheme.onPrimary,
+                                          borderRadius: BorderRadius.circular(6),
+                                          border: Border.all(color: theme.colorScheme.primaryContainer, width: 2),
+                                        ),
+                                        child: Text(
+                                          characterLevelEntity.itemCounts![i].toString(),
+                                          style: TextStyle(
+                                            color: theme.colorScheme.primary,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               )
                           ],
                         ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                          margin: const EdgeInsets.symmetric(horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            children: [
+                              for (int i = 0; i < topStats.length; i++)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: i.isEven ? theme.colorScheme.onPrimary : theme.colorScheme.primaryContainer,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(topStats.keys.elementAt(i), style: theme.textTheme.titleMedium,),
+                                      Spacer(),
+                                      Text(topStats.values.elementAt(i), style: theme.textTheme.titleMedium,),
+                                    ],
+                                  ),
+                                )
+                            ],
+                          ),
+                        ),
+
+
                       ],
                     );
                   },

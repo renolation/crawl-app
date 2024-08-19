@@ -14,6 +14,20 @@ List<String> getNonNullProperties(Object instance) {
   return nonNullProperties;
 }
 
+
+Map<String, String> getProperties(Object instance) {
+  Map<String, dynamic> instanceMap = jsonDecode(jsonEncode(instance));
+  Map<String, String> nonNullProperties = {};
+
+  instanceMap.forEach((key, value) {
+    if (value != null && key != 'id' && key != 'itemCounts' && key != 'items' && key!= 'ascension_max_level') {
+      key = convertBackToNormal(key);
+      nonNullProperties[key] = value.toString();
+    }
+  });
+  return nonNullProperties;
+}
+
 String convertBackToNormal(String str) {
   return str
       .replaceAll('_', ' ') // Replace underscores with spaces
