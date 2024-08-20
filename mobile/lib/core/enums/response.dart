@@ -1,10 +1,15 @@
 enum WeaponType {
-  Any,
-  Broadblade,
-  Gauntlets,
-  Pistols,
-  Rectifier,
-  Sword,
+  Any('Any', ''),
+  Broadblade('Broadblade','https://wuthering.gg/_ipx/q_70&s_64x64/images//IconSkill/SP_IconNorSword.png'),
+  Gauntlets('Gauntlets', 'https://wuthering.gg/_ipx/q_70&s_64x64/images//IconSkill/SP_IconNorFist.png'),
+  Pistols('Pistols','https://wuthering.gg/_ipx/q_70&s_64x64/images//IconSkill/SP_IconNorGun.png'),
+  Rectifier('Rectifier','https://wuthering.gg/_ipx/q_70&s_64x64/images//IconSkill/SP_IconNorMagic.png'),
+  Sword('Sword','https://wuthering.gg/_ipx/q_70&s_64x64/images//IconSkill/SP_IconNorKnife.png');
+
+  const WeaponType(this.value, this.imageUrl);
+
+  final String value;
+  final String imageUrl;
 }
 
 enum CharacterRarity {
@@ -59,9 +64,7 @@ enum ItemRarity {
   final String name;
   final int value;
   final String color;
-
 }
-
 
 enum ItemType {
   All('All'),

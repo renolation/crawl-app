@@ -41,3 +41,12 @@ Color getCharacterColor(CharacterEntity characterEntity) {
   );
   return hexStringToColor(matchingRarity.color);
 }
+
+String getWeaponImageUrl(String weaponName) {
+  for (var weapon in WeaponType.values) {
+    if (weapon.value == weaponName) {
+      return weapon.imageUrl;
+    }
+  }
+  return 'https://wuthering.gg/_ipx/q_70&s_64x64/images//IconSkill/SP_IconNorMagic.png'; // Return an empty string if no match is found
+}

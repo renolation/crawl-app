@@ -77,14 +77,15 @@ class CharacterDetailPage extends HookConsumerWidget {
                         ),
                         const SizedBox(height: 8),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               OutlinedButton(
                                 onPressed: null,
                                 style: ButtonStyle(
-                                  minimumSize: WidgetStateProperty.all(Size(100, 40)),
+                                  minimumSize: WidgetStateProperty.all(Size(90, 40)),
+                                  padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 4)),
                                   shape: WidgetStateProperty.all(
                                       RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0))),
                                   side: WidgetStateProperty.all(
@@ -93,12 +94,22 @@ class CharacterDetailPage extends HookConsumerWidget {
                                   ),
                                   backgroundColor: WidgetStateProperty.all(theme.colorScheme.onPrimary),
                                 ),
-                                child: Text(data.buble!, style: const TextStyle(color: Colors.white),),
+                                child: Row(
+                                  children: [
+                                    CachedNetworkImage(
+                                        height: 25,
+                                        width: 25,
+                                        imageUrl: getWeaponImageUrl(data.buble!)),
+                                    Text(data.buble!, style: const TextStyle(color: Colors.white),),
+                                  ],
+                                ),
                               ),
                               OutlinedButton(
                                 onPressed: null,
                                 style: ButtonStyle(
                                   minimumSize: WidgetStateProperty.all(Size(140, 40)),
+                                  padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 4)),
+
                                   shape: WidgetStateProperty.all(
                                       RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0))),
                                   side: WidgetStateProperty.all(
@@ -107,12 +118,23 @@ class CharacterDetailPage extends HookConsumerWidget {
                                   ),
                                   backgroundColor: WidgetStateProperty.all(theme.colorScheme.onPrimary),
                                 ),
-                                child: Text(data.birthday!, style: const TextStyle(color: Colors.white),),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Icon(FontAwesomeIcons.cakeCandles, color: Colors.white,
+                                    size: 25,
+                                    ),
+
+                                    Text(data.birthday!, style: const TextStyle(color: Colors.white),),
+                                  ],
+                                ),
                               ),
                               OutlinedButton(
                                 onPressed: null,
                                 style: ButtonStyle(
                                   minimumSize: WidgetStateProperty.all(Size(80, 40)),
+                                  padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 8)),
+
                                   shape: WidgetStateProperty.all(
                                       RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0))),
                                   side: WidgetStateProperty.all(
@@ -122,7 +144,16 @@ class CharacterDetailPage extends HookConsumerWidget {
                                   backgroundColor: WidgetStateProperty.all(theme.colorScheme.onPrimary),
                                 ),
                                 //todo: element
-                                child: Text(data.buble!, style: const TextStyle(color: Colors.white),),
+                                child: Row(
+                                  children: [
+                                    CachedNetworkImage(
+                                        height: 25,
+                                        width: 25,
+                                        imageUrl: data.characterElement!.imageUrl!.withUrlCheck()),
+                                    SizedBox(width: 4,),
+                                    Text(data.characterElement!.name!, style: const TextStyle(color: Colors.white),),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
