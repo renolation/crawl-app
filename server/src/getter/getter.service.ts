@@ -134,7 +134,7 @@ export class GetterService {
     async getCharacterById(id: number) {
         return this.characterRepository.findOne({
             where: {id},
-            relations: ['levels', 'levels.items'],
+            relations: ['levels', 'levels.items', 'characterElement'],
         });
     }
 

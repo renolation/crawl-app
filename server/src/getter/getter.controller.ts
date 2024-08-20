@@ -58,7 +58,7 @@ export class GetterController {
         return this.getterService.getEchoById(id);
     }
 
-        @Get('character/:id')
+    @Get('character/:id')
     async getCharacterById(@Param('id') id: number) {
         return this.getterService.getCharacterById(id);
     }
